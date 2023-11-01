@@ -1,7 +1,13 @@
+import styles from "./chat-list.module.sass"
+import Message from "./message/message"
+
 export default function ChatList(){
   return(
-    <div>
-      Chat List!
+    <div className={styles.ChatList}>
+      <Message />
+      <Message />
+      <Message />
+      <Message />
     </div>
   )
 }
