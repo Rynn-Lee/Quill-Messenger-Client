@@ -1,10 +1,36 @@
 .Message
   display: flex
-  flex-direction: column
+  flex-direction: row
   width: 250px
+  align-items: center
   background: var(--var-accent2)
-  padding: 5px 0px
+  overflow: hidden
+  padding: 10px 5px
+  transition: var(--var-transition)
+  &:hover
+    background: var(--var-accent3)
   .active
     background: var(--var-accent3)
-  .name
-    color: var(--var-text-color)
+  img
+    border-radius: 100px
+  .texts
+    padding: 0px 5px
+    width: 195px
+    display: flex
+    flex-direction: column
+    .upperLine
+      display: flex
+      justify-content: space-between
+      align-items: center
+      .name
+        width: max-content
+        color: var(--var-text-color)
+      .time
+        color: #ffffff30
+        font-size: 12px
+  .messagePreview
+    padding-top: 2px 
+    width: 100%
+    overflow: hidden
+    text-overflow: ellipsis
+    white-space: nowrap

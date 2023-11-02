@@ -5,6 +5,7 @@
   --var-accent4: #2f3241
   --var-text-color: #af93f9
   --var-text-color2: #af93f920
+  --var-transition: 100ms
   
 body
   background: var(--var-accent1)
@@ -13,6 +14,8 @@ body
   font-size: 15px
   padding: 0px
   margin: 0px
+  &>*
+    user-select: none
 
 .content
   display: flex

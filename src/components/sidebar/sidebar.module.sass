@@ -9,11 +9,61 @@
   overflow: hidden
   flex-direction: column
   .logo
-    width: 100%
+    // border-bottom: 1px solid var(--var-text-color2)
+    // box-shadow: 0px 2px 1px 0px #00000030
+    font-size: 16px
     display: flex
     align-items: center
+    justify-content: space-between
     padding: 10px
-    font-size: 16px
-    border-bottom: 1px solid var(--var-text-color2)
-    &>*
-      margin: 0px 5px
+    div
+      display: flex
+      align-items: center
+      &>*
+        margin: 0px 5px
+
+.userBadge
+  position: relative
+  display: flex
+  flex-direction: row
+  width: 100%
+  padding: 5px
+  border-bottom: 1px solid var(--var-text-color2)
+  // box-shadow: inset 2px -2px 1px 0px #00000030
+  img
+    border-radius: 100px
+  .info
+    padding: 4px 0px 4px 10px
+    display: flex
+    flex-direction: column
+    height: 52px
+    justify-content: center
+    .name
+      color: var(--var-text-color)
+
+.button
+  font-size: 15px
+  padding: 10px 9px
+  color: #dadde0
+  background: none
+  text-align: left
+  border: none
+  margin-bottom: 2px
+  border-radius: 5px
+  width: 100%
+  display: flex
+  align-items: center
+  &>*
+    margin: 0px 5px
+
+.title
+  width: 250px
+  display: flex
+  flex-direction: row
+  justify-content: space-between
+  div
+    display: flex
+    align-items: center
+    padding: 10px 15px 10px 12px
+    &>b
+      margin-left: 15px
