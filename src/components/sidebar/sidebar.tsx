@@ -3,7 +3,7 @@ import ChatList from "../chat-list/chat-list"
 import styles from "./sidebar.module.sass"
 import UserBadge from "./UserBadge"
 
-export default function Sidebar(){
+export default function Sidebar({socket}: any){
   return(
     <div className={styles.sidebar}>
       <div className={styles.logo}>
@@ -11,7 +11,7 @@ export default function Sidebar(){
         <div><Icon.Settings /></div>
       </div>
       <UserBadge styles={styles}/>
-      <ChatList styles={styles}/>
+      <ChatList/>
     </div>
   )
 }
