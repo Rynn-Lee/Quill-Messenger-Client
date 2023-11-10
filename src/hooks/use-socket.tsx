@@ -26,7 +26,6 @@ export default function useSocket(){
   }
 
   const getConnectedUsers = () => {
-    console.log("SOCKET INFO:", socket)
     console.log('asked for users!')
     socket.emit('getConnectedUsers')
   }

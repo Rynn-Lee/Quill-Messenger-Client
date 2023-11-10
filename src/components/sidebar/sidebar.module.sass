@@ -1,57 +1,34 @@
 .sidebar
   position: fixed
-  width: 250px
-  top: 0px
-  left: 0px
   display: flex
-  height: 100vh
-  background: var(--var-accent2)
-  overflow: hidden
   flex-direction: column
-  .logo
-    // border-bottom: 1px solid var(--var-text-color2)
-    // box-shadow: 0px 2px 1px 0px #00000030
-    font-size: 16px
+  height: 100vh
+  justify-content: space-between
+  background: var(--var-accent1)
+  .upperButtons, .bottomButtons
+    margin: 15px 0px
     display: flex
     align-items: center
-    justify-content: space-between
-    padding: 10px
-    div
+    flex-direction: column
+    &>*
+      margin: 12px 0px
+      padding: 0px 25px
+    .activePage
+      &::before
+        content: " "
+        left: 0px
+        height: 30px
+        position: absolute 
+        border-left: 3px solid #458a6d90
+    .userImage
+      border-radius: 35px
+    a
       display: flex
       align-items: center
-      &>*
-        margin: 0px 5px
-
-.userBadge
-  position: relative
-  display: flex
-  flex-direction: row
-  width: 100%
-  padding: 5px
-  border-bottom: 1px solid var(--var-text-color2)
-  // box-shadow: inset 2px -2px 1px 0px #00000030
-  img
-    border-radius: 100px
-  .info
-    padding: 4px 0px 4px 10px
-    display: flex
-    flex-direction: column
-    height: 52px
-    justify-content: center
-    .name
-      color: var(--var-text-color)
-
-.button
-  font-size: 15px
-  padding: 10px 9px
-  color: #dadde0
-  background: none
-  text-align: left
+      justify-content: center 
+  .bottomButtons
+    .linkUserImage
+      padding: 0px !important
+.hr
   border: none
-  margin-bottom: 2px
-  border-radius: 5px
-  width: 100%
-  display: flex
-  align-items: center
-  &>*
-    margin: 0px 5px
+  border-top: 1px #458a6d40 solid

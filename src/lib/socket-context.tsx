@@ -5,8 +5,10 @@ import socketio from 'socket.io-client'
 export const socket = socketio
 export const SocketContext = React.createContext(socket)
 
-// export const socketEvents = {
-//   getConnectedUsers(){
-//     socket.emit('getConnectedUsers', (data: any) => data)
-//   }
-// }
+export default function SocketProvider({children, socketHook}: any){
+  return(
+  <SocketContext.Provider value={socketHook}>
+    {children}
+  </SocketContext.Provider>
+  )
+}
