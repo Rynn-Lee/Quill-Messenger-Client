@@ -1,9 +1,8 @@
 import Icon from "@/assets/Icons"
 import Message from "./message/message"
 import { useContext, useEffect, useState } from "react"
-import { SocketContext } from "../sockets/context"
+import { SocketContext } from "../../lib/socket-context"
 import styles from './chat-list.module.sass'
-import { Socket } from "socket.io-client"
 
 export default function ChatList(){
   const [users, setUsers] = useState([])
@@ -11,6 +10,7 @@ export default function ChatList(){
 
   useEffect(()=>{
     socket.io.on('connectedUsers', (data: any)=>setUsers(data))
+    // return ()=>{ socket.unsubscribe('connectedUsers') }
   }, [])
 
   return(

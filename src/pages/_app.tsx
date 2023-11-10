@@ -1,5 +1,5 @@
-import { SocketContext } from '@/components/sockets/context'
-import useSocket from '@/hook/use-socket'
+import { SocketContext } from '@/lib/socket-context'
+import useSocket from '@/hooks/use-socket'
 import AppLayout from '@/layouts/app-layout'
 import '@/styles/global.sass'
 import type { AppProps } from 'next/app'
