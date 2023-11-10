@@ -2,22 +2,21 @@ import { useEffect, useState } from "react"
 import io, { Socket } from "socket.io-client"
 
 export default function useSocket(){
-  const [socket, setSocket] = useState<Socket>(io('127.0.0.1:4000'))
+  const [socket, setSocket]: any = useState<Socket | null>(null)
 
-  // unsubscribe
+  // connection and disconnection
   useEffect(()=>{
-    return () => terminateConnection() 
+    const newSocket = io('127.0.0.1:4000');
+    setSocket(newSocket)
+    
+    newSocket.on('connect', ()=> console.log("Connected to the server"))
+
+    return () => {
+      console.log("terminating connections");
+      newSocket.removeAllListeners();
+      newSocket.disconnect();
+    }
   }, [])
-
-  // subscriptions
-  socket.on('connect', ()=> console.log("Connected to the server"))
-
-  // exported functions
-  const terminateConnection = () => {
-    console.log("terminating connections")
-    socket.removeAllListeners()
-    socket.disconnect()
-  }
 
   const unsubscribe = (eventName: string) => {
     console.log("called unsub")

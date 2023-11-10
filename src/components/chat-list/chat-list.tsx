@@ -9,9 +9,12 @@ export default function ChatList(){
   const socket: any = useContext(SocketContext)
 
   useEffect(()=>{
-    socket.io.on('connectedUsers', (data: any)=>setUsers(data))
-    // return ()=>{ socket.unsubscribe('connectedUsers') }
-  }, [])
+    if(!socket){return}
+    socket?.io?.on('connectedUsers', (data: any)=>setUsers(data))
+    return ()=>{
+      socket?.io?.off('connectedUsers')
+    }
+  }, [socket])
 
   return(
     <>

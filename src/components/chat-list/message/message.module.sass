@@ -23,7 +23,10 @@
       justify-content: space-between
       align-items: center
       .name
-        width: max-content
+        text-overflow: ellipsis
+        white-space: nowrap
+        overflow: hidden
+        max-width: 142px !important
         color: var(--var-text-color)
       .time
         color: #ffffff30
@@ -34,3 +37,4 @@
     overflow: hidden
     text-overflow: ellipsis
     white-space: nowrap
+    font-size: 13px
