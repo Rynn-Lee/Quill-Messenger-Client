@@ -20,13 +20,13 @@ export default function Sidebar({socket}: any){
     <div className={styles.sidebar}>
       <div className={styles.upperButtons}>
         <Icon.Quill /><hr className={styles.hr}/>
-        <Link className={activePage == "/" ? styles.activePage : ""} href="/">{activePage == "/" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
+        <Link className={activePage == "/chats" ? styles.activePage : ""} href="/chats">{activePage == "/chats" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
         <Link className={activePage == "/add-friends" ? styles.activePage : ""} href="/add-friends">{activePage == "/add-friends" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
       </div>
       <div className={styles.bottomButtons}>
         <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>
+        <Link href="/"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
-        
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           <Image className={styles.userImage} src="https://avatars.githubusercontent.com/u/38906839?v=4" alt="pfp" width={40} height={40}/>
         </Link>

@@ -7,16 +7,13 @@ interface userData {
 }
 
 type AccoutStore = {
-  counter: number
   userId: string
   username: string
   password: string
   setUser: (arg0: userData) => void
-  counterAdd: () => void
 }
 
 export const useAccountStore = create<AccoutStore>()((set) => ({
-  counter: 0,
   userId: "",
   username: "",
   password: "",
@@ -24,6 +21,5 @@ export const useAccountStore = create<AccoutStore>()((set) => ({
     userId: userdata.userId,
     username: userdata.username,
     password: userdata.password
-  })),
-  counterAdd: () => set((state) => ({counter: state.counter + 1}))
+  }))
 }))
