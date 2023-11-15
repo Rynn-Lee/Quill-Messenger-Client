@@ -91,7 +91,7 @@ const Input:React.FunctionComponent<inputProps> = ({fancy, ...inputProps}) => {
           fancy.hide
             ? fancy.text
             : fancy.placeholder
-              ? `${fancy.text}: ${inputProps.value ? inputProps.value : ""}`
+              ? `${fancy.text}: ${inputProps.value ? inputProps.value : "nothing..."}`
               : `${inputProps.value ? inputProps.value : ""}`}
             </Label> 
           : <></>}
