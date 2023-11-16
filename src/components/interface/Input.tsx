@@ -42,7 +42,7 @@ const FancyInput = styled.input<DataFancyComponentProps>`
     padding: 10px 15px;
     width: 100%;
     font-size: 13px;
-    background: var(--var-accent3);
+    background: transparent;
     border: 1px solid transparent;
     border-radius: 10px;
     color: ${(props: any)=>(props?.datafancy?.text ? '#00000000' : '#ffffff')};

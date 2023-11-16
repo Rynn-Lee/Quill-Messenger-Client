@@ -1,28 +1,33 @@
-import { getItem } from '@/lib/local-storage'
 import { create } from 'zustand'
 
 interface userData {
-  userId: string
-  username: string
-  password: string
+  _id: string,
+  usertag: string,
+  password: string,
+  displayedName: string,
+  lastOnline: string,
 }
 
 type AccoutStore = {
-  userId: string
-  usertag: string
-  displayedName?: string
-  password: string
+  _id: string,
+  usertag: string,
+  password: string,
+  displayedName: string,
+  lastOnline: string,
   setUser: (arg0: userData) => void
 }
 
 export const useAccountStore = create<AccoutStore>()((set) => ({
-  userId: "",
+  _id: "",
   usertag: "",
-  displayedName: "",
   password: "",
+  displayedName: "",
+  lastOnline: "",
   setUser: (userdata: userData) => set((state) => ({
-    userId: userdata.userId,
-    username: userdata.username,
-    password: userdata.password
+    _id: userdata._id,
+    usertag: userdata.usertag,
+    password: userdata.password,
+    displayedName: userdata.displayedName,
+    lastOnline: userdata.lastOnline,
   }))
 }))

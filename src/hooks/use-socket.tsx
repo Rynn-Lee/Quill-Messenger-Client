@@ -6,7 +6,7 @@ export default function useSocket(){
 
   // connection and disconnection
   useEffect(()=>{
-    const newSocket = io('127.0.0.1:4000');
+    const newSocket = io('ws://127.0.0.1:4000');
     setSocket(newSocket)
     
     newSocket.on('connect', ()=> console.log("Connected to the server"))

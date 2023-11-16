@@ -6,6 +6,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/router"
+import { logout } from "@/api"
 
 export default function Sidebar({socket}: any){
   const [activePage, setActivePage] = useState("/")
@@ -25,7 +26,7 @@ export default function Sidebar({socket}: any){
       </div>
       <div className={styles.bottomButtons}>
         <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>
-        <Link href="/"><Icon.Logout/></Link>
+        <Link onClick={logout} href="/"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           <Image className={styles.userImage} src="https://avatars.githubusercontent.com/u/38906839?v=4" alt="pfp" width={40} height={40}/>

@@ -1,3 +1,4 @@
+import { removeItem } from "@/lib/local-storage"
 import { md5hash } from "@lib/encryptor"
 import axios from "axios"
 
@@ -26,5 +27,13 @@ const login = async(userdata: any) => {
   }
 }
 
+const logout = async() => {
+  try{
+    removeItem('userdata')
+  } catch (err) { 
+    console.log("error")
+  }
+}
 
-export {register, login}
+
+export {register, login, logout}
