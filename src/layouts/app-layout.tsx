@@ -1,9 +1,20 @@
+import { WarningContext } from "@/lib/warning/warning-context";
+import { useSocketStore } from "@/stores/SocketStore";
 import Sidebar from "@components/sidebar/sidebar";
 import Head from "next/head";
 import { useRouter } from "next/router";
+import { useContext, useEffect } from "react";
 
 export default function AppLayout({children}: any){
+  const {socket, status}: any = useSocketStore()
+  const warning: any = useContext(WarningContext)
   const router = useRouter()
+
+  useEffect(()=>{
+    if(!socket?.io){return}
+    !status && warning.throwError({title: "Connection Error", message: "You lost connecting to the server! Check your internet connection!"})
+  }, [status])
+
   return(
     <>
       <Head>

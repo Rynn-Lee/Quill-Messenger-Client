@@ -2,7 +2,7 @@ import useWarning from "./use-warning";
 import React from "react";
 import styles from "./warning.module.sass"
 
-export const WarningContext = React.createContext()
+export const WarningContext: any = React.createContext(null)
 
 export default function WarningProvider({children}: any){
   const warningHook = useWarning()

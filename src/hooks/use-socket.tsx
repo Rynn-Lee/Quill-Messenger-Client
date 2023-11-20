@@ -1,15 +1,25 @@
+import { useSocketStore } from "@/stores/SocketStore"
 import { useEffect, useState } from "react"
 import io, { Socket } from "socket.io-client"
 
 export default function useSocket(){
   const [socket, setSocket]: any = useState<Socket | null>(null)
+  const {status, setStatus}: any = useSocketStore()
 
   // connection and disconnection
   useEffect(()=>{
     const newSocket = io('ws://127.0.0.1:4000');
     setSocket(newSocket)
     
-    newSocket.on('connect', ()=> console.log("Connected to the server"))
+    newSocket.on('connect', ()=> {
+      setStatus(true)
+      console.log("Connected to the server")
+    })
+
+    newSocket.on('disconnect', ()=>{
+      setStatus(false)
+      console.log("Disconnected from the server")
+    })
 
     return () => {
       console.log("terminating connections");

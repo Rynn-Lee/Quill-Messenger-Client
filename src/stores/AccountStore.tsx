@@ -23,7 +23,7 @@ export const useAccountStore = create<AccoutStore>()((set) => ({
   password: "",
   displayedName: "",
   lastOnline: "",
-  setUser: (userdata: userData) => set((state) => ({
+  setUser: (userdata: userData) => set(() => ({
     _id: userdata._id,
     usertag: userdata.usertag,
     password: userdata.password,
