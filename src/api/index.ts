@@ -1,6 +1,6 @@
 import { removeItem } from "@lib/local-storage"
 import { md5hash } from "@lib/encryptor"
-import axios from "axios"
+import axios, { AxiosError } from "axios"
 
 const register = async(userdata: any) => {
   if(userdata.password !== userdata.confirmPassword){
@@ -14,6 +14,10 @@ const register = async(userdata: any) => {
     })
     return result.data.message
   } catch(err: any) {
+    console.log(err)
+    if(!err.response.data.message.message){
+      return {message: "Couldn't connect to the server...", status: 404}
+    }
     return {message: err.response.data.message.message, status: err.response.status}
   }
 }
@@ -27,6 +31,7 @@ const login = async(userdata: any) => {
     }})
     return result.data.message
   } catch(err: any) {
+    console.log(err)
     return {message: err.response.data.message.message, status: err.response.status}
   }
 }

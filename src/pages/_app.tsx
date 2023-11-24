@@ -8,16 +8,6 @@ import { useEffect } from 'react'
 import { getItem } from '@/lib/local-storage'
 import { useAccountStore } from '@/stores/AccountStore'
 import { useSocketStore } from '@/stores/SocketStore'
-import {
-  isHttpPortOpen,
-  isPortTaken,
-  findAvailablePort,
-  scanOnlineIpPortPairs,
-  scanOnlineIpsByPort,
-  nonLocalhostNetworks,
-  localServerIsRunning,
-  scanLocalNetworkOnlineHostsByPort,
-} from "tauri-plugin-network-api";
 
 export default function App({ Component, pageProps }: AppProps) {
   const {usertag, setUser}: any = useAccountStore()

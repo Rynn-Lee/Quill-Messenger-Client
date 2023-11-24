@@ -3,15 +3,17 @@ import { useState } from "react"
 export default function useWarning(){
   const [isError, setIsError] = useState(false)
   const [errorDetails, setErrorDetails] = useState({
-    title: "aboba",
-    message: "aboba message"
+    title: "",
+    message: "",
+    fn: null
   })
 
-  const throwError = ({title, message}: any) => {
-    setErrorDetails({title, message})
+  const showWindow = ({title, message, fn = null}: any) => {
+    console.log("FN:", fn)
+    setErrorDetails({title, message, fn})
     setIsError(true)
   }
-  const closeError = () => setIsError(false)
+  const closeWindow = () => setIsError(false)
 
-  return {isError, closeError, throwError, error: errorDetails}
+  return {isError, closeWindow, showWindow, error: errorDetails}
 }

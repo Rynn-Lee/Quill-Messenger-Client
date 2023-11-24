@@ -11,12 +11,13 @@ export default function WarningProvider({children}: any){
     <WarningContext.Provider value={warningHook}>
       {warningHook.isError
       ?
-        <div className={styles.errorWindow} onClick={()=>warningHook.closeError()}>
+        <div className={styles.errorWindow} onClick={()=>warningHook.closeWindow()}>
           <div className={styles.errorBlock} onClick={(e)=>e.stopPropagation()}>
             <div className={styles.errorTitle}>{warningHook.error.title}</div>
             <div className={styles.errorMessage}>{warningHook.error.message}</div>
             <div className={styles.actionButtons}>
-              <button onClick={()=>warningHook.closeError()}>Close Message</button>
+              {warningHook.error.fn ? <button onClick={()=>{warningHook.error.fn(); warningHook.closeWindow()}}>Continue</button> : <></>}
+              <button onClick={()=>warningHook.closeWindow()}>Close</button>
             </div>
           </div>
         </div>

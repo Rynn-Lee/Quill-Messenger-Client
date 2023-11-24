@@ -2,15 +2,22 @@ import Icon from "@/assets/Icons"
 import styles from "./sidebar.module.sass"
 import Image from "next/image"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { logout } from "@/api"
 import { useSocketStore } from "@/stores/SocketStore"
+import { WarningContext } from "@/lib/warning/warning-context"
 
 export default function Sidebar(){
   const {status}: any = useSocketStore()
+  const warning: any = useContext(WarningContext)
   const [activePage, setActivePage] = useState("/")
   const router = useRouter()
+
+  const leave = () => {
+    logout()
+    router.replace('/')
+  }
 
   useEffect(()=>{ setActivePage(router.pathname) }, [router.pathname])
   return(
@@ -24,7 +31,7 @@ export default function Sidebar(){
       </div>
       <div className={styles.bottomButtons}>
         <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>
-        <Link onClick={logout} href="/"><Icon.Logout/></Link>
+        <Link onClick={()=>warning.showWindow({title: "Confirm Action", message: "Are you sure you want to exit?", fn: leave})} href="/"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           <Image

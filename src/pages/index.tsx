@@ -32,13 +32,13 @@ export default function Home() {
 
   const RegisterAccount = async() => {
     const result = await register(userInputs)
-    if(result.status >= 400){warning.throwError({title: "Failed to Register", message: result.message}); return;}
+    if(result.status >= 400){warning.showWindow({title: "Failed to Register", message: result.message}); return;}
     passLoginScreen(result)
   }
 
   const LoginAccount = async() => {
     const result = await login(userInputs)
-    if(result.status >= 400){warning.throwError({title: "Failed to Log In", message: result.message}); return;}
+    if(result.status >= 400){warning.showWindow({title: "Failed to Log In", message: result.message}); return;}
     passLoginScreen(result)
   }
 
