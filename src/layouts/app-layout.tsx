@@ -12,7 +12,11 @@ export default function AppLayout({children}: any){
 
   useEffect(()=>{
     if(!socket?.io){return}
-    !status && warning.throwError({title: "Connection Error", message: "You lost connecting to the server! Check your internet connection!"})
+    !status && warning.throwError({
+      title: "Cannot connect to the server!",
+      message: "You've lost the connection to the server. Check your ethernet connection"
+    })
+    status && warning.error.title == "Cannot connect to the server!" && warning.closeError()
   }, [status])
 
   return(

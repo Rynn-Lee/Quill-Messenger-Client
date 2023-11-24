@@ -1,8 +1,14 @@
 :root
-  --var-accent1: #1b1b1b
-  --var-accent2: #242424
-  --var-accent3: #458a6d20
-  --var-accent3-hover: #458a6d40
+  // --var-accent1: #1b1b1b
+  // --var-accent2: #242424
+  // --var-accent3: #458a6d20
+  // --var-accent3-hover: #458a6d40
+  --var-accent1: #191b20
+  --var-accent2: #17191f
+  --var-accent3: #776ca550
+  --var-accent3-hover: #9385ca50
+  --var-button: linear-gradient(90deg, #5B4C97, #2643a3)
+  --var-button2: linear-gradient(90deg, #6454a3, #2e4caf)
   --var-transition: 100ms
   
 body
@@ -28,3 +34,22 @@ body
   height: 100vh
   justify-content: center
   align-items: center
+
+.fancybutton
+  color: #ffffff
+  padding: 10px 15px
+  border-radius: 10px
+  border: none
+  background: var(--var-button)
+  cursor: pointer
+  transition: var(--var-transition)
+  box-shadow: 2px 5px 5px #00000040
+  border-right: 2px solid #ffffff20
+  border-bottom: 2px solid #ffffff20
+  &:hover
+    box-shadow: 0px 0px 5px #000000
+    transform: translateX(2px) translateY(2px)
+    box-shadow: none
+  &:active
+    background: var(--var-button2)
+    

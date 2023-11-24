@@ -1,10 +1,11 @@
 import { useAccountStore } from "@store/AccountStore"
 
 export default function AddFriends() {
-  const {counter, counterAdd}: any = useAccountStore()
+  const {usertag, password}: any = useAccountStore()
   return (
     <>
-      <div onClick={()=>counterAdd()}>AddFriends - {counter && counter}</div>
+      <div>add friends - {usertag} - {password}</div>
+      {/* <div onClick={()=>counterAdd()}>AddFriends - {counter && counter}</div> */}
     </>
   )
 }

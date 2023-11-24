@@ -20,6 +20,7 @@ export default function Sidebar(){
         <hr className={styles.hr}/>
         <Link className={activePage == "/chats" ? styles.activePage : ""} href="/chats">{activePage == "/chats" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
         <Link className={activePage == "/add-friends" ? styles.activePage : ""} href="/add-friends">{activePage == "/add-friends" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
+        <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
       <div className={styles.bottomButtons}>
         <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>

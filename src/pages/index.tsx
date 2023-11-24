@@ -30,11 +30,7 @@ export default function Home() {
     router.push("/chats")
   }
 
-  const addNewUser = async() => {
-    if(userInputs.password !== userInputs.confirmPassword){
-      warning.throwError({title: "Validation Error", message: "Your passwords do not match!"})
-      return;
-    }
+  const RegisterAccount = async() => {
     const result = await register(userInputs)
     if(result.status >= 400){warning.throwError({title: "Failed to Register", message: result.message}); return;}
     passLoginScreen(result)
@@ -77,7 +73,7 @@ export default function Home() {
           value={userInputs.confirmPassword}
           fancy={{text: "Confirm password", placeholder: "Confirm password", hide: true}}
           type="password"/>
-        <button className={styles.loginButton} onClick={addNewUser}>Register</button>
+        <button className={styles.loginButton} onClick={RegisterAccount}>Register</button>
       </div>
     </LoginTabs>
   )
