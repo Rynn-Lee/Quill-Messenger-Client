@@ -95,12 +95,44 @@ const DiscoverActive = (props: IconProps) => {
     </svg>
   )
 }
+
+const Pin = (props: IconProps) => {
+  return(
+    <svg fill="#909090" width="15px" height="15px" viewBox="0 0 1920 1920" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
+      <g id="SVGRepo_iconCarrier"> <path d="M1154.976 0 988.342 166.52c-60.448 60.447-63.436 153.418-15.4 220.646L670.359 689.751c-4.022 4.022-6.55 8.964-9.079 13.79-147.212-61.022-328.671-34.246-444.626 81.709l-98.027 98.141 418.31 418.195-520.129 520.129c-22.41 22.409-22.41 58.724 0 81.248 11.262 11.147 25.972 16.778 40.682 16.778s29.42-5.63 40.567-16.778l520.128-520.129 418.195 418.31 98.142-98.142c75.962-75.847 117.793-176.862 117.793-284.313 0-56.195-12.067-110.208-33.787-160.198 2.758-1.839 5.861-2.988 8.275-5.516l303.963-303.964c29.19 21.145 63.896 33.097 100.67 33.097 46.083 0 89.293-17.928 121.93-50.565L1920 764.909 1154.976 0Z" fillRule="evenodd"/> </g>
+    </svg>
+  )
+}
+
+const Letter = (props: IconProps) => {
+  return(
+    <svg fill="none" width="15px" height="15px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
+      <g id="SVGRepo_iconCarrier"> <path opacity="0.4" d="M17 20.5H7C4 20.5 2 19 2 15.5V8.5C2 5 4 3.5 7 3.5H17C20 3.5 22 5 22 8.5V15.5C22 19 20 20.5 17 20.5Z" fill="#dddddd"/> <path d="M12.0008 12.87C11.1608 12.87 10.3108 12.61 9.66076 12.08L6.53075 9.57997C6.21075 9.31997 6.15076 8.84997 6.41076 8.52997C6.67076 8.20997 7.14076 8.14997 7.46076 8.40997L10.5908 10.91C11.3508 11.52 12.6407 11.52 13.4007 10.91L16.5308 8.40997C16.8508 8.14997 17.3308 8.19997 17.5808 8.52997C17.8408 8.84997 17.7908 9.32997 17.4608 9.57997L14.3308 12.08C13.6908 12.61 12.8408 12.87 12.0008 12.87Z" fill="#dddddd"/> </g>
+    </svg>
+  )
+}
+
+const DoubleCheck = (props: IconProps) => {
+  return(
+    <svg fill="none" width="15px" height="15px" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <g id="SVGRepo_bgCarrier" strokeWidth="0"/>
+      <g id="SVGRepo_tracerCarrier" strokeLinecap="round" strokeLinejoin="round"/>
+      <g id="SVGRepo_iconCarrier"> <path d="M2 12L7.25 17C7.25 17 8.66939 15.3778 9.875 14" stroke="#9385ca" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/> <path d="M8 12L13.25 17L22 7" stroke="#9385ca" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/> <path d="M16 7L12.5 11" stroke="#9385ca" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/> </g>
+    </svg>
+  )
+}
 // strokeWidth
 // strokeLinecap
 // strokeLinejoin
 
 const Icon = {
-  Quill, Messages, MessagesActive, People, PeopleActive, Settings, SettingsActive, Logout, Discover, DiscoverActive
+  Quill, Messages, MessagesActive, People,
+  PeopleActive, Settings, SettingsActive,
+  Logout, Discover, DiscoverActive, Pin, Letter, DoubleCheck
 }
 
 export default Icon

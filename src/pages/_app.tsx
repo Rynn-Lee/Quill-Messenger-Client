@@ -6,8 +6,8 @@ import WarningProvider from '@/lib/warning/warning-context'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { getItem } from '@/lib/local-storage'
-import { useAccountStore } from '@/stores/AccountStore'
-import { useSocketStore } from '@/stores/SocketStore'
+import { useAccountStore } from '@/stores/account-store'
+import { useSocketStore } from '@/stores/socket-store'
 
 export default function App({ Component, pageProps }: AppProps) {
   const {usertag, setUser}: any = useAccountStore()
@@ -22,7 +22,7 @@ export default function App({ Component, pageProps }: AppProps) {
   useEffect(()=>{
     const userdata = getItem('userdata')
     if(!userdata){
-      router.push('/')
+      router.replace('/')
       return
     }
     !usertag && setUser(userdata)

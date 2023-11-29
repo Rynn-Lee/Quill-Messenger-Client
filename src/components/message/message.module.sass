@@ -1,0 +1,39 @@
+.messageBlock
+  cursor: pointer
+  display: flex
+  flex-direction: row
+  align-items: flex-end
+  padding: 10px 5px
+  transition: var(--var-transition)
+  justify-content: space-evenly
+  border-radius: 10px
+  &:hover
+    background: var(--var-accent3-hover)
+  &>img
+    object-fit: cover
+    flex: 1
+    margin: 0px 10px 0px 0px
+    border-radius: 50px
+  .messageContent
+    flex: 10
+    display: flex
+    flex-direction: column
+    &>div
+      display: flex
+      flex-direction: row
+      justify-content: space-between
+    .top
+      .name
+        font-weight: 600
+      .time
+        color: gray
+        font-size: 12px
+    .bottom
+      .message
+        text-overflow: ellipsis
+        max-width: 190px
+        font-family: Calibri
+        color: gray
+        font-size: 13px
+        white-space: nowrap
+        overflow: hidden

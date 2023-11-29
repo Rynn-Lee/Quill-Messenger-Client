@@ -1,5 +1,6 @@
 import { WarningContext } from "@/lib/warning/warning-context";
-import { useSocketStore } from "@/stores/SocketStore";
+import { useAccountStore } from "@/stores/account-store";
+import { useSocketStore } from "@/stores/socket-store";
 import Sidebar from "@components/sidebar/sidebar";
 import Head from "next/head";
 import { useRouter } from "next/router";
@@ -14,7 +15,7 @@ export default function AppLayout({children}: any){
     if(!socket?.io){return}
     !status && warning.showWindow({
       title: "Cannot connect to the server!",
-      message: "You've lost a connection to the server. Check your ethernet connection"
+      message: "You've lost a connection to the server. Check your Internet connection"
     })
     status && warning.error.title == "Cannot connect to the server!" && warning.closeWindow()
   }, [status])

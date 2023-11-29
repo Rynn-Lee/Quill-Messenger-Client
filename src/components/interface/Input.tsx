@@ -42,7 +42,7 @@ const FancyInput = styled.input<DataFancyComponentProps>`
     padding: 10px 15px;
     width: 100%;
     font-size: 13px;
-    background: transparent;
+    background: var(--var-input);
     border: 1px solid transparent;
     border-radius: 10px;
     color: ${(props: any)=>(props?.datafancy?.text ? '#00000000' : '#ffffff')};
@@ -55,11 +55,11 @@ const FancyInput = styled.input<DataFancyComponentProps>`
     }
     &:focus{
       border-color: var(--var-link);
-      background: var(--var-accent3-hover);
+      background: var(--var-input-hover);
       color: #ffffff;
     }
     &:hover{
-      background: var(--var-accent3-hover);
+      background: var(--var-input-hover);
       color: #ffffff;
     }
     &:focus + .label, &:hover + .label{

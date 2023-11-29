@@ -53,8 +53,15 @@
   border-radius: 10px
   border: none
   width: 100%
-  cursor: pointer
   transition: var(--var-transition)
-  &:hover
+  &:disabled
+    cursor: default
+    background: var(--var-accent3-disabled)
+  &:hover:enabled
+    cursor: pointer
     background: var(--var-accent3-hover)
 
+.warningLabels
+  &>li
+    max-width: 250px
+    color: coral

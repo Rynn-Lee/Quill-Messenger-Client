@@ -3,7 +3,6 @@ import { create } from 'zustand'
 interface userData {
   _id: string,
   usertag: string,
-  password: string,
   displayedName: string,
   lastOnline: string,
 }
@@ -11,7 +10,6 @@ interface userData {
 type AccoutStore = {
   _id: string,
   usertag: string,
-  password: string,
   displayedName: string,
   lastOnline: string,
   setUser: (arg0: userData) => void
@@ -20,13 +18,11 @@ type AccoutStore = {
 export const useAccountStore = create<AccoutStore>()((set) => ({
   _id: "",
   usertag: "",
-  password: "",
   displayedName: "",
   lastOnline: "",
   setUser: (userdata: userData) => set(() => ({
     _id: userdata._id,
     usertag: userdata.usertag,
-    password: userdata.password,
     displayedName: userdata.displayedName,
     lastOnline: userdata.lastOnline,
   }))

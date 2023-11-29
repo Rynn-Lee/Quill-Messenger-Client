@@ -1,10 +1,12 @@
-import { useAccountStore } from "@store/AccountStore"
+import { useAccountStore } from "@/stores/account-store"
 
 export default function AddFriends() {
-  const {usertag, password}: any = useAccountStore()
+  const {usertag, _id}: any = useAccountStore()
+
+
   return (
     <>
-      <div>add friends - {usertag} - {password}</div>
+      <div>add friends - {usertag} - {_id}</div>
       {/* <div onClick={()=>counterAdd()}>AddFriends - {counter && counter}</div> */}
     </>
   )
