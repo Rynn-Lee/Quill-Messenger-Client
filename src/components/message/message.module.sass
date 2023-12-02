@@ -8,7 +8,7 @@
   justify-content: space-evenly
   border-radius: 10px
   &:hover
-    background: var(--var-accent3-hover)
+    background: var(--var-accent1)
   &>img
     object-fit: cover
     flex: 1
@@ -23,7 +23,13 @@
       flex-direction: row
       justify-content: space-between
     .top
+      display: flex
+      align-items: center
       .name
+        text-overflow: ellipsis
+        white-space: nowrap
+        overflow: hidden
+        max-width: 150px
         font-weight: 600
       .time
         color: gray
@@ -37,3 +43,6 @@
         font-size: 13px
         white-space: nowrap
         overflow: hidden
+
+.activePage
+  background: var(--var-accent3-hover) !important

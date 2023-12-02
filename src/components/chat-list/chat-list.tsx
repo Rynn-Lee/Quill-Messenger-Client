@@ -4,61 +4,72 @@ import Input from '../interface/Input'
 import Message from '../message/message'
 import { useChatStore } from '@store/chat-store'
 import { useAccountStore } from '@store/account-store'
-import { useEffect } from 'react'
-import { getChats } from '@/api/chat-api'
+import { useContext, useEffect, useState } from 'react'
+import { createChat, getChats } from '@/api/chat-api'
+import { inputFilter } from '@/utils/input-filter'
+import { fetchUserTag } from '@/api/auth-api'
+import { WarningContext } from '@/lib/warning/warning-context'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
 
 export default function ChatList(){
-  const {userChats, setUserChats}: any = useChatStore()
-  const {_id}: any = useAccountStore()
+  const {userChats, setUserChats, addNewChat}: any = useChatStore()
+  const warning: any = useContext(WarningContext)
+  const [search, setSearch] = useState<string>("")
+  const user: any = useAccountStore()
+  const router = useRouter()
 
   const fetchChats = async() => {
-    setUserChats(await getChats(_id))
+    const result = await getChats(user._id)
+    setUserChats(result.data.chats)
+  }
+
+  const addNewUserChat = async() => {
+    const secondUser = await fetchUserTag(search)
+    if(secondUser.status >= 400){
+      warning.showWindow({title: `User doesn't exist`, message: `The user "${search}" you've been searching for doesn't exist :<`})
+      return;
+    }
+    
+    const doesChatExist = userChats.filter((chat: any) => {
+      if(chat.members[0] == secondUser.data._id || chat.members[1] == secondUser.data._id){
+        router.push(`/chat/${chat._id}`)
+        console.log("FOUND THE SAME CHAT, REDIRECTING")
+        return true
+      }
+    })
+    if(doesChatExist.length){return}
+
+    const newChat = await createChat(user._id, secondUser.data._id)
+    addNewChat(newChat.data)
   }
 
   useEffect(()=>{
-    !userChats && _id && fetchChats()
-  }, [_id])
-
-  useEffect(()=>{
-    console.log(userChats)
-  }, [userChats])
+    !userChats.length && user._id && fetchChats()
+  }, [user._id])
 
   return(
     <div className={styles.chatlist}>
       <h2>Messages</h2>
-      <Input
-        fancy={{text: "Search", placeholder: "User Tag"}}
-        type="text"/>
-      <fieldset className={styles.block}>
-        <legend><Icon.Pin/> PINNED</legend>
-        <Message
-          avatar={"https://sun9-60.userapi.com/impg/NjD_4q2BZOy4hv6vM69wK8IpDKlSOAE-jFYnkg/AhkMtiKe1SU.jpg?size=736x736&quality=95&sign=cda2e26ff94697c124aa7deedf3ff611&type=album"}
-          displayedName={"Daud Attano"}
-          time={"3:06 AM"}
-          message={"череп его"}/>
-        <Message
-          avatar={"https://sun9-44.userapi.com/impg/8rtcxGE4Pd5Z03OlfUZ8rDE9HcaWeAJZ2eAgIA/HicFJNf3_kw.jpg?size=894x893&quality=95&sign=895ccbc91c37e7b631717924274ad7af&type=album"}
-          displayedName={"Lord Cookis"}
-          time={"12:35 AM"}
-          message={"Ну, пора кодить)"}/>
-      </fieldset>
+      <div className={styles.searchBlock}>
+        <Input
+          onChange={(e)=>setSearch(inputFilter(e.target.value))}
+          value={search}
+          fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
+          type="text"/>
+        <button onClick={addNewUserChat} className={`${styles.createChat}`}><Icon.AddUser/></button>
+      </div>
       <fieldset className={styles.block}>
         <legend><Icon.Letter/> ALL MESSAGES</legend>
-        <Message
-          avatar={"https://sun9-23.userapi.com/impf/c637628/v637628105/e846/FRet575Vh8U.jpg?size=1280x960&quality=96&sign=f169dfa14fc720cf6eb901664d51e223&type=album"}
-          displayedName={"Maksima"}
-          time={"3:18 AM"}
-          message={"точняк"}/>
-        <Message
-          avatar={"https://avatars.githubusercontent.com/u/38906839?v=4"}
-          displayedName={"RynnLee"}
-          time={"Yesterday"}
-          message={"Типа шизоид, сам себе пишу"}/>
-        <Message
-          avatar={"https://avatars.githubusercontent.com/u/47696233?v=4"}
-          displayedName={"SketchPiece"}
-          time={"A week ago"}
-          message={"мне бы времени побольше в 24 часах"}/>
+        {userChats?.map((chat: any) => (
+          <Link
+            key={chat._id}
+            href={`/chat/${chat._id}`}>
+            <Message
+              chat={chat}
+              user={user}/>
+          </Link>
+        ))}
       </fieldset>
     </div>
   )

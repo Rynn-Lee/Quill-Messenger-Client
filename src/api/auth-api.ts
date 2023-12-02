@@ -13,6 +13,7 @@ const account = async(userdata: any, register: boolean) => {
       usertag: userdata.usertag,
       password: userdata.password
     })
+    console.log(`action: ${url}`, result.data)
     return({
       data: result.data,
       status: 200,
@@ -42,6 +43,38 @@ const getUsers = async() => {
   }
 }
 
+const fetchUserId = async(_id: string) => {
+  try{
+    const result = await axios.get(`${api_url}/user/find/${_id}`)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      message: err.response.data.message,
+      status: err.response.status,
+    })
+  }
+}
+
+const fetchUserTag = async(usertag: string) => {
+  try{
+    const result = await axios.get(`${api_url}/user/findtag/${usertag}`)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      message: err.response.data.message,
+      status: err.response.status,
+    })
+  }
+}
+
 
 const logout = async() => {
   try{
@@ -52,4 +85,4 @@ const logout = async() => {
 }
 
 
-export {account, logout, getUsers}
+export {account, logout, getUsers, fetchUserId, fetchUserTag}

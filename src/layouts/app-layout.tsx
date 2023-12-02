@@ -1,3 +1,4 @@
+import ChatList from "@/components/chat-list/chat-list";
 import { WarningContext } from "@/lib/warning/warning-context";
 import { useAccountStore } from "@/stores/account-store";
 import { useSocketStore } from "@/stores/socket-store";
@@ -28,7 +29,7 @@ export default function AppLayout({children}: any){
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {router.pathname != "/" ? <Sidebar /> : <></>}
+      {router.pathname != "/" ? <><Sidebar /> <ChatList/></>: <></>}
       <div className={`${router.pathname != "/" ? "content" : "login"}`}>
         {children}
       </div>

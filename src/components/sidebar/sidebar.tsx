@@ -7,19 +7,32 @@ import { useRouter } from "next/router"
 import { logout } from "@/api/auth-api"
 import { useSocketStore } from "@/stores/socket-store"
 import { WarningContext } from "@/lib/warning/warning-context"
+import { useAccountStore } from "@/stores/account-store"
+import { useChatStore } from "@/stores/chat-store"
 
 export default function Sidebar(){
   const {status}: any = useSocketStore()
+  const {clearAccountStore}: any = useAccountStore()
+  const {clearChatStore}: any = useChatStore()
   const warning: any = useContext(WarningContext)
   const [activePage, setActivePage] = useState("/")
   const router = useRouter()
 
   const leave = () => {
     logout()
+    clearAccountStore()
+    clearChatStore()
     router.replace('/')
   }
 
-  useEffect(()=>{ setActivePage(router.pathname) }, [router.pathname])
+  useEffect(()=>{
+    const pathname = router.pathname.split('/')
+    if(pathname.includes('chat')){
+      setActivePage('/chat')
+      return
+    }
+    setActivePage(router.pathname)
+  }, [router.pathname])
   return(
     <div className={styles.sidebar}>
       <div className={styles.upperButtons}>

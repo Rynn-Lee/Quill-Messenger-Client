@@ -7,6 +7,7 @@ import { useAccountStore } from "@/stores/account-store"
 import styles from "@styles/pages/login.module.sass"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
+import { inputFilter } from "@/utils/input-filter"
 
 export default function Home() {
   const router = useRouter()
@@ -24,12 +25,6 @@ export default function Home() {
     passLoginScreen(userdata)
   }, [])
 
-
-  const inputFilter = (value: string, key: string) => {
-    const filteredValue = value.replace(/[\u0400-\u04FF\s!@#$%^&*()-+=?:;№"']/g, "").toLocaleLowerCase()
-    setUserInputs({...userInputs, [key]: filteredValue})
-  }
-
   const passLoginScreen = (userdata: any) => {
     setItem('userdata', userdata)
     setUser(userdata)
@@ -46,17 +41,17 @@ export default function Home() {
   }
 
   return (
-    <LoginTabs titles={['Login', 'Register']}>
+    <LoginTabs titles={['Login', 'Register']} userInputs={userInputs}>
       <div>
         <Input
-          onChange={(e)=>inputFilter(e.target.value, 'usertag')}
+          onChange={(e)=>setUserInputs({...userInputs, usertag: inputFilter(e.target.value)})}
           value={userInputs.usertag.toLocaleLowerCase()}
-          fancy={{text: "UserTag", placeholder: "User Tag"}}
+          fancy={{text: "UserTag", placeholder: "User Tag", backgroundHover: "#9385ca50"}}
           type="text"/>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, password: e.target.value})}
           value={userInputs.password}
-          fancy={{text: "Password", placeholder: "Password", hide: true}}
+          fancy={{text: "Password", placeholder: "Password", hide: true, backgroundHover: "#9385ca50"}}
           type="password"/>
         <button className={styles.loginButton} onClick={()=>accountAction(false)} disabled={
           !userInputs.usertag ||
@@ -65,19 +60,19 @@ export default function Home() {
       </div>
       <div>
         <Input
-          onChange={(e)=>inputFilter(e.target.value, 'usertag')}
+          onChange={(e)=>setUserInputs({...userInputs, usertag: inputFilter(e.target.value)})}
           value={userInputs.usertag.toLocaleLowerCase()}
-          fancy={{text: "UserTag", placeholder: "User Tag"}}
+          fancy={{text: "UserTag", placeholder: "User Tag", backgroundHover: "#9385ca50"}}
           type="text"/>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, password: e.target.value})}
           value={userInputs.password}
-          fancy={{text: "Password", placeholder: "Password", hide: true}}
+          fancy={{text: "Password", placeholder: "Password", hide: true, backgroundHover: "#9385ca50"}}
           type="password"/>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, confirmPassword: e.target.value})}
           value={userInputs.confirmPassword}
-          fancy={{text: "Confirm password", placeholder: "Confirm password", hide: true}}
+          fancy={{text: "Confirm password", placeholder: "Confirm password", hide: true, backgroundHover: "#9385ca50"}}
           type="password"/>
         <button className={styles.loginButton} onClick={()=>accountAction(true)} disabled={
           (userInputs.usertag.length < 3) ||
@@ -85,18 +80,12 @@ export default function Home() {
           (userInputs.password.length < 8) || 
           (userInputs.password !== userInputs.confirmPassword)}>Register</button>
         
-        <ul className={styles.warningLabels}>
-          {userInputs.usertag.length < 3 ? <li>Usertag must be longer than 3 characters!</li> : <></>}
-          {userInputs.usertag.length > 30 ? <li>Usertag must be no more than 30 characters long!</li> : <></>}
-          {userInputs.password.length < 8 ? <li>Password must be longer than 8 characters!</li> : <></>}
-          {userInputs.password !== userInputs.confirmPassword ? <li>Passwords do not match!</li> : <></>}
-        </ul>
       </div>
     </LoginTabs>
   )
 }
 
-function LoginTabs({children, titles}: any){
+function LoginTabs({children, titles, userInputs}: any){
   const [tab, setTab] = useState(0)
   return(
     <div className={styles.loginPage}>
@@ -107,6 +96,13 @@ function LoginTabs({children, titles}: any){
       <div className={styles.loginContent}>
         {children[tab]}
       </div>
+      {tab == 1 ? <>
+      <ul className={styles.warningLabels}>
+        {userInputs.usertag.length < 3 ? <li>Usertag must be longer than 3 characters!</li> : <></>}
+        {userInputs.usertag.length > 30 ? <li>Usertag must be no more than 30 characters long!</li> : <></>}
+        {userInputs.password.length < 8 ? <li>Password must be longer than 8 characters!</li> : <></>}
+        {userInputs.password !== userInputs.confirmPassword ? <li>Passwords do not match!</li> : <></>}
+      </ul></> : <></>}
     </div>
   )
 }

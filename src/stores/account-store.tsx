@@ -25,5 +25,11 @@ export const useAccountStore = create<AccoutStore>()((set) => ({
     usertag: userdata.usertag,
     displayedName: userdata.displayedName,
     lastOnline: userdata.lastOnline,
+  })),
+  clearAccountStore: () => set(()=>({
+    _id: "",
+    usertag: "",
+    displayedName: "",
+    lastOnline: ""
   }))
 }))

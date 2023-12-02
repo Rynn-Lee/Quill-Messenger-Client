@@ -1,4 +1,6 @@
 .chatlist
+  position: fixed
+  left: 76px
   display: flex
   flex-direction: column
   background: var(--var-accent4)
@@ -25,3 +27,23 @@
       font-family: Calibri
       &>*
         margin-right: 8px
+  .searchBlock
+    display: flex
+    flex-direction: row
+    align-items: center
+    &>div:first-child
+      margin-right: 5px !important
+
+.createChat
+  display: flex
+  margin-right: 5px
+  align-items: center
+  justify-content: center
+  padding: 0px
+  border-radius: 10px
+  background: #50505020
+  border: none
+  transition: var(--var-transition)
+  cursor: pointer
+  &:hover
+    background: #90909020
