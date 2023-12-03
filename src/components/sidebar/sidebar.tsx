@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
-import { logout } from "@/api/auth-api"
+import { logout } from "@/api/user-api"
 import { useSocketStore } from "@/stores/socket-store"
 import { WarningContext } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
@@ -12,8 +12,8 @@ import { useChatStore } from "@/stores/chat-store"
 
 export default function Sidebar(){
   const {status}: any = useSocketStore()
-  const {clearAccountStore}: any = useAccountStore()
-  const {clearChatStore}: any = useChatStore()
+  const {clearAccountStore, avatar}: any = useAccountStore()
+  const {clearChatStore, activeChat}: any = useChatStore()
   const warning: any = useContext(WarningContext)
   const [activePage, setActivePage] = useState("/")
   const router = useRouter()
@@ -33,12 +33,14 @@ export default function Sidebar(){
     }
     setActivePage(router.pathname)
   }, [router.pathname])
+
+
   return(
     <div className={styles.sidebar}>
       <div className={styles.upperButtons}>
         <Icon.Quill />
         <hr className={styles.hr}/>
-        <Link className={activePage == "/chat" ? styles.activePage : ""} href="/chat">{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
+        <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${activeChat?.chat?._id ? `/chat/${activeChat.chat._id}` : `/chat`}`}>{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
         <Link className={activePage == "/add-friends" ? styles.activePage : ""} href="/add-friends">{activePage == "/add-friends" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
@@ -49,7 +51,7 @@ export default function Sidebar(){
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           <Image
             className={`${styles.userImage} ${status ? styles.connected : styles.disconnected}`}
-            src="https://avatars.githubusercontent.com/u/38906839?v=4"
+            src={avatar}
             alt="pfp" width={40} height={40}/>
         </Link>
       </div>

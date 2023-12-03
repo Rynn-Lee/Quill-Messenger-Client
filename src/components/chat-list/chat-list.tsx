@@ -7,7 +7,7 @@ import { useAccountStore } from '@store/account-store'
 import { useContext, useEffect, useState } from 'react'
 import { createChat, getChats } from '@/api/chat-api'
 import { inputFilter } from '@/utils/input-filter'
-import { fetchUserTag } from '@/api/auth-api'
+import { fetchUserTag } from '@/api/user-api'
 import { WarningContext } from '@/lib/warning/warning-context'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -25,6 +25,7 @@ export default function ChatList(){
   }
 
   const addNewUserChat = async() => {
+    if(search == user._id){return}
     const secondUser = await fetchUserTag(search)
     if(secondUser.status >= 400){
       warning.showWindow({title: `User doesn't exist`, message: `The user "${search}" you've been searching for doesn't exist :<`})
@@ -46,7 +47,7 @@ export default function ChatList(){
 
   useEffect(()=>{
     !userChats.length && user._id && fetchChats()
-  }, [user._id])
+  }, [user._id, userChats])
 
   return(
     <div className={styles.chatlist}>

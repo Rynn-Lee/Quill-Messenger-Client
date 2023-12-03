@@ -75,6 +75,21 @@ const fetchUserTag = async(usertag: string) => {
   }
 }
 
+const updateProfile = async(data: any) => {
+  try{
+    const result = await axios.post(`${api_url}/user/update`, data)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      message: err.response.data.message,
+      status: err.response.status,
+    })
+  }
+}
 
 const logout = async() => {
   try{
@@ -84,5 +99,4 @@ const logout = async() => {
   }
 }
 
-
-export {account, logout, getUsers, fetchUserId, fetchUserTag}
+export {account, logout, getUsers, fetchUserId, fetchUserTag, updateProfile}

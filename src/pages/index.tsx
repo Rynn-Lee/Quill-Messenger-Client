@@ -1,4 +1,4 @@
-import { account } from "@/api/auth-api"
+import { account } from "@/api/user-api"
 import { getItem, setItem } from "@/lib/local-storage"
 import { WarningContext } from "@/lib/warning/warning-context"
 import Icon from "@assets/Icons"
@@ -28,6 +28,7 @@ export default function Home() {
   const passLoginScreen = (userdata: any) => {
     setItem('userdata', userdata)
     setUser(userdata)
+    console.log("USERDATA login", userdata)
     router.push("/chat")
   }
 
