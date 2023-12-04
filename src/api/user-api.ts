@@ -1,7 +1,7 @@
 import { removeItem } from "@lib/local-storage"
 import axios from "axios"
 
-const api_url = 'http://127.0.0.1:4000/api'
+const api_url = 'http://192.168.2.100:4000/api'
 
 const account = async(userdata: any, register: boolean) => {
   const url = register ? `${api_url}/user/register` : `${api_url}/user/login`

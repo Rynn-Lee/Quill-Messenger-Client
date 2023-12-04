@@ -1,9 +1,63 @@
 .chatBox
   position: fixed
-  top: 20px
+  top: 15px
+  overflow: hidden
 .chatContent
   position: fixed
-  top: 80px
+  top: 68px
   left: 346px
   right: 0px
-  padding: 5px 30px
+  padding: 5px 20px
+  overflow-y: auto
+  bottom: 60px
+  justify-content: flex-end
+
+.message
+  display: flex
+  width: 100%
+  align-items: center
+  padding: 10px 0px
+  img
+    border-radius: 100px
+  div
+    max-width: 500px
+    padding: 5px 15px
+    border-radius: 10px
+
+.myMessage
+  justify-content: flex-start
+  flex-direction: row-reverse
+  .text
+    margin-right: 5px
+    background: var(--var-accent3-hover)
+  .timeSent
+    float: left
+    // left: 20px
+
+.notMyMessage
+  .text
+    margin-left: 5px
+    background: var(--var-accent3-disabled)
+  .timeSent
+    float: right
+
+.timeSent
+  font-size: 13px
+  color: #ffffff50
+  position: relative
+
+.inputMessages
+  position: fixed
+  bottom: 20px
+  left: 346px
+  right: 10px
+  display: flex
+  align-items: flex-end
+  flex-direction: row
+  &>div
+    flex: 10
+  button
+    margin-left: 10px
+    border-radius: 20px
+    border: none
+    background: #ffffff00

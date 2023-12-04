@@ -10,6 +10,7 @@ export default function Message({chat, user}: any){
   const [userData, setUserData]: any = useState()
   const {setActiveChat}: any = useChatStore()
   const router = useRouter()
+  
   const fetchData = async() => {
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     const result = await fetchUserId(userID)
@@ -26,9 +27,9 @@ export default function Message({chat, user}: any){
 
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>
-      <Image
+      {userData?.avatar ? <Image
         src={userData?.avatar}
-        alt="pfp" width={40} height={40}/>
+        alt="pfp" width={40} height={40}/> : <></>}
       <div className={styles.messageContent}>
         <div className={styles.top}>
           <span className={styles.name}>{userData?.displayedName}</span>

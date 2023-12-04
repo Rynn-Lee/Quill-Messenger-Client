@@ -12,16 +12,16 @@ import { useChatStore } from "@/stores/chat-store"
 
 export default function Sidebar(){
   const {status}: any = useSocketStore()
-  const {clearAccountStore, avatar}: any = useAccountStore()
-  const {clearChatStore, activeChat}: any = useChatStore()
+  const user: any = useAccountStore()
+  const chat: any = useChatStore()
   const warning: any = useContext(WarningContext)
   const [activePage, setActivePage] = useState("/")
   const router = useRouter()
 
   const leave = () => {
     logout()
-    clearAccountStore()
-    clearChatStore()
+    user.clearAccountStore()
+    chat.clearChatStore()
     router.replace('/')
   }
 
@@ -40,7 +40,7 @@ export default function Sidebar(){
       <div className={styles.upperButtons}>
         <Icon.Quill />
         <hr className={styles.hr}/>
-        <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${activeChat?.chat?._id ? `/chat/${activeChat.chat._id}` : `/chat`}`}>{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
+        <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${chat.activeChat?.chat?._id ? `/chat/${chat.activeChat.chat._id}` : `/chat`}`}>{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
         <Link className={activePage == "/add-friends" ? styles.activePage : ""} href="/add-friends">{activePage == "/add-friends" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
@@ -49,10 +49,10 @@ export default function Sidebar(){
         <Link onClick={()=>warning.showWindow({title: "Confirm Action", message: "Are you sure you want to exit?", fn: leave})} href="#"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
-          <Image
+          {user.avatar ? <Image
             className={`${styles.userImage} ${status ? styles.connected : styles.disconnected}`}
-            src={avatar}
-            alt="pfp" width={40} height={40}/>
+            src={user.avatar}
+            alt="pfp" width={40} height={40}/> : <></>}
         </Link>
       </div>
     </div> 

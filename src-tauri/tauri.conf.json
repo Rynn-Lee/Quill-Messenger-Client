@@ -57,9 +57,11 @@
       {
         "fullscreen": false,
         "height": 600,
+        "width": 800,
+        "minHeight": 480,
+        "minWidth": 610,
         "resizable": true,
-        "title": "Quill Messenger",
-        "width": 800
+        "title": "Quill Messenger"
       }
     ]
   }
