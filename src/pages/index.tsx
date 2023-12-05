@@ -28,7 +28,6 @@ export default function Home() {
   const passLoginScreen = (userdata: any) => {
     setItem('userdata', userdata)
     setUser(userdata)
-    console.log("USERDATA login", userdata)
     router.push("/chat")
   }
 

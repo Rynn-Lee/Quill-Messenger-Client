@@ -12,12 +12,12 @@ import Icon from "@/assets/Icons"
 
 export default function ChatBox() {
   const router = useRouter()
-  const warning: any = useContext(WarningContext)
-  const [messagesHistory, setMessagesHistory]: any = useState([])
   const {activeChat}: any = useChatStore()
   const user = useAccountStore()
-  const ChatID: any = router.query.chatID
+  const warning: any = useContext(WarningContext)
+  const [messagesHistory, setMessagesHistory]: any = useState([])
   const [messageToSend, setMessageToSend] = useState("")
+  const ChatID: any = router.query.chatID
   const ref = useRef<HTMLDivElement>(null);
 
   const retrieveMessages = async() => {
@@ -36,7 +36,6 @@ export default function ChatBox() {
       warning.showWindow({title: "Couldn't send your message :<", message: `Something went wrong!: ${result.message}`})
       return
     }
-    console.log(result)
     setMessageToSend("")
   }
 

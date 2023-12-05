@@ -8,13 +8,13 @@ import Image from "next/image"
 import { useContext, useState } from "react"
 
 export default function Profile() {
-  const {setUser} = useAccountStore()
+  const warning: any = useContext(WarningContext)
   const user = useAccountStore()
+  const {setUser} = useAccountStore()
   const [newData, setNewData] = useState({
     avatar: user.avatar,
     displayedName: user.displayedName
   })
-  const warning: any = useContext(WarningContext)
 
   const update = async() => {
     const result = await updateProfile({_id: user._id, ...newData})

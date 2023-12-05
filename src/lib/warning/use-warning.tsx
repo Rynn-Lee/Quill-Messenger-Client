@@ -9,7 +9,6 @@ export default function useWarning(){
   })
 
   const showWindow = ({title, message, fn = null}: any) => {
-    console.log("FN:", fn)
     setErrorDetails({title, message, fn})
     setIsError(true)
   }

@@ -22,7 +22,6 @@ export default function useSocket(){
     })
 
     return () => {
-      console.log("terminating connections");
       newSocket.removeAllListeners();
       newSocket.disconnect();
     }
@@ -40,11 +39,5 @@ export default function useSocket(){
     socket.emit('getConnectedUsers')
   }
 
-  const disconnectAll = () => {
-    console.log('asked for total genocide!')
-    socket.emit('disconnectAll')
-  }
-
-
-  return {io: socket, getConnectedUsers, disconnectAll, unsubscribe}
+  return {io: socket, getConnectedUsers, unsubscribe}
 }

@@ -11,11 +11,11 @@ import { useAccountStore } from "@/stores/account-store"
 import { useChatStore } from "@/stores/chat-store"
 
 export default function Sidebar(){
+  const [activePage, setActivePage] = useState("/")
   const {status}: any = useSocketStore()
   const user: any = useAccountStore()
   const chat: any = useChatStore()
   const warning: any = useContext(WarningContext)
-  const [activePage, setActivePage] = useState("/")
   const router = useRouter()
 
   const leave = () => {
