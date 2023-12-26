@@ -1,19 +1,25 @@
 import Image from 'next/image'
 import styles from './message.module.sass'
 import Icon from '@/assets/Icons'
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { fetchUserId } from '@/api/user-api'
 import { useRouter } from 'next/router'
 import { useChatStore } from '@/stores/chat-store'
+import { WarningContext } from '@/lib/warning/warning-context'
 
 export default function Message({chat, user}: any){
   const [userData, setUserData]: any = useState()
   const {setActiveChat}: any = useChatStore()
+  const warning: any = useContext(WarningContext)
   const router = useRouter()
   
   const fetchData = async() => {
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     const result = await fetchUserId(userID)
+    if(result.status >= 400){
+      warning.showWindow({title: "Couldn't fetch messages", message: result.message})
+      return
+    }
     setUserData(result.data)
   }
 

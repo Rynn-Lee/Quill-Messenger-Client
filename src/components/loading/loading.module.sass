@@ -1,0 +1,32 @@
+.loading
+  display: flex
+  width: 100vw
+  height: 100vh
+  position: fixed
+  justify-content: center
+  align-items: center
+  flex-direction: column
+  animation: fade 0.8s linear 0s infinite alternate forwards
+
+.loadingText
+  margin-top: 10px
+
+.loadingIco
+  display: flex
+  align-items: center
+  justify-content: center
+  animation: rotate 1s linear 0s infinite normal forwards
+
+@keyframes rotate
+  0%
+    transform: rotate(0deg)
+  50%
+    transform: rotate(360deg)
+  100%
+    transform: rotate(720deg)
+
+@keyframes fade
+  0%
+    opacity: 1
+  100%
+    opacity: 0.3

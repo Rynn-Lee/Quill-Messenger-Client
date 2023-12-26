@@ -21,8 +21,8 @@ const account = async(userdata: any, register: boolean) => {
   } catch(err: any) {
     return({
       data: null,
-      message: err.response.data.message,
-      status: err.response.status,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
     })
   }
 }
@@ -37,8 +37,8 @@ const getUsers = async() => {
   } catch (err: any) {
     return({
       data: null,
-      message: err.response.data.message,
-      status: err.response.status,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
     })
   }
 }
@@ -53,8 +53,8 @@ const fetchUserId = async(_id: string) => {
   } catch (err: any) {
     return({
       data: null,
-      message: err.response.data.message,
-      status: err.response.status,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
     })
   }
 }
@@ -69,8 +69,8 @@ const fetchUserTag = async(usertag: string) => {
   } catch (err: any) {
     return({
       data: null,
-      message: err.response.data.message,
-      status: err.response.status,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
     })
   }
 }
@@ -85,8 +85,8 @@ const updateProfile = async(data: any) => {
   } catch (err: any) {
     return({
       data: null,
-      message: err.response.data.message,
-      status: err.response.status,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
     })
   }
 }

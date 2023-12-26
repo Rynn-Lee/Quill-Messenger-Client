@@ -21,6 +21,10 @@ export default function ChatList(){
 
   const fetchChats = async() => {
     const result = await getChats(user._id)
+    if(result.status >= 400){
+      warning.showWindow({title: "No response from the server...", message: result.message})
+      return
+    }
     setUserChats(result.data.chats)
   }
 

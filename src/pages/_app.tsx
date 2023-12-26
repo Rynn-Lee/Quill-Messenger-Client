@@ -4,14 +4,17 @@ import '@/styles/global.sass'
 import type { AppProps } from 'next/app'
 import WarningProvider from '@/lib/warning/warning-context'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { getItem } from '@/lib/local-storage'
 import { useAccountStore } from '@/stores/account-store'
 import { useSocketStore } from '@/stores/socket-store'
+import Loading from '@/components/loading/loading'
+import { useLoadingStore } from '@/stores/loading-store'
 
 export default function App({ Component, pageProps }: AppProps) {
   const {usertag, setUser}: any = useAccountStore()
   const {socket ,setSocket}: any = useSocketStore()
+  const {loading, setLoading}: any = useLoadingStore()
   const router = useRouter()
   const socketHook = useSocket()
 
@@ -28,10 +31,11 @@ export default function App({ Component, pageProps }: AppProps) {
     !usertag && setUser(userdata)
   }, [router.pathname])
 
-  useEffect(()=>{
-    const currentPort = window.location.port;
-    console.log("Current Port:", currentPort);
-  }, [])
+  if(loading){
+    return(
+      <Loading />
+    )
+  }
 
   return (
     <WarningProvider>

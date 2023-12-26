@@ -19,7 +19,7 @@ export default function Profile() {
   const update = async() => {
     const result = await updateProfile({_id: user._id, ...newData})
     if(result.status >= 400){
-      warning.showWindow({title: "Couldn't update", message: `Something went wrong!: ${result.message}`});
+      warning.showWindow({title: "Couldn't update your profile picture", message: `Something went wrong!: ${result.message}`});
       return
     }
     setItem('userdata', result.data)
