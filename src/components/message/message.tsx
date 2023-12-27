@@ -6,6 +6,8 @@ import { fetchUserId } from '@/api/user-api'
 import { useRouter } from 'next/router'
 import { useChatStore } from '@/stores/chat-store'
 import { WarningContext } from '@/lib/warning/warning-context'
+import { netRequestHandler } from '@/utils/net-request-handler'
+import { tryCatch } from '@/utils/try-catch'
 
 export default function Message({chat, user}: any){
   const [userData, setUserData]: any = useState()
@@ -13,18 +15,14 @@ export default function Message({chat, user}: any){
   const warning: any = useContext(WarningContext)
   const router = useRouter()
   
+  const selectChat = () => setActiveChat({chat: chat, friend: userData})
+
   const fetchData = async() => {
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
-    const result = await fetchUserId(userID)
-    if(result.status >= 400){
-      warning.showWindow({title: "Couldn't fetch messages", message: result.message})
-      return
-    }
-    setUserData(result.data)
-  }
-
-  const selectChat = () => {
-    setActiveChat({chat: chat, friend: userData})
+    tryCatch(async()=>{
+      const result = await netRequestHandler(fetchUserId(userID), warning)
+      setUserData(result.data)
+    })
   }
 
   useEffect(()=>{

@@ -3,6 +3,8 @@ import Input from "@/components/interface/Input"
 import { setItem } from "@/lib/local-storage"
 import { WarningContext } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
+import { netRequestHandler } from "@/utils/net-request-handler"
+import { tryCatch } from "@/utils/try-catch"
 import styles from "@styles/pages/profile.module.sass"
 import Image from "next/image"
 import { useContext, useState } from "react"
@@ -17,13 +19,11 @@ export default function Profile() {
   })
 
   const update = async() => {
-    const result = await updateProfile({_id: user._id, ...newData})
-    if(result.status >= 400){
-      warning.showWindow({title: "Couldn't update your profile picture", message: `Something went wrong!: ${result.message}`});
-      return
-    }
-    setItem('userdata', result.data)
-    setUser(result.data)
+    tryCatch(async()=> {
+      const result = await netRequestHandler(updateProfile({_id: user._id, ...newData}), warning)
+      setItem('userdata', result.data)
+      setUser(result.data)
+    })
   }
 
   return (

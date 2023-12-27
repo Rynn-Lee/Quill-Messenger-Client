@@ -13,7 +13,6 @@ const account = async(userdata: any, register: boolean) => {
       usertag: userdata.usertag,
       password: userdata.password
     })
-    console.log(`action: ${url}`, result.data)
     return({
       data: result.data,
       status: 200,
@@ -21,6 +20,7 @@ const account = async(userdata: any, register: boolean) => {
   } catch(err: any) {
     return({
       data: null,
+      title: `Couldn't ${register ? "register a new" : "log into"} account`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -37,6 +37,7 @@ const getUsers = async() => {
   } catch (err: any) {
     return({
       data: null,
+      title: `Couldn't fetch users list`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -53,6 +54,7 @@ const fetchUserId = async(_id: string) => {
   } catch (err: any) {
     return({
       data: null,
+      title: `No users found with such id`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -69,6 +71,7 @@ const fetchUserTag = async(usertag: string) => {
   } catch (err: any) {
     return({
       data: null,
+      title: `No users found with such tag`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -85,6 +88,7 @@ const updateProfile = async(data: any) => {
   } catch (err: any) {
     return({
       data: null,
+      title: `Couldn't update profile`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })

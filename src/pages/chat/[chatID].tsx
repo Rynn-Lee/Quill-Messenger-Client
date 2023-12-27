@@ -9,6 +9,8 @@ import { useAccountStore } from "@/stores/account-store"
 import Image from "next/image"
 import Input from "@/components/interface/Input"
 import Icon from "@/assets/Icons"
+import { tryCatch } from "@/utils/try-catch"
+import { netRequestHandler } from "@/utils/net-request-handler"
 
 export default function ChatBox() {
   const router = useRouter()
@@ -21,35 +23,31 @@ export default function ChatBox() {
   const ref = useRef<HTMLDivElement>(null);
 
   const retrieveMessages = async() => {
-    const result = await fetchMessages(ChatID)
-    if(result.status >= 400){
-      warning.showWindow({title: "Couldn't fetch messages :<", message: `Something went wrong!: ${result.message}`})
-      return
-    }
-    setMessagesHistory(result.data)
+    tryCatch(async()=>{
+      const result = await netRequestHandler(fetchMessages(ChatID), warning)
+      setMessagesHistory(result.data)
+    })
   }
 
   const sendNewMessage = async() => {
     if(!messageToSend){return}
-    const result = await sendTextMessage(ChatID, user._id, messageToSend)
-    if(result.status >= 400){
-      warning.showWindow({title: "Couldn't send your message :<", message: `Something went wrong!: ${result.message}`})
-      return
-    }
-    setMessageToSend("")
+    tryCatch(async()=>{
+      await netRequestHandler(sendTextMessage(ChatID, user._id, messageToSend), warning)
+      setMessageToSend("")
+    })
   }
 
   useEffect(()=>{
     if(!messagesHistory.length){return}
     ref.current?.scrollIntoView({
-      behavior: "smooth",
+      behavior: "instant",
       block: "end"
     })
   }, [messagesHistory.length])
 
   useEffect(()=>{
     retrieveMessages()
-  }, [messagesHistory])
+  }, [ChatID])
 
   return (
     <div className={styles.chatBox}>
@@ -57,7 +55,6 @@ export default function ChatBox() {
         name={activeChat?.friend?.displayedName}
         usertag={activeChat?.friend?.usertag}
         avatar={activeChat?.friend?.avatar}/>
-
 
       <div className={styles.chatContent}>
         {messagesHistory.map((message: any) => {
@@ -72,7 +69,7 @@ export default function ChatBox() {
                 height={30}/> : <></>}
               <div className={styles.text}>
                 {message.text}<br/>
-                <span className={styles.timeSent}>{`${date.getHours()}:${date.getMinutes()}`}</span>
+                <span className={styles.timeSent}>{`${date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`}</span>
               </div>
             </div>
             <div ref={ref} />

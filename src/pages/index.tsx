@@ -8,13 +8,13 @@ import styles from "@styles/pages/login.module.sass"
 import { useRouter } from "next/router"
 import { useContext, useEffect, useState } from "react"
 import { inputFilter } from "@/utils/input-filter"
-import { useLoadingStore } from "@/stores/loading-store"
+import { netRequestHandler } from "@/utils/net-request-handler"
+import { tryCatch } from "@/utils/try-catch"
 
 export default function Home() {
   const router = useRouter()
   const warning: any = useContext(WarningContext)
   const {setUser}: any = useAccountStore()
-  const {setLoading}: any = useLoadingStore()
   const [userInputs, setUserInputs] = useState({
     usertag: "",
     password: "",
@@ -24,7 +24,6 @@ export default function Home() {
   const passLoginScreen = (userdata: any) => {
     setItem('userdata', userdata)
     setUser(userdata)
-    setLoading(false)
     router.push("/chat")
   }
 
@@ -36,13 +35,10 @@ export default function Home() {
 
 
   const accountAction = async(action: boolean) => {
-    setLoading(true)
-    const result = await account(userInputs, action)
-    if(result.status >= 400){
-      warning.showWindow({title: "Failed to Perform an action", message: result.message});
-      return;
-    }
-    passLoginScreen(result.data)
+    tryCatch(async()=>{
+      const result = await netRequestHandler(account(userInputs, action), warning)
+      passLoginScreen(result.data)
+    })
   }
 
   return (

@@ -11,6 +11,8 @@ import { fetchUserTag } from '@/api/user-api'
 import { WarningContext } from '@/lib/warning/warning-context'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { netRequestHandler } from '@/utils/net-request-handler'
+import { tryCatch } from '@/utils/try-catch'
 
 export default function ChatList(){
   const {userChats, setUserChats, addNewChat}: any = useChatStore()
@@ -20,33 +22,28 @@ export default function ChatList(){
   const router = useRouter()
 
   const fetchChats = async() => {
-    const result = await getChats(user._id)
-    if(result.status >= 400){
-      warning.showWindow({title: "No response from the server...", message: result.message})
-      return
-    }
-    setUserChats(result.data.chats)
+    tryCatch(async()=>{
+      const result = await netRequestHandler(getChats(user._id), warning)
+      setUserChats(result.data.chats)
+    })
   }
 
   const addNewUserChat = async() => {
     if(search == user._id){return}
-    const secondUser = await fetchUserTag(search)
-    if(secondUser.status >= 400){
-      warning.showWindow({title: `User doesn't exist`, message: `The user "${search}" you've been searching for doesn't exist :<`})
-      return;
-    }
-    
-    const doesChatExist = userChats.filter((chat: any) => {
-      if(chat.members[0] == secondUser.data._id || chat.members[1] == secondUser.data._id){
-        router.push(`/chat/${chat._id}`)
-        console.log("FOUND THE SAME CHAT, REDIRECTING")
-        return true
-      }
+    tryCatch(async()=>{
+      const secondUser = await netRequestHandler(fetchUserTag(search), warning)
+      const doesChatExist = userChats.filter((chat: any) => {
+        if(chat.members[0] == secondUser.data._id || chat.members[1] == secondUser.data._id){
+          router.push(`/chat/${chat._id}`)
+          console.log("FOUND THE SAME CHAT, REDIRECTING")
+          return true
+        }
+      })
+      if(doesChatExist.length){return}
+  
+      const newChat = await createChat(user._id, secondUser.data._id)
+      addNewChat(newChat.data)
     })
-    if(doesChatExist.length){return}
-
-    const newChat = await createChat(user._id, secondUser.data._id)
-    addNewChat(newChat.data)
   }
 
   useEffect(()=>{

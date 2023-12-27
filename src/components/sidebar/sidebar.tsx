@@ -41,7 +41,7 @@ export default function Sidebar(){
         <Icon.Quill />
         <hr className={styles.hr}/>
         <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${chat.activeChat?.chat?._id ? `/chat/${chat.activeChat.chat._id}` : `/chat`}`}>{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
-        <Link className={activePage == "/add-friends" ? styles.activePage : ""} href="/add-friends">{activePage == "/add-friends" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
+        <Link className={activePage == "/groups" ? styles.activePage : ""} href="/groups">{activePage == "/groups" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
       <div className={styles.bottomButtons}>

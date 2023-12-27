@@ -12,6 +12,7 @@ const getChats = async(_id: string) => {
   } catch(err: any) {
     return({
       data: [],
+      title: "Couldn't retreive chats",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -28,6 +29,7 @@ const createChat = async(firstID: string, secondID: string) => {
   } catch(err: any) {
     return({
       data: [],
+      title: "Couldn't create a new chat",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -44,6 +46,7 @@ const fetchMessages = async(chatID: string) => {
   } catch(err: any) {
     return({
       data: [],
+      title: "Couldn't fetch messages",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -60,6 +63,7 @@ const sendTextMessage = async(chatID: string, senderID: string, text: string) =>
   } catch(err: any) {
     return({
       data: [],
+      title: "Couldn't send a message",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
