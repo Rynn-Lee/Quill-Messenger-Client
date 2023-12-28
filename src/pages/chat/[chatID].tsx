@@ -38,12 +38,12 @@ export default function ChatBox() {
   }
 
   useEffect(()=>{
-    if(!messagesHistory.length){return}
+    if(!messagesHistory?.length){return}
     ref.current?.scrollIntoView({
       behavior: "instant",
       block: "end"
     })
-  }, [messagesHistory.length])
+  }, [messagesHistory?.length])
 
   useEffect(()=>{
     retrieveMessages()
@@ -57,7 +57,7 @@ export default function ChatBox() {
         avatar={activeChat?.friend?.avatar}/>
 
       <div className={styles.chatContent}>
-        {messagesHistory.map((message: any) => {
+        {messagesHistory?.map((message: any) => {
           const date = new Date(message.createdAt)
           return (
           <Fragment key={message._id} >
@@ -75,7 +75,7 @@ export default function ChatBox() {
             <div ref={ref} />
           </Fragment>
         )})}
-        {!messagesHistory.length ? <span>The chat is empty!</span> : <></>}
+        {!messagesHistory?.length ? <span>The chat is empty!</span> : <></>}
       </div>
 
       <div className={styles.inputMessages}>

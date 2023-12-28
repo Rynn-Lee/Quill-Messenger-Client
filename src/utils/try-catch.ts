@@ -1,6 +1,6 @@
-export const tryCatch = (fn: Function) => {
+export const tryCatch = async(fn: Function) => {
   try{
-    fn()
+    await fn()
   } catch (error) {
     console.log("An error occured!:", error)
   }
