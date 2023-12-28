@@ -32,7 +32,9 @@ export default function ChatBox() {
   const sendNewMessage = async() => {
     if(!messageToSend){return}
     tryCatch(async()=>{
-      await netRequestHandler(sendTextMessage(ChatID, user._id, messageToSend), warning)
+      const sentMessage = await netRequestHandler(sendTextMessage(ChatID, user._id, messageToSend), warning)
+      console.log("Sent message", sentMessage)
+      setMessagesHistory([...messagesHistory, sentMessage.data])
       setMessageToSend("")
     })
   }
@@ -40,7 +42,7 @@ export default function ChatBox() {
   useEffect(()=>{
     if(!messagesHistory?.length){return}
     ref.current?.scrollIntoView({
-      behavior: "instant",
+      behavior: "smooth",
       block: "end"
     })
   }, [messagesHistory?.length])
@@ -60,8 +62,8 @@ export default function ChatBox() {
         {messagesHistory?.map((message: any) => {
           const date = new Date(message.createdAt)
           return (
-          <Fragment key={message._id} >
-            <div id={message._id} className={`${styles.message} ${message.senderID == user._id ? styles.myMessage : styles.notMyMessage}`}>
+          <Fragment key={message._id}>
+            <div id={message._id} className={`${styles.message} ${message.senderID == user._id ? styles.myMessage : styles.notMyMessage} ${styles.showAnim}`}>
               {activeChat?.friend?.avatar ? <Image
                 src={message.senderID == user._id ? user.avatar : activeChat?.friend?.avatar}
                 alt="avatar"
@@ -86,7 +88,8 @@ export default function ChatBox() {
           fancy={{
             text: "Lolba",
             background: "#ffffff0f",
-            backgroundHover: "#ffffff1f"
+            backgroundHover: "#ffffff1f",
+            position: "left"
           }}/>
         <button onClick={sendNewMessage}><Icon.SendArrow/></button>
       </div>

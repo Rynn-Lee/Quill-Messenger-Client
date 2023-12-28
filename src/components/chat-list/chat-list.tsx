@@ -13,13 +13,19 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
+import { useSocketStore } from '@/stores/socket-store'
 
 export default function ChatList(){
   const {userChats, setUserChats, addNewChat}: any = useChatStore()
   const warning: any = useContext(WarningContext)
   const [search, setSearch] = useState<string>("")
   const user: any = useAccountStore()
+  const {status}: any = useSocketStore()
   const router = useRouter()
+
+  useEffect(()=>{
+    !userChats.length && user._id && status && fetchChats()
+  }, [user._id, userChats, status])
 
   const fetchChats = async() => {
     tryCatch(async()=>{
@@ -45,10 +51,6 @@ export default function ChatList(){
       addNewChat(newChat.data)
     })
   }
-
-  useEffect(()=>{
-    !userChats.length && user._id && fetchChats()
-  }, [user._id, userChats])
 
   return(
     <div className={styles.chatlist}>

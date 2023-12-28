@@ -11,6 +11,19 @@
   overflow-y: auto
   bottom: 60px
 
+.showAnim
+  opacity: 0
+  animation: showChat 0.4s linear 0s forwards
+  animation-iteration-count: 1
+
+@keyframes showChat
+  0%
+    opacity: 0  
+  40%
+    opacity: 0
+  100%
+    opacity: 1 
+
 .message
   display: flex
   width: 100%

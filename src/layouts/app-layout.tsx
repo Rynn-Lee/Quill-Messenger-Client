@@ -16,7 +16,7 @@ export default function AppLayout({children}: any){
     if(!socket?.io){return}
     !status && warning.showWindow({
       title: "Cannot connect to the server!",
-      message: "You've lost a connection to the server. Check your Internet connection"
+      message: "You've lost connection to the server. Check your Internet connection"
     })
     status && warning.error.title == "Cannot connect to the server!" && warning.closeWindow()
   }, [status])

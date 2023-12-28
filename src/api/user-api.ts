@@ -88,7 +88,7 @@ const updateProfile = async(data: any) => {
   } catch (err: any) {
     return({
       data: null,
-      title: `Couldn't update profile`,
+      title: `Not able to update profile`,
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
