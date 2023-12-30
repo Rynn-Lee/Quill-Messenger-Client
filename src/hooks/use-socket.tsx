@@ -2,13 +2,15 @@ import { useSocketStore } from "@/stores/socket-store"
 import { useEffect, useState } from "react"
 import io, { Socket } from "socket.io-client"
 
-export default function useSocket(){
+export default function useSocket(_id: string, usertag: string){
   const [socket, setSocket]: any = useState<Socket | null>(null)
   const {status, setStatus}: any = useSocketStore()
 
   // connection and disconnection
   useEffect(()=>{
-    const newSocket = io('ws://127.0.0.1:4000');
+    if(!_id){return}
+
+    const newSocket = io(`ws://127.0.0.1:4000/?_id=${_id}`);
     setSocket(newSocket)
     
     newSocket.on('connect', ()=> {
@@ -25,7 +27,7 @@ export default function useSocket(){
       newSocket.removeAllListeners();
       newSocket.disconnect();
     }
-  }, [])
+  }, [_id])
 
   const unsubscribe = (eventName: string) => {
     console.log("called unsub")

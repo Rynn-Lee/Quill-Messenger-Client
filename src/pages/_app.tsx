@@ -1,4 +1,3 @@
-import useSocket from '@/hooks/use-socket'
 import AppLayout from '@/layouts/app-layout'
 import '@/styles/global.sass'
 import type { AppProps } from 'next/app'
@@ -7,17 +6,10 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { getItem } from '@/lib/local-storage'
 import { useAccountStore } from '@/stores/account-store'
-import { useSocketStore } from '@/stores/socket-store'
 
 export default function App({ Component, pageProps }: AppProps) {
   const {usertag, setUser}: any = useAccountStore()
-  const {socket ,setSocket}: any = useSocketStore()
   const router = useRouter()
-  const socketHook = useSocket()
-
-  useEffect(()=>{
-    !socket && socketHook.io && setSocket(socketHook)
-  }, [socketHook])
 
   useEffect(()=>{
     const userdata = getItem('userdata')

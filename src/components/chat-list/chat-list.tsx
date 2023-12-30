@@ -14,14 +14,22 @@ import { useRouter } from 'next/router'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
 import { useSocketStore } from '@/stores/socket-store'
+import useSocket from '@/hooks/use-socket'
 
 export default function ChatList(){
   const {userChats, setUserChats, addNewChat}: any = useChatStore()
+  const [search, setSearch]: any = useState<string>("")
+  const {socket ,setSocket}: any = useSocketStore()
+  const {_id, usertag}: any = useAccountStore()
   const warning: any = useContext(WarningContext)
-  const [search, setSearch] = useState<string>("")
-  const user: any = useAccountStore()
+  const socketHook: any = useSocket(_id, usertag)
   const {status}: any = useSocketStore()
+  const user: any = useAccountStore()
   const router = useRouter()
+
+  useEffect(()=>{
+    !socket && socketHook.io && setSocket(socketHook)
+  }, [socketHook])
 
   useEffect(()=>{
     !userChats.length && user._id && status && fetchChats()
