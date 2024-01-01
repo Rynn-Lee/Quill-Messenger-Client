@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import { ComponentProps } from 'react'
 
 interface IconProps extends ComponentProps<'svg'> {}
@@ -155,6 +156,10 @@ const Loading = (props: IconProps) => {
     </svg>
   )
 }
+
+const AnimatedPen = (props: IconProps) => {
+  return(<Image src={"/animated/anim-pen.apng"} alt="pen" width={19} height={19}/>)
+}
 // strokeWidth
 // strokeLinecap
 // strokeLinejoin
@@ -164,7 +169,7 @@ const Icon = {
   PeopleActive, Settings, SettingsActive,
   Logout, Discover, DiscoverActive, Pin,
   Letter, DoubleCheck, AddUser, SendArrow,
-  Loading
+  Loading, AnimatedPen
 }
 
 export default Icon

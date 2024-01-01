@@ -1,4 +1,6 @@
 import ChatList from "@/components/chat-list/chat-list";
+import SocketInit from "@/components/chat-list/socket-init";
+import { getItem } from "@/lib/local-storage";
 import { WarningContext } from "@/lib/warning/warning-context";
 import { useAccountStore } from "@/stores/account-store";
 import { useSocketStore } from "@/stores/socket-store";
@@ -9,8 +11,18 @@ import { useContext, useEffect } from "react";
 
 export default function AppLayout({children}: any){
   const {socket, status}: any = useSocketStore()
+  const {usertag, setUser}: any = useAccountStore()
   const warning: any = useContext(WarningContext)
   const router = useRouter()
+
+  useEffect(()=>{
+    const userdata = getItem('userdata')
+    if(!userdata){
+      router.replace('/')
+      return
+    }
+    !usertag && setUser(userdata)
+  }, [router.pathname])
 
   useEffect(()=>{
     if(!socket?.io){return}
@@ -18,6 +30,7 @@ export default function AppLayout({children}: any){
       title: "Cannot connect to the server!",
       message: "You've lost connection to the server. Check your Internet connection"
     })
+    //kinda confusing. Checks if status changed to True and if connection error window is open and closes it
     status && warning.error.title == "Cannot connect to the server!" && warning.closeWindow()
   }, [status])
 
@@ -29,7 +42,7 @@ export default function AppLayout({children}: any){
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {router.pathname != "/" ? <><Sidebar /> <ChatList/></>: <></>}
+      {router.pathname != "/" ? <><Sidebar /> <ChatList/> <SocketInit /></>: <></>}
       <div className={`${router.pathname != "/" ? "content" : "login"}`}>
         {children}
       </div>

@@ -29,10 +29,9 @@ export default function Home() {
 
   useEffect(()=>{
     const userdata = getItem('userdata')
-    if(!userdata){return}
+    if(!userdata){ return }
     passLoginScreen(userdata)
   }, [])
-
 
   const accountAction = async(action: boolean) => {
     tryCatch(async()=>{

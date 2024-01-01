@@ -29,6 +29,7 @@ export default function Message({chat, user}: any){
     !userData && fetchData()
   }, [userData])
 
+
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>
       {userData?.avatar ? <Image

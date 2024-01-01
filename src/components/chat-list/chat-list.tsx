@@ -14,22 +14,15 @@ import { useRouter } from 'next/router'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
 import { useSocketStore } from '@/stores/socket-store'
-import useSocket from '@/hooks/use-socket'
 
 export default function ChatList(){
   const {userChats, setUserChats, addNewChat}: any = useChatStore()
   const [search, setSearch]: any = useState<string>("")
-  const {socket ,setSocket}: any = useSocketStore()
-  const {_id, usertag}: any = useAccountStore()
   const warning: any = useContext(WarningContext)
-  const socketHook: any = useSocket(_id, usertag)
   const {status}: any = useSocketStore()
   const user: any = useAccountStore()
   const router = useRouter()
 
-  useEffect(()=>{
-    !socket && socketHook.io && setSocket(socketHook)
-  }, [socketHook])
 
   useEffect(()=>{
     !userChats.length && user._id && status && fetchChats()
@@ -43,13 +36,12 @@ export default function ChatList(){
   }
 
   const addNewUserChat = async() => {
-    if(search == user._id){return}
+    if(search == user.usertag){return}
     tryCatch(async()=>{
       const secondUser = await netRequestHandler(fetchUserTag(search), warning)
       const doesChatExist = userChats.filter((chat: any) => {
         if(chat.members[0] == secondUser.data._id || chat.members[1] == secondUser.data._id){
           router.push(`/chat/${chat._id}`)
-          console.log("FOUND THE SAME CHAT, REDIRECTING")
           return true
         }
       })

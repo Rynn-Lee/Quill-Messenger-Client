@@ -14,6 +14,7 @@
     "axios": "^1.6.2",
     "crypto-js": "^4.2.0",
     "next": "14.0.1",
+    "npm": "^10.2.5",
     "react": "^18",
     "react-dom": "^18",
     "socket.io-client": "^4.7.2",

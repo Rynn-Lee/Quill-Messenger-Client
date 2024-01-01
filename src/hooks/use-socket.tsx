@@ -36,10 +36,10 @@ export default function useSocket(_id: string, usertag: string){
     })
   }
 
-  const getConnectedUsers = () => {
+  const getOnlineUsers = () => {
     console.log('asked for users!')
-    socket.emit('getConnectedUsers')
+    socket.emit('getOnlineUSers')
   }
 
-  return {io: socket, getConnectedUsers, unsubscribe}
+  return {io: socket, getOnlineUsers, unsubscribe}
 }
