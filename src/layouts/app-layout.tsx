@@ -1,5 +1,5 @@
 import ChatList from "@/components/chat-list/chat-list";
-import SocketInit from "@/components/chat-list/socket-init";
+import SocketInit from "@/components/socket-io/socket-init";
 import { getItem } from "@/lib/local-storage";
 import { WarningContext } from "@/lib/warning/warning-context";
 import { useAccountStore } from "@/stores/account-store";

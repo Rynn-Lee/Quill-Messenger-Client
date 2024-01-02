@@ -4,8 +4,8 @@ import { useSocketStore } from "@/stores/socket-store"
 import { useEffect } from "react"
 
 export default function SocketInit(){
-  const {_id, usertag}: any = useAccountStore()
-  const socketHook: any = useSocket(_id, usertag)
+  const {_id}: any = useAccountStore()
+  const socketHook: any = useSocket(_id)
   const {socket, setSocket}: any = useSocketStore()
 
   useEffect(()=>{

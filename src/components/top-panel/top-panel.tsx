@@ -14,6 +14,9 @@ export default function TopPanel({name, usertag, avatar, ChatID}: any){
       if(data.ChatID != ChatID){ return }
       setIsOpponentTyping(data.state)
     })
+    return () => {
+      socket.io.off('typing')
+    }
   }, [])
 
 

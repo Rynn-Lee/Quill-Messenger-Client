@@ -22,7 +22,7 @@ export default function ChatBox() {
   const [messageToSend, setMessageToSend] = useState("")
   const ChatID: any = router.query.chatID
   const ref = useRef<HTMLDivElement>(null);
-  const {socket}: any = useSocketStore()
+  const {socket, status}: any = useSocketStore()
   const [isTyping, setIsTyping]: any = useState(false);
   const [typingTimer, setTypingTimer]: any = useState(null);
 
@@ -38,12 +38,16 @@ export default function ChatBox() {
   }, [ChatID])
 
   useEffect(()=>{
-    if(!socket?.io){return}
+    console.log("socket", socket)
+    if(!status){return}
     socket.io.on('newMessage', (data: any) => {
       if(data.chatID != ChatID){ return }
       setMessagesHistory((prevState: any)=>([...prevState, {...data}]))
     })
-  }, [])
+    return () => {
+      socket.io.off('newMessage')
+    }
+  }, [status])
 
   useEffect(()=>{ // smooth transition for new messages
     if(!messagesHistory?.length){return}
@@ -62,16 +66,17 @@ export default function ChatBox() {
 
   const startTyping = () => {
     clearTimeout(typingTimer);
+    stopTyping()
     if(isTyping){return}
-    socket.io.emit('typing', {state: true, recipientID: activeChat.friend._id, ChatID})
     setIsTyping(true);
+    socket.io.emit('typing', {state: true, recipientID: activeChat.friend._id, ChatID})
   };
 
   const stopTyping = () => {
     clearTimeout(typingTimer);
     setTypingTimer(setTimeout(() => {
-      socket.io.emit('typing', {state: false, recipientID: activeChat.friend._id, ChatID})
       setIsTyping(false)
+      socket.io.emit('typing', {state: false, recipientID: activeChat.friend._id, ChatID})
     }, 1000));
   };
 
@@ -112,9 +117,8 @@ export default function ChatBox() {
       <div className={styles.inputMessages}>
         <Input
           value={messageToSend}
-          onChange={(e)=>setMessageToSend(e.target.value)}
-          onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage()); ((e.keyCode >= 48 && e.keyCode <= 122) && startTyping())}}
-          onKeyUp={stopTyping}
+          onChange={(e)=>{setMessageToSend(e.target.value);startTyping()}}
+          onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
           fancy={{
             text: "Lolba",
             background: "#ffffff0f",

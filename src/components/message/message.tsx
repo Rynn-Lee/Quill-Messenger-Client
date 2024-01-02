@@ -8,40 +8,41 @@ import { useChatStore } from '@/stores/chat-store'
 import { WarningContext } from '@/lib/warning/warning-context'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
+import { useAccountStore } from '@/stores/account-store'
 
-export default function Message({chat, user}: any){
-  const [userData, setUserData]: any = useState()
+export default function Message({chat}: any){
+  const [OpponentData, setOpponentData]: any = useState()
   const {setActiveChat}: any = useChatStore()
+  const user = useAccountStore()
   const warning: any = useContext(WarningContext)
   const router = useRouter()
   
-  const selectChat = () => setActiveChat({chat: chat, friend: userData})
+  const selectChat = () => setActiveChat({chat: chat, friend: OpponentData})
 
   const fetchData = async() => {
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(fetchUserId(userID), warning)
-      setUserData(result.data)
+      setOpponentData(result.data)
     })
   }
 
   useEffect(()=>{
-    !userData && fetchData()
-  }, [userData])
-
+    !OpponentData && fetchData()
+  }, [OpponentData])
 
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>
-      {userData?.avatar ? <Image
-        src={userData?.avatar}
+      {OpponentData?.avatar ? <Image
+        src={OpponentData?.avatar}
         alt="pfp" width={40} height={40}/> : <></>}
       <div className={styles.messageContent}>
         <div className={styles.top}>
-          <span className={styles.name}>{userData?.displayedName}</span>
+          <span className={styles.name}>{OpponentData?.displayedName}</span>
           <span className={styles.time}>12:00 AM</span>
         </div>
         <div className={styles.bottom}>
-          <span className={styles.message}>message</span>
+          <span className={styles.message}>No messages yet...</span>
           <span className={styles.status}><Icon.DoubleCheck/></span>
         </div>
       </div>

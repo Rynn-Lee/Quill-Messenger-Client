@@ -5,7 +5,7 @@ import styles from "./warning.module.sass"
 export const WarningContext: any = React.createContext(null)
 
 export default function WarningProvider({children}: any){
-  const warningHook = useWarning()
+  const warningHook: any = useWarning()
 
   return(
     <WarningContext.Provider value={warningHook}>

@@ -6,6 +6,8 @@ Project Description
 
 ### Todo
 
+- [ ] Clear inputfield when chat has changed  
+- [ ] Implement getting messages by portions, not all at once  
 - [ ] Group messages from the same person in a row  
 - [ ] Sorting chat-list order by "last messaged"  
 - [ ] Show last message in chat-list  
@@ -17,11 +19,12 @@ Project Description
 
 ### In Progress
 
-- [ ] Fix app not knowing opponent - Move fetching function from "message" component to "[chatID]"  
+- [ ] Fix sockets lagging af  
 - [ ] Implement "typing..." status  
+- [ ] Implement real-time messaging  
 
 ### Done ✓
 
-- [x] Implement real-time messaging  
-- [x] Rethink the way sockets work  
+- [x] Fix app not knowing opponent  
+- [x] Fix chat-list being a moron  
 

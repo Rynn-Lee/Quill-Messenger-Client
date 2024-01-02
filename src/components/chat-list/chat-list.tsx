@@ -23,7 +23,6 @@ export default function ChatList(){
   const user: any = useAccountStore()
   const router = useRouter()
 
-
   useEffect(()=>{
     !userChats.length && user._id && status && fetchChats()
   }, [user._id, userChats, status])
@@ -69,9 +68,7 @@ export default function ChatList(){
           <Link
             key={chat._id}
             href={`/chat/${chat._id}`}>
-            <Message
-              chat={chat}
-              user={user}/>
+            <Message chat={chat}/>
           </Link>
         ))}
       </fieldset>
