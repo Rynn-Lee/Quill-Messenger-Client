@@ -9,10 +9,13 @@ import { WarningContext } from '@/lib/warning/warning-context'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
 import { useAccountStore } from '@/stores/account-store'
+import { SocketContext } from '@/context/socket-context'
+import { Socket } from 'socket.io-client'
 
 export default function Message({chat}: any){
   const [OpponentData, setOpponentData]: any = useState()
   const {setActiveChat}: any = useChatStore()
+  const socket: Socket | any = useContext(SocketContext)
   const user = useAccountStore()
   const warning: any = useContext(WarningContext)
   const router = useRouter()
@@ -20,6 +23,7 @@ export default function Message({chat}: any){
   const selectChat = () => setActiveChat({chat: chat, friend: OpponentData})
 
   const fetchData = async() => {
+    if(!socket?.connected){return}
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(fetchUserId(userID), warning)
@@ -29,7 +33,7 @@ export default function Message({chat}: any){
 
   useEffect(()=>{
     !OpponentData && fetchData()
-  }, [OpponentData])
+  }, [OpponentData, socket?.connected])
 
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>

@@ -13,23 +13,25 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
-import { useSocketStore } from '@/stores/socket-store'
+import { SocketContext } from '@/context/socket-context'
+import { Socket } from 'socket.io-client'
 
 export default function ChatList(){
   const {userChats, setUserChats, addNewChat}: any = useChatStore()
   const [search, setSearch]: any = useState<string>("")
+  const socket: Socket | any = useContext(SocketContext)
   const warning: any = useContext(WarningContext)
-  const {status}: any = useSocketStore()
   const user: any = useAccountStore()
   const router = useRouter()
 
   useEffect(()=>{
-    !userChats.length && user._id && status && fetchChats()
-  }, [user._id, userChats, status])
+    !userChats.length && user._id && socket?.connected && fetchChats()
+  }, [user._id, socket?.connected])
 
   const fetchChats = async() => {
     tryCatch(async()=>{
       const result = await netRequestHandler(getChats(user._id), warning)
+      console.log("Fetched chats", result)
       setUserChats(result.data.chats)
     })
   }
@@ -45,7 +47,6 @@ export default function ChatList(){
         }
       })
       if(doesChatExist.length){return}
-  
       const newChat = await createChat(user._id, secondUser.data._id)
       addNewChat(newChat.data)
     })

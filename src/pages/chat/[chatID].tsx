@@ -11,7 +11,8 @@ import Input from "@/components/interface/Input"
 import Icon from "@/assets/Icons"
 import { tryCatch } from "@/utils/try-catch"
 import { netRequestHandler } from "@/utils/net-request-handler"
-import { useSocketStore } from "@/stores/socket-store"
+import { SocketContext } from "@/context/socket-context"
+import { Socket } from "socket.io-client/debug"
 
 export default function ChatBox() {
   const router = useRouter()
@@ -21,10 +22,11 @@ export default function ChatBox() {
   const [messagesHistory, setMessagesHistory]: any = useState([])
   const [messageToSend, setMessageToSend] = useState("")
   const ChatID: any = router.query.chatID
+  const socket: Socket | any = useContext(SocketContext)
   const ref = useRef<HTMLDivElement>(null);
-  const {socket, status}: any = useSocketStore()
   const [isTyping, setIsTyping]: any = useState(false);
   const [typingTimer, setTypingTimer]: any = useState(null);
+  const [isOpponentTyping, setIsOpponentTyping]: any = useState(false);
 
   const retrieveMessages = async() => {
     tryCatch(async()=>{
@@ -33,21 +35,28 @@ export default function ChatBox() {
     })
   }
 
-  useEffect(()=>{ // Will be obsolete in the future after implementing caching or retrieveng 20 msgs per request
+ // Will be obsolete in the future after implementing caching or retrieveng 20 msgs per request
+  useEffect(()=>{
+    if(!socket?.connected){return}
     retrieveMessages()
-  }, [ChatID])
+  }, [ChatID, socket?.connected])
 
   useEffect(()=>{
-    console.log("socket", socket)
-    if(!status){return}
-    socket.io.on('newMessage', (data: any) => {
+    if(!socket?.connected){return}
+    socket.on('newMessage', (data: any) => {
       if(data.chatID != ChatID){ return }
       setMessagesHistory((prevState: any)=>([...prevState, {...data}]))
     })
+    socket.on('typing', (data: any) => {
+      if(data.ChatID != ChatID){ return }
+      console.log("Typing event!", data)
+      setIsOpponentTyping(data.state)
+    })
     return () => {
-      socket.io.off('newMessage')
+      socket.off('newMessage')
+      socket.off('typing')
     }
-  }, [status])
+  }, [socket, ChatID])
 
   useEffect(()=>{ // smooth transition for new messages
     if(!messagesHistory?.length){return}
@@ -55,30 +64,37 @@ export default function ChatBox() {
   }, [messagesHistory?.length])
 
   const sendNewMessage = async() => {
-    if(!messageToSend){return}
+    if(!messageToSend || !socket){return}
+    console.log("SOCKET FROM CHATID", socket)
     tryCatch(async()=>{
       const sentMessage = await netRequestHandler(sendTextMessage(ChatID, user._id, messageToSend), warning)
-      socket.io.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
+      socket.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
       setMessagesHistory([...messagesHistory, sentMessage.data])
       setMessageToSend("")
     })
   }
 
   const startTyping = () => {
+    if(!socket){return}
     clearTimeout(typingTimer);
     stopTyping()
     if(isTyping){return}
     setIsTyping(true);
-    socket.io.emit('typing', {state: true, recipientID: activeChat.friend._id, ChatID})
+    socket.emit('typing', {state: true, recipientID: activeChat.friend._id, ChatID})
   };
 
   const stopTyping = () => {
+    if(!socket){return}
     clearTimeout(typingTimer);
     setTypingTimer(setTimeout(() => {
       setIsTyping(false)
-      socket.io.emit('typing', {state: false, recipientID: activeChat.friend._id, ChatID})
+      socket.emit('typing', {state: false, recipientID: activeChat.friend._id, ChatID})
     }, 1000));
   };
+
+  useEffect(()=>{
+    console.log("IS OPPONENT TYPING", isOpponentTyping)
+  }, [isOpponentTyping])
 
   useEffect(() => {
       return () => clearTimeout(typingTimer); // Clear the timeout if the component is unmounted
@@ -90,7 +106,7 @@ export default function ChatBox() {
         name={activeChat?.friend?.displayedName}
         usertag={activeChat?.friend?.usertag}
         avatar={activeChat?.friend?.avatar}
-        ChatID={ChatID}/>
+        isOpponentTyping={isOpponentTyping}/>
 
       <div className={styles.chatContent}>
         {messagesHistory?.map((message: any) => {

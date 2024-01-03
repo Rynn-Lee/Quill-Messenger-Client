@@ -13,18 +13,17 @@ Project Description
 - [ ] Show last message in chat-list  
 - [ ] Implement caching last message from chats to show as preview  
 - [ ] Implement online users  
-- [ ] Add react-window | https://github.com/bvaughn/react-window  
 - [ ] Fix errors not showing when server is down  
 - [ ] [NOT NESSESARY NOW] Implement Loading Screen when logging in  
+- [ ] Add react-window | https://github.com/bvaughn/react-window  
 
 ### In Progress
 
-- [ ] Fix sockets lagging af  
-- [ ] Implement "typing..." status  
-- [ ] Implement real-time messaging  
+- [ ] Socket Context should decide wether show a new message or just add to the store with latest messages  
 
 ### Done ✓
 
-- [x] Fix app not knowing opponent  
-- [x] Fix chat-list being a moron  
+- [x] Implement "typing..." status  
+- [x] Implement real-time messaging  
+- [x] Rewrite sockets to context  
 

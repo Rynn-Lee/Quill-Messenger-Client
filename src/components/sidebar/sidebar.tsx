@@ -5,14 +5,15 @@ import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { logout } from "@/api/user-api"
-import { useSocketStore } from "@/stores/socket-store"
 import { WarningContext } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import { useChatStore } from "@/stores/chat-store"
+import { SocketContext } from "@/context/socket-context"
+import { Socket } from "socket.io-client"
 
 export default function Sidebar(){
   const [activePage, setActivePage] = useState("/")
-  const {status}: any = useSocketStore()
+  const socket: Socket | any = useContext(SocketContext);
   const user: any = useAccountStore()
   const chat: any = useChatStore()
   const warning: any = useContext(WarningContext)
@@ -34,7 +35,6 @@ export default function Sidebar(){
     setActivePage(router.pathname)
   }, [router.pathname])
 
-
   return(
     <div className={styles.sidebar}>
       <div className={styles.upperButtons}>
@@ -50,7 +50,7 @@ export default function Sidebar(){
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           {user.avatar ? <Image
-            className={`${styles.userImage} ${status ? styles.connected : styles.disconnected}`}
+            className={`${styles.userImage} ${socket?.connected ? styles.connected : styles.disconnected}`}
             src={user.avatar}
             alt="pfp" width={40} height={40}/> : <></>}
         </Link>

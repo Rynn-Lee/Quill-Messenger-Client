@@ -1,4 +1,9 @@
 .loading
+  left: 0px
+  top: 0px
+  z-index: 99999
+  backdrop-filter: blur(3px)
+  background: #00000020
   display: flex
   width: 100vw
   height: 100vh
@@ -6,16 +11,16 @@
   justify-content: center
   align-items: center
   flex-direction: column
+
+.fading
   animation: fade 0.8s linear 0s infinite alternate forwards
-
-.loadingText
-  margin-top: 10px
-
+  
 .loadingIco
   display: flex
   align-items: center
   justify-content: center
   animation: rotate 1s linear 0s infinite normal forwards
+  margin-bottom: 20px
 
 @keyframes rotate
   0%

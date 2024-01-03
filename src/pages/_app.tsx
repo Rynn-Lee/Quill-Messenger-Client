@@ -13,12 +13,12 @@ const ComponentWithNoSSR = dynamic(() => Promise.resolve(NonSSRWrapper), {
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
-    <NonSSRWrapper>
+    <ComponentWithNoSSR>
       <WarningProvider>
         <AppLayout>
           <Component {...pageProps}/>
         </AppLayout>
       </WarningProvider>
-    </NonSSRWrapper>
+    </ComponentWithNoSSR>
   )
 }
