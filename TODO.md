@@ -6,11 +6,9 @@ Project Description
 
 ### Todo
 
-- [ ] An object that contains all opened chats  
-- [ ] Clear inputfield when chat has changed  
 - [ ] Implement getting messages by portions, not all at once  
+- [ ] Memorize input message for each chats  
 - [ ] Group messages from the same person in a row  
-- [ ] Show last message in chat-list  
 - [ ] Implement caching last message from chats to show as preview  
 - [ ] Implement online users  
 - [ ] Fix errors not showing when server is down  
@@ -19,10 +17,8 @@ Project Description
 
 ### In Progress
 
-- [ ] Add "Typing" status to chat's storage  
 - [ ] Sorting chat-list order by last message time  
 
 ### Done ✓
 
-- [x] Socket Context should decide wether show a new message or just add to the store with latest messages  
 

@@ -5,7 +5,7 @@ import { useAccountStore } from "@/stores/account-store";
 import Sidebar from "@components/sidebar/sidebar";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { useContext, useEffect, useRef } from "react";
+import { useEffect } from "react";
 
 export default function AppLayout({children}: any){
   const {_id, usertag, setUser}: any = useAccountStore()

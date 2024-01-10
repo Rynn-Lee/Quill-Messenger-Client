@@ -39,11 +39,11 @@ export default function Message({chat}: any){
   }
 
   useEffect(()=>{
-    if(!messagesHistory[chat._id]?.length){return}
-    const timeDate = new Date(messagesHistory[chat._id][messagesHistory[chat._id].length-1].createdAt)
+    if(!messagesHistory[chat._id]?.messages?.length){return}
+    const timeDate = new Date(messagesHistory[chat._id].messages[messagesHistory[chat._id].messages.length-1].createdAt)
     setMessageData({
-      senderID: messagesHistory[chat._id][messagesHistory[chat._id].length-1].senderID,
-      text: messagesHistory[chat._id][messagesHistory[chat._id].length-1].text,
+      senderID: messagesHistory[chat._id].messages[messagesHistory[chat._id].messages.length-1].senderID,
+      text: messagesHistory[chat._id].messages[messagesHistory[chat._id].messages.length-1].text,
       time: `${timeDate.getHours()}:${timeDate.getMinutes() < 10 ? "0" + timeDate.getMinutes() : timeDate.getMinutes()}`
     })
   }, [messagesHistory[chat._id]])
@@ -63,7 +63,16 @@ export default function Message({chat}: any){
           <span className={styles.time}>{messageData?.time?.length ? messageData.time : ""}</span>
         </div>
         <div className={styles.bottom}>
-          <span className={styles.message}><span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>{messageData?.text?.length ? messageData.text : "No messages yet..."}</span>
+          <span className={styles.message}>
+            {messagesHistory[chat._id]?.isTyping
+            ? <span className={`${styles.typing} ${styles.sentFromMe}`}><Icon.AnimatedPen/> Typing...</span> 
+            : <>
+                <span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
+                {messageData?.text?.length ? messageData.text : "No messages yet..."}
+              </>
+            }
+            
+          </span>
           <span className={styles.status}><Icon.DoubleCheck/></span>
         </div>
       </div>

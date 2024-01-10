@@ -3,7 +3,7 @@ import { useChatStore } from "@/stores/chat-store"
 import { useRouter } from "next/router"
 import styles from "@styles/pages/chat.module.sass"
 import { Fragment, useContext, useEffect, useRef, useState } from "react"
-import { fetchLatestMessage, fetchMessages, sendTextMessage } from "@/api/chat-api"
+import { sendTextMessage } from "@/api/chat-api"
 import { WarningContext } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import Image from "next/image"
@@ -26,14 +26,12 @@ export default function ChatBox() {
   const ref = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping]: any = useState(false);
   const [typingTimer, setTypingTimer]: any = useState(null);
-  const [isOpponentTyping, setIsOpponentTyping]: any = useState(false);
   const {messagesHistory,  addMessage}: any = useMessageStore()
 
-
   useEffect(()=>{ // smooth transition for new messages
-    if(!messagesHistory[ChatID]?.length){return}
+    if(!messagesHistory[ChatID]?.messages?.length){return}
     ref.current?.scrollIntoView({behavior: "smooth", block: "end"})
-  }, [messagesHistory[ChatID]?.length])
+  }, [messagesHistory[ChatID]?.messages?.length])
 
   const sendNewMessage = async() => {
     if(!messageToSend || !socket){return}
@@ -73,10 +71,10 @@ export default function ChatBox() {
         name={activeChat?.friend?.displayedName}
         usertag={activeChat?.friend?.usertag}
         avatar={activeChat?.friend?.avatar}
-        isOpponentTyping={isOpponentTyping}/>
+        ChatID={ChatID}/>
 
       <div className={styles.chatContent}>
-        {messagesHistory[ChatID]?.map((message: any) => {
+        {messagesHistory[ChatID]?.messages?.map((message: any) => {
           const date = new Date(message.createdAt)
           return (
           <Fragment key={message._id}>
@@ -94,7 +92,7 @@ export default function ChatBox() {
             <div ref={ref} />
           </Fragment>
         )})}
-        {!messagesHistory[ChatID]?.length ? <span>The chat is empty!</span> : <></>}
+        {!messagesHistory[ChatID]?.messages?.length ? <span>The chat is empty!</span> : <></>}
       </div>
 
       <div className={styles.inputMessages}>
