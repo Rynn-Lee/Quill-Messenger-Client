@@ -16,10 +16,9 @@ Project Description
 
 ### In Progress
 
-- [ ] Fix chatID and ChatID  
 - [ ] Sorting chat-list order by last message time  
 
 ### Done ✓
 
-- [x] Memorize input message for each chat  
+- [x] Fix chatID and ChatID  
 

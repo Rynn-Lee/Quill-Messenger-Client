@@ -20,7 +20,7 @@ export default function ChatBox() {
   const {activeChat}: any = useChatStore()
   const user = useAccountStore()
   const warning: any = useContext(WarningContext)
-  const ChatID: any = router.query.chatID
+  const chatID: any = router.query.chatID
   const socket: Socket | any = useContext(SocketContext)
   const ref = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping]: any = useState(false);
@@ -28,17 +28,17 @@ export default function ChatBox() {
   const {messagesHistory,  addMessage, setInputMessage}: any = useMessageStore()
 
   useEffect(()=>{ // smooth transition for new messages
-    if(!messagesHistory[ChatID]?.messages?.length){return}
+    if(!messagesHistory[chatID]?.messages?.length){return}
     ref.current?.scrollIntoView({behavior: "smooth", block: "end"})
-  }, [messagesHistory[ChatID]?.messages?.length])
+  }, [messagesHistory[chatID]?.messages?.length])
 
   const sendNewMessage = async() => {
-    if(!messagesHistory[ChatID]?.inputMessage || !socket){return}
+    if(!messagesHistory[chatID]?.inputMessage || !socket){return}
     tryCatch(async()=>{
-      const sentMessage = await netRequestHandler(sendTextMessage(ChatID, user._id, messagesHistory[ChatID]?.inputMessage), warning)
+      const sentMessage = await netRequestHandler(sendTextMessage(chatID, user._id, messagesHistory[chatID]?.inputMessage), warning)
       socket.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
       addMessage(sentMessage.data)
-      setInputMessage({chatID: ChatID, message: ""})
+      setInputMessage({chatID, message: ""})
     })
   }
 
@@ -48,7 +48,7 @@ export default function ChatBox() {
     stopTyping()
     if(isTyping){return}
     setIsTyping(true);
-    socket.emit('typing', {state: true, recipientID: activeChat.friend._id, ChatID})
+    socket.emit('typing', {state: true, recipientID: activeChat.friend._id, chatID})
   };
 
   const stopTyping = () => {
@@ -56,7 +56,7 @@ export default function ChatBox() {
     clearTimeout(typingTimer);
     setTypingTimer(setTimeout(() => {
       setIsTyping(false)
-      socket.emit('typing', {state: false, recipientID: activeChat.friend._id, ChatID})
+      socket.emit('typing', {state: false, recipientID: activeChat.friend._id, chatID})
     }, 1000));
   };
 
@@ -70,10 +70,10 @@ export default function ChatBox() {
         name={activeChat?.friend?.displayedName}
         usertag={activeChat?.friend?.usertag}
         avatar={activeChat?.friend?.avatar}
-        ChatID={ChatID}/>
+        chatID={chatID}/>
 
       <div className={styles.chatContent}>
-        {messagesHistory[ChatID]?.messages?.map((message: any) => {
+        {messagesHistory[chatID]?.messages?.map((message: any) => {
           const date = new Date(message.createdAt)
           return (
           <Fragment key={message._id}>
@@ -91,13 +91,13 @@ export default function ChatBox() {
             <div ref={ref} />
           </Fragment>
         )})}
-        {!messagesHistory[ChatID]?.messages?.length ? <span>The chat is empty!</span> : <></>}
+        {!messagesHistory[chatID]?.messages?.length ? <span>The chat is empty!</span> : <></>}
       </div>
 
       <div className={styles.inputMessages}>
         <Input
-          value={messagesHistory[ChatID]?.inputMessage}
-          onChange={(e)=>{setInputMessage({chatID: ChatID, message: e.target.value});startTyping()}}
+          value={messagesHistory[chatID]?.inputMessage}
+          onChange={(e)=>{setInputMessage({chatID, message: e.target.value});startTyping()}}
           onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
           fancy={{
             text: "Lolba",

@@ -3,7 +3,7 @@ import { create } from 'zustand'
 export const useMessageStore = create((set) => ({
   messagesHistory: {},
   setChatHistory: (data: any) => set((state: any) => ({
-    messagesHistory: {...state.messagesHistory, [data.ChatID]: {
+    messagesHistory: {...state.messagesHistory, [data.chatID]: {
       ...state.messagesHistory[data.chatID],
       'messages': [...data.messages],
       isTyping: false,

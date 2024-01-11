@@ -3,7 +3,7 @@ import styles from "./toppanel.module.sass"
 import Icon from "@/assets/Icons"
 import { useMessageStore } from "@/stores/messages-store"
 
-export default function TopPanel({name, usertag, avatar, ChatID}: any){
+export default function TopPanel({name, usertag, avatar, chatID}: any){
   const {messagesHistory}: any = useMessageStore()
   return(
     <div className={styles.topPanel}>
@@ -12,7 +12,7 @@ export default function TopPanel({name, usertag, avatar, ChatID}: any){
       : <></>}
       <span className={styles.displayedName}>{name}</span>
       <span className={styles.usertag}>{usertag}
-        {messagesHistory[ChatID]?.isTyping 
+        {messagesHistory[chatID]?.isTyping 
         ? <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
         : <></>}
       </span>

@@ -68,7 +68,7 @@ export default function SocketWrapper({children, _id}: any){
       addMessage(data)
     })
     socket.on('typing', (data: any) => {
-      setIsTyping({chatID: data.ChatID, state: data.state})
+      setIsTyping({chatID: data.chatID, state: data.state})
     })
     return () => {
       socket.off('newMessage')
@@ -84,7 +84,7 @@ export default function SocketWrapper({children, _id}: any){
     for(let i = 0; i < userChats.length; i++){
       tryCatch(async()=>{
         const latestMessage = await netRequestHandler(fetchLatestMessage(userChats[i]._id), warning)
-        setChatHistory({ChatID: userChats[i]._id, messages: latestMessage.data})
+        setChatHistory({chatID: userChats[i]._id, messages: latestMessage.data})
       })
     }
   }
