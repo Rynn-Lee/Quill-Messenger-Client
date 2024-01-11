@@ -25,7 +25,7 @@ export default function ChatList(){
   const router = useRouter()
 
   useEffect(()=>{
-    !userChats.length && user._id && socket?.connected && fetchChats()
+    user._id && socket?.connected && fetchChats()
   }, [user._id, socket?.connected])
 
   const fetchChats = async() => {

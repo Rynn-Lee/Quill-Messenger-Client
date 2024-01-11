@@ -7,7 +7,6 @@ Project Description
 ### Todo
 
 - [ ] Implement getting messages by portions, not all at once  
-- [ ] Memorize input message for each chats  
 - [ ] Group messages from the same person in a row  
 - [ ] Implement caching last message from chats to show as preview  
 - [ ] Implement online users  
@@ -17,8 +16,10 @@ Project Description
 
 ### In Progress
 
+- [ ] Fix chatID and ChatID  
 - [ ] Sorting chat-list order by last message time  
 
 ### Done ✓
 
+- [x] Memorize input message for each chat  
 

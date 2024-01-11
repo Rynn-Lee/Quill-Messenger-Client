@@ -20,13 +20,12 @@ export default function ChatBox() {
   const {activeChat}: any = useChatStore()
   const user = useAccountStore()
   const warning: any = useContext(WarningContext)
-  const [messageToSend, setMessageToSend] = useState("")
   const ChatID: any = router.query.chatID
   const socket: Socket | any = useContext(SocketContext)
   const ref = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping]: any = useState(false);
   const [typingTimer, setTypingTimer]: any = useState(null);
-  const {messagesHistory,  addMessage}: any = useMessageStore()
+  const {messagesHistory,  addMessage, setInputMessage}: any = useMessageStore()
 
   useEffect(()=>{ // smooth transition for new messages
     if(!messagesHistory[ChatID]?.messages?.length){return}
@@ -34,12 +33,12 @@ export default function ChatBox() {
   }, [messagesHistory[ChatID]?.messages?.length])
 
   const sendNewMessage = async() => {
-    if(!messageToSend || !socket){return}
+    if(!messagesHistory[ChatID]?.inputMessage || !socket){return}
     tryCatch(async()=>{
-      const sentMessage = await netRequestHandler(sendTextMessage(ChatID, user._id, messageToSend), warning)
+      const sentMessage = await netRequestHandler(sendTextMessage(ChatID, user._id, messagesHistory[ChatID]?.inputMessage), warning)
       socket.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
       addMessage(sentMessage.data)
-      setMessageToSend("")
+      setInputMessage({chatID: ChatID, message: ""})
     })
   }
 
@@ -97,8 +96,8 @@ export default function ChatBox() {
 
       <div className={styles.inputMessages}>
         <Input
-          value={messageToSend}
-          onChange={(e)=>{setMessageToSend(e.target.value);startTyping()}}
+          value={messagesHistory[ChatID]?.inputMessage}
+          onChange={(e)=>{setInputMessage({chatID: ChatID, message: e.target.value});startTyping()}}
           onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
           fancy={{
             text: "Lolba",

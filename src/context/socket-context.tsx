@@ -23,9 +23,9 @@ export default function SocketWrapper({children, _id}: any){
     //New socket.io connection won't be created if on the logging page
     if(router.pathname == "/"){return}
     const newSocket = io(`ws://192.168.2.100:4000/?_id=${_id}`, {
-      reconnection: true, // включить повторное подключение
-      reconnectionDelay: 2000, // интервал между попытками (в миллисекундах)
-      reconnectionAttempts: 100 // максимальное количество попыток
+      reconnection: true,
+      reconnectionDelay: 2000,
+      reconnectionAttempts: 100
     });
 
     newSocket.on('connect', ()=> {

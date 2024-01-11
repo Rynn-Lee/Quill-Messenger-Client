@@ -15,7 +15,7 @@ import { useMessageStore } from '@/stores/messages-store'
 
 export default function Message({chat}: any){
   const [OpponentData, setOpponentData]: any = useState()
-  const {setActiveChat}: any = useChatStore()
+  const {setActiveChat, activeChat}: any = useChatStore()
   const {messagesHistory}: any = useMessageStore()
   const socket: Socket | any = useContext(SocketContext)
   const user = useAccountStore()
@@ -54,9 +54,7 @@ export default function Message({chat}: any){
 
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>
-      {OpponentData?.avatar ? <Image
-        src={OpponentData?.avatar}
-        alt="pfp" width={40} height={40}/> : <></>}
+      {OpponentData?.avatar ? <Image src={OpponentData?.avatar} alt="pfp" width={40} height={40}/> : <></>}
       <div className={styles.messageContent}>
         <div className={styles.top}>
           <span className={styles.name}>{OpponentData?.displayedName}</span>
@@ -65,13 +63,16 @@ export default function Message({chat}: any){
         <div className={styles.bottom}>
           <span className={styles.message}>
             {messagesHistory[chat._id]?.isTyping
-            ? <span className={`${styles.typing} ${styles.sentFromMe}`}><Icon.AnimatedPen/> Typing...</span> 
-            : <>
-                <span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
-                {messageData?.text?.length ? messageData.text : "No messages yet..."}
-              </>
+            ? <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
+            : messagesHistory[chat._id]?.inputMessage?.length && activeChat.chat._id != chat._id
+              ? <>
+                  <span className={styles.draft}>{"Draft: "}</span>{messagesHistory[chat._id].inputMessage}
+                </>
+              : <>
+                  <span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
+                  {messageData?.text?.length ? messageData.text : "No messages yet..."}
+                </>
             }
-            
           </span>
           <span className={styles.status}><Icon.DoubleCheck/></span>
         </div>
