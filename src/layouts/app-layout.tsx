@@ -1,4 +1,4 @@
-import ChatList from "@/components/chat-list/chat-list";
+import DialogList from "@/components/dialogs/dialog-list";
 import SocketWrapper from "@/context/socket-context";
 import { getItem } from "@/lib/local-storage";
 import { useAccountStore } from "@/stores/account-store";
@@ -28,7 +28,7 @@ export default function AppLayout({children}: any){
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      {router.pathname != "/" ? <><Sidebar /> <ChatList/></>: <></>}
+      {router.pathname != "/" ? <><Sidebar /> <DialogList/></>: <></>}
       <div className={`${router.pathname != "/" ? "content" : "login"}`}>
         {children}
       </div>

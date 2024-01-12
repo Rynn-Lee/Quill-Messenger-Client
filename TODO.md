@@ -6,6 +6,7 @@ Project Description
 
 ### Todo
 
+- [ ] Cache opponent data  
 - [ ] Implement getting messages by portions, not all at once  
 - [ ] Group messages from the same person in a row  
 - [ ] Implement caching last message from chats to show as preview  
@@ -20,5 +21,4 @@ Project Description
 
 ### Done ✓
 
-- [x] Fix chatID and ChatID  
 

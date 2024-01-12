@@ -1,4 +1,4 @@
-import { account } from "@/api/user-api"
+import { loginAPI, registerAPI } from "@/api/user-api"
 import { getItem, setItem } from "@/lib/local-storage"
 import { WarningContext } from "@/lib/warning/warning-context"
 import Icon from "@assets/Icons"
@@ -33,9 +33,16 @@ export default function Home() {
     passLoginScreen(userdata)
   }, [])
 
-  const accountAction = async(action: boolean) => {
+  const registerNewAccount = async() => {
     tryCatch(async()=>{
-      const result = await netRequestHandler(account(userInputs, action), warning)
+      const result = await netRequestHandler(registerAPI(userInputs), warning)
+      passLoginScreen(result.data)
+    })
+  }
+
+  const loginAccount = async() => {
+    tryCatch(async()=>{
+      const result = await netRequestHandler(loginAPI(userInputs), warning)
       passLoginScreen(result.data)
     })
   }
@@ -53,7 +60,7 @@ export default function Home() {
           value={userInputs.password}
           fancy={{text: "Password", placeholder: "Password", hide: true, backgroundHover: "#9385ca50"}}
           type="password"/>
-        <button className={styles.loginButton} onClick={()=>accountAction(false)} disabled={
+        <button className={styles.loginButton} onClick={loginAccount} disabled={
           !userInputs.usertag ||
           !userInputs.password.length}>Login</button>
         
@@ -74,7 +81,7 @@ export default function Home() {
           value={userInputs.confirmPassword}
           fancy={{text: "Confirm password", placeholder: "Confirm password", hide: true, backgroundHover: "#9385ca50"}}
           type="password"/>
-        <button className={styles.loginButton} onClick={()=>accountAction(true)} disabled={
+        <button className={styles.loginButton} onClick={registerNewAccount} disabled={
           (userInputs.usertag.length < 3) ||
           (userInputs.usertag.length > 30) ||
           (userInputs.password.length < 8) || 

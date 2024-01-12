@@ -4,7 +4,7 @@ import Image from "next/image"
 import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
-import { logout } from "@/api/user-api"
+import { logoutAPI } from "@/api/user-api"
 import { WarningContext } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import { useChatStore } from "@/stores/chat-store"
@@ -19,8 +19,8 @@ export default function Sidebar(){
   const warning: any = useContext(WarningContext)
   const router = useRouter()
 
-  const leave = () => {
-    logout()
+  const logout = () => {
+    logoutAPI()
     user.clearAccountStore()
     chat.clearChatStore()
     router.replace('/')
@@ -46,7 +46,7 @@ export default function Sidebar(){
       </div>
       <div className={styles.bottomButtons}>
         <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>
-        <Link onClick={()=>warning.showWindow({title: "Confirm Action", message: "Are you sure you want to exit?", fn: leave})} href="#"><Icon.Logout/></Link>
+        <Link onClick={()=>warning.showWindow({title: "Confirm Action", message: "Are you sure you want to leave?", fn: logout})} href="#"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           {user.avatar ? <Image

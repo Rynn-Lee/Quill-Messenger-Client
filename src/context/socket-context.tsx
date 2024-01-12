@@ -4,7 +4,7 @@ import Loading from "@/components/loading/loading";
 import { useRouter } from "next/router";
 import { netRequestHandler } from "@/utils/net-request-handler";
 import { tryCatch } from "@/utils/try-catch";
-import { fetchLatestMessage } from "@/api/chat-api";
+import { fetchLatestMessageAPI } from "@/api/message-api";
 import { useChatStore } from "@/stores/chat-store";
 import { useMessageStore } from "@/stores/messages-store";
 import { WarningContext } from "@/lib/warning/warning-context";
@@ -83,8 +83,8 @@ export default function SocketWrapper({children, _id}: any){
   const fillMessagesPreview = async() => {
     for(let i = 0; i < userChats.length; i++){
       tryCatch(async()=>{
-        const latestMessage = await netRequestHandler(fetchLatestMessage(userChats[i]._id), warning)
-        setChatHistory({chatID: userChats[i]._id, messages: latestMessage.data})
+        const latestMessage = await netRequestHandler(fetchLatestMessageAPI(userChats[i]._id), warning)
+        setChatHistory({chatID: userChats[i]._id, messages: latestMessage.data.reverse()})
       })
     }
   }
