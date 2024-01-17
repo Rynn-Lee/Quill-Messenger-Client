@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 import WarningProvider from '@/lib/warning/warning-context'
 import dynamic from 'next/dynamic';
 
-const NonSSRWrapper = ({ children }: any) => (<>{children}</>);
+const NonSSRWrapper = ({ children }: {children: React.ReactNode}) => (<>{children}</>);
 
 const ComponentWithNoSSR = dynamic(() => Promise.resolve(NonSSRWrapper), {
     ssr: false,

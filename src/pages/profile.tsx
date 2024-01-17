@@ -1,7 +1,7 @@
-import { updateProfile } from "@/api/user-api"
+import { updateUserProfileAPI } from "@/api/user-api"
 import Input from "@/components/interface/Input"
 import { setItem } from "@/lib/local-storage"
-import { WarningContext } from "@/lib/warning/warning-context"
+import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import { netRequestHandler } from "@/utils/net-request-handler"
 import { tryCatch } from "@/utils/try-catch"
@@ -10,7 +10,7 @@ import Image from "next/image"
 import { useContext, useState } from "react"
 
 export default function Profile() {
-  const warning: any = useContext(WarningContext)
+  const warning = useContext<warningHook>(WarningContext)
   const user = useAccountStore()
   const {setUser} = useAccountStore()
   const [newData, setNewData] = useState({
@@ -20,7 +20,7 @@ export default function Profile() {
 
   const update = async() => {
     tryCatch(async()=> {
-      const result = await netRequestHandler(updateProfile({_id: user._id, ...newData}), warning)
+      const result = await netRequestHandler(()=>updateUserProfileAPI({_id: user._id, ...newData}), warning)
       setItem('userdata', result.data)
       setUser(result.data)
     })

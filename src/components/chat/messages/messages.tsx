@@ -1,8 +1,11 @@
 import { Fragment } from 'react'
 import styles from './messages.module.sass'
 import Image from 'next/image'
+import { messageHistory } from '@/stores/messages-store'
+import { chat, userData } from '@/types/types'
+import { friend } from '@/stores/chat-store'
 
-export default function Messages({messagesHistory, chatID, activeChat, user, refProp}: any){
+export default function Messages({messagesHistory, chatID, activeChat, user, refProp}: {messagesHistory: messageHistory, chatID: string, activeChat: {chat: chat, friend: friend}, user: userData, refProp: any}){
   return(
     <div className={styles.chatContent}>
       {messagesHistory[chatID]?.messages?.map((message: any) => {

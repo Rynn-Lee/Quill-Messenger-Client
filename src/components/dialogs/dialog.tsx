@@ -5,19 +5,20 @@ import { useContext, useEffect, useState } from 'react'
 import { fetchUserByIdAPI } from '@/api/user-api'
 import { useRouter } from 'next/router'
 import { useChatStore } from '@/stores/chat-store'
-import { WarningContext } from '@/lib/warning/warning-context'
+import { WarningContext, warningHook } from '@/lib/warning/warning-context'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
 import { useAccountStore } from '@/stores/account-store'
 import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
+import { chat } from '@/types/types'
 
-export default function Dialog({chat, chatStore}: any){
-  const [opponentData, setOpponentData]: any = useState()
-  const {setActiveChat, activeChat}: any = useChatStore()
+export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
+  const [opponentData, setOpponentData] = useState<any>()
+  const {setActiveChat, activeChat} = useChatStore()
   const socket: Socket | any = useContext(SocketContext)
   const user = useAccountStore()
-  const warning: any = useContext(WarningContext)
+  const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
   const [messageData, setMessageData] = useState({
     senderID: "",
@@ -31,11 +32,11 @@ export default function Dialog({chat, chatStore}: any){
     if(opponentData || !socket?.connected){return}
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
-      const result = await netRequestHandler(fetchUserByIdAPI(userID), warning)
+      const result = await netRequestHandler(()=>fetchUserByIdAPI(userID), warning)
       setOpponentData(result.data)
     })
   }, [opponentData, socket?.connected])
-  
+
   useEffect(()=>{
     if(!chatStore?.messages?.length){return}
     const timeDate = new Date(chatStore?.messages[chatStore?.messages.length-1].createdAt)

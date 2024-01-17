@@ -7,7 +7,7 @@ import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect } from "react";
 
-export default function AppLayout({children}: any){
+export default function AppLayout({children}: {children: React.ReactNode}){
   const {_id, usertag, setUser}: any = useAccountStore()
   const router = useRouter()
 

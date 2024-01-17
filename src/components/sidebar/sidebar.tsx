@@ -5,7 +5,7 @@ import Link from "next/link"
 import { useContext, useEffect, useState } from "react"
 import { useRouter } from "next/router"
 import { logoutAPI } from "@/api/user-api"
-import { WarningContext } from "@/lib/warning/warning-context"
+import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import { useChatStore } from "@/stores/chat-store"
 import { SocketContext } from "@/context/socket-context"
@@ -14,9 +14,9 @@ import { Socket } from "socket.io-client"
 export default function Sidebar(){
   const [activePage, setActivePage] = useState("/")
   const socket: Socket | any = useContext(SocketContext);
-  const user: any = useAccountStore()
-  const chat: any = useChatStore()
-  const warning: any = useContext(WarningContext)
+  const user = useAccountStore()
+  const chat = useChatStore()
+  const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
 
   const logout = () => {

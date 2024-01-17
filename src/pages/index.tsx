@@ -1,6 +1,6 @@
 import { loginAPI, registerAPI } from "@/api/user-api"
 import { getItem, setItem } from "@/lib/local-storage"
-import { WarningContext } from "@/lib/warning/warning-context"
+import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import Icon from "@assets/Icons"
 import Input from "@components/interface/Input"
 import { useAccountStore } from "@/stores/account-store"
@@ -10,18 +10,19 @@ import { useContext, useEffect, useState } from "react"
 import { inputFilter } from "@/utils/input-filter"
 import { netRequestHandler } from "@/utils/net-request-handler"
 import { tryCatch } from "@/utils/try-catch"
+import { userData } from "@/types/types"
 
 export default function Home() {
   const router = useRouter()
-  const warning: any = useContext(WarningContext)
-  const {setUser}: any = useAccountStore()
+  const warning = useContext<warningHook>(WarningContext)
+  const {setUser} = useAccountStore()
   const [userInputs, setUserInputs] = useState({
     usertag: "",
     password: "",
     confirmPassword: "",
   })
 
-  const passLoginScreen = (userdata: any) => {
+  const passLoginScreen = (userdata: userData) => {
     setItem('userdata', userdata)
     setUser(userdata)
     router.push("/chat")
@@ -35,14 +36,14 @@ export default function Home() {
 
   const registerNewAccount = async() => {
     tryCatch(async()=>{
-      const result = await netRequestHandler(registerAPI(userInputs), warning)
+      const result = await netRequestHandler(()=>registerAPI(userInputs), warning)
       passLoginScreen(result.data)
     })
   }
 
   const loginAccount = async() => {
     tryCatch(async()=>{
-      const result = await netRequestHandler(loginAPI(userInputs), warning)
+      const result = await netRequestHandler(()=>loginAPI(userInputs), warning)
       passLoginScreen(result.data)
     })
   }

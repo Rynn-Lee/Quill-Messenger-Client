@@ -4,7 +4,7 @@ import { useRouter } from "next/router"
 import styles from "@styles/pages/chat.module.sass"
 import { useContext, useEffect, useRef, useState } from "react"
 import { sendMessageAPI } from "@/api/message-api"
-import { WarningContext } from "@/lib/warning/warning-context"
+import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
 import Input from "@/components/interface/Input"
 import Icon from "@/assets/Icons"
@@ -17,14 +17,14 @@ import Messages from "@/components/chat/messages/messages"
 
 export default function ChatBox() {
   const router = useRouter()
-  const {activeChat}: any = useChatStore()
+  const {activeChat} = useChatStore()
   const user = useAccountStore()
-  const warning: any = useContext(WarningContext)
-  const chatID: any = router.query.chatID
+  const warning = useContext<warningHook>(WarningContext)
+  const chatID: string = router.query.chatID as string
   const socket: Socket | any = useContext(SocketContext)
   const ref = useRef<HTMLDivElement>(null);
-  const [isTyping, setIsTyping]: any = useState(false);
-  const [typingTimer, setTypingTimer]: any = useState(null);
+  const [isTyping, setIsTyping] = useState<boolean>(false);
+  const [typingTimer, setTypingTimer] = useState<any>(null);
   const {messagesHistory,  addMessage, setInputMessage}: any = useMessageStore()
 
   useEffect(()=>{
@@ -35,7 +35,7 @@ export default function ChatBox() {
   const sendNewMessage = async() => {
     if(!messagesHistory[chatID]?.inputMessage || !socket){return}
     tryCatch(async()=>{
-      const sentMessage = await netRequestHandler(sendMessageAPI(chatID, user._id, messagesHistory[chatID]?.inputMessage), warning)
+      const sentMessage = await netRequestHandler(()=>sendMessageAPI(chatID, user._id, messagesHistory[chatID]?.inputMessage), warning)
       socket.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
       addMessage(sentMessage.data)
       setInputMessage({chatID, message: ""})

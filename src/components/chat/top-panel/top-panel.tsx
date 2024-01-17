@@ -3,8 +3,8 @@ import styles from "./toppanel.module.sass"
 import Icon from "@/assets/Icons"
 import { useMessageStore } from "@/stores/messages-store"
 
-export default function TopPanel({name, usertag, avatar, chatID}: any){
-  const {messagesHistory}: any = useMessageStore()
+export default function TopPanel({name, usertag, avatar, chatID}: {name: string, usertag: string, avatar: string, chatID: string}){
+  const {messagesHistory} = useMessageStore()
   return(
     <div className={styles.topPanel}>
       {avatar 

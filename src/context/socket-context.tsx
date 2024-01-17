@@ -7,14 +7,14 @@ import { tryCatch } from "@/utils/try-catch";
 import { fetchLatestMessageAPI } from "@/api/message-api";
 import { useChatStore } from "@/stores/chat-store";
 import { useMessageStore } from "@/stores/messages-store";
-import { WarningContext } from "@/lib/warning/warning-context";
+import { WarningContext, warningHook } from "@/lib/warning/warning-context";
 
 export const SocketContext: any = createContext(null)
 
-export default function SocketWrapper({children, _id}: any){
-  const {userChats}: any = useChatStore()
-  const warning = useContext(WarningContext)
-  const {addMessage, setChatHistory, setIsTyping}: any = useMessageStore()
+export default function SocketWrapper({children, _id}: {children: React.ReactNode, _id: string}){
+  const {userChats} = useChatStore()
+  const warning = useContext<warningHook>(WarningContext)
+  const {addMessage, setChatHistory, setIsTyping} = useMessageStore()
   const [socket, setSocket] = useState<Socket | null | any>()
   const router = useRouter()
 
@@ -83,7 +83,7 @@ export default function SocketWrapper({children, _id}: any){
   const fillMessagesPreview = async() => {
     for(let i = 0; i < userChats.length; i++){
       tryCatch(async()=>{
-        const latestMessage = await netRequestHandler(fetchLatestMessageAPI(userChats[i]._id), warning)
+        const latestMessage = await netRequestHandler(()=>fetchLatestMessageAPI(userChats[i]._id), warning)
         setChatHistory({chatID: userChats[i]._id, messages: latestMessage.data.reverse()})
       })
     }

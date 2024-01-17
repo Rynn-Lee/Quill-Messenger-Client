@@ -1,7 +1,8 @@
 import { useState } from "react"
 
+
 export default function useWarning(){
-  const [isError, setIsError] = useState(false)
+  const [isError, setIsError] = useState<boolean>(false)
   const [errorDetails, setErrorDetails] = useState({
     title: "",
     message: "",
