@@ -8,7 +8,7 @@
   justify-content: space-evenly
   border-radius: 10px
   &:hover
-    background: var(--var-accent1)
+    background: var(--dialogHover)
   &>img
     object-fit: cover
     flex: 1
@@ -19,12 +19,16 @@
   .messageContent
     flex: 10
     display: flex
+    height: 40px
     flex-direction: column
+    justify-content: space-evenly
     &>div
       display: flex
       flex-direction: row
       justify-content: space-between
+      align-items: center
     .top
+      flex: 1
       display: flex
       align-items: center
       .name
@@ -37,6 +41,7 @@
         color: gray
         font-size: 12px
     .bottom
+      flex: 1
       .message
         text-overflow: ellipsis
         max-width: 182px
@@ -48,28 +53,28 @@
       .status
         position: absolute
         left: 38px
-        background: var(--var-accent3-solid)
+        background: var(--notif-counter)
         padding: 2px 4px
         border-radius: 100px
         font-size: 12px
         font-family: Calibri
 
 .activePage
-  background: var(--var-accent3-hover) !important
+  background: var(--dialogActive) !important
 
 .online
   border: 1px lightgreen solid !important
 
 .sentFromMe
-  color: #c577e4 !important
+  color: var(--app-message) !important
 
 .typing
-  color: #c577e4 !important
-  position: absolute
+  color: var(--app-message) !important
+  // position: absolute
   display: flex
   align-items: center
   &>*
     margin: 0px 4px 0px 0px
 
 .draft
-  color: #e73f3f !important
+  color: var(--error) !important

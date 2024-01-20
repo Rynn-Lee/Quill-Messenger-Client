@@ -4,20 +4,24 @@
   padding: 0px 30px
   font-size: 18px
   left: 346px
-  // top: 15px
-  // background: #00000056
   right: 0px
   display: flex
   align-items: center
-  &>*
-    margin-right: 10px
-  .displayedName
-    font-weight: 600
-  .usertag
-    font-size: 14px
-    color: #ffffff50
-  .avatar
-    border-radius: 100px
+  justify-content: space-between
+  &>div
+    display: flex
+    flex-direction: row
+    align-items: center
+    justify-content: center
+    &>*
+      margin-right: 10px
+    .displayedName
+      font-weight: 600
+    .usertag
+      font-size: 14px
+      color: #ffffff50
+    .avatar
+      border-radius: 100px
 
 .typing
   position: fixed

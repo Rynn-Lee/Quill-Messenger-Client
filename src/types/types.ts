@@ -1,8 +1,6 @@
 export type userData = {
   avatar: string,
   displayedName: string,
-  isOnline: false,
-  lastOnline: string | number
   usertag: string,
   _id: string
 }

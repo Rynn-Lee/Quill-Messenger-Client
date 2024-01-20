@@ -13,7 +13,7 @@
   width: 100%
   align-items: flex-end
   word-break: break-all
-  padding: 10px 0px
+  padding: 1px 0px
   img
     border-radius: 100px
   div
@@ -21,20 +21,24 @@
     padding: 5px 15px
     border-radius: 10px
 
-.myMessage
+.rightMessage
   justify-content: flex-start
   flex-direction: row-reverse
   .text
+    position: sticky
+    right: 50px
     margin-right: 5px
-    background: var(--var-accent3-hover)
+    background: var(--rightMessage)
   .timeSent
     float: left
     // left: 20px
 
-.notMyMessage
+.leftMessage
   .text
+    position: sticky
+    left: 50px
     margin-left: 5px
-    background: var(--var-accent3-disabled)
+    background: var(--leftMessage)
   .timeSent
     float: right
 
@@ -42,3 +46,21 @@
   font-size: 13px
   color: #ffffff50
   position: relative
+
+.leftRow
+  border-radius: 10px 10px 10px 6px !important
+.rightRow
+  border-radius: 10px 10px 6px 10px !important
+
+.arrow
+  position: relative
+  top: -24px
+.floatRight
+  float: right
+.floatLeft
+  float: left
+
+.rightTriangle
+  padding: 0px 31px 0px 0px
+.leftTriangle
+  padding: 0px 0px 0px 31px

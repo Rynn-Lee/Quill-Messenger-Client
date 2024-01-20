@@ -64,6 +64,11 @@ export default function ChatBox() {
       return () => clearTimeout(typingTimer); // Clear the timeout if the component is unmounted
   }, [typingTimer]);
 
+  // const isVisible = useOnScreen(ref)
+  // useEffect(()=>{
+  //   console.log("Element is", isVisible)
+  // }, [isVisible])
+
   return (
     <div className={styles.chatBox}>
       <TopPanel
@@ -80,16 +85,12 @@ export default function ChatBox() {
         refProp={ref}/>
 
       <div className={styles.inputMessages}>
-        <Input
+      <Input
           value={messagesHistory[chatID]?.inputMessage || ""}
           onChange={(e)=>{setInputMessage({chatID, message: e.target.value});startTyping()}}
           onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
-          fancy={{
-            text: "Lolba",
-            background: "#ffffff0f",
-            backgroundHover: "#ffffff1f",
-            position: "left"
-          }}/>
+          fancy={{text: "Message", backgroundHover: "var(--messageInput)", background: "var(--messageInput)", position: "left"}}
+          type="text"/>
         <button onClick={sendNewMessage}><Icon.SendArrow/></button>
       </div>
     </div>

@@ -1,29 +1,33 @@
 "use client"
-import React from 'react'
+import React, { PropsWithoutRef, useEffect, useState } from 'react'
 import styled from 'styled-components'
 
 interface inputProps extends React.ComponentProps<"input"> {
   fancy?: any
-  inputProps?: string
+  inputProps?: any
 }
 
 interface DataFancyComponentProps {
-  datafancy: {
-    text?: string
-    hide?: boolean
-    placeholder?: boolean
-    position?: string
-  };
+  fancy: fancy;
   value?: string | any
+}
+
+type fancy = {
+  position?: string,
+  background?: string,
+  backgroundHover?: string,
+  text?: string,
+  hide?: boolean,
+  placeholder?: string
 }
 
 const Label = styled.label<DataFancyComponentProps>`
   position: absolute;
   font-size: 13px;
   display: block;
-  text-align: ${(props) => (props?.datafancy?.position ? props.datafancy.position : "center")};
+  text-align: ${(props) => (props?.fancy?.position ? props.fancy.position : "center")};
   top: 0px;
-  left: 0px;
+  left: 10px;
   width: 100%;
   height: 100%;
   white-space: nowrap;
@@ -42,10 +46,10 @@ const FancyInput = styled.input<DataFancyComponentProps>`
     padding: 10px 15px;
     width: 100%;
     font-size: 13px;
-    background: ${(props: any)=>(props?.datafancy?.background || 'transparent')};
+    background: ${(props: DataFancyComponentProps)=>(props?.fancy?.background || 'transparent')};
     border: 1px solid transparent;
     border-radius: 10px;
-    color: ${(props: any)=>(props?.datafancy?.text ? '#00000000' : '#ffffff')};
+    color: ${(props: DataFancyComponentProps)=>(props?.fancy?.text ? '#00000000' : '#ffffff')};
     outline: none;
     transition: var(--var-transition);
     &:-webkit-outer-spin-button,
@@ -55,15 +59,17 @@ const FancyInput = styled.input<DataFancyComponentProps>`
     }
     &:focus{
       border-color: var(--var-link);
-      background: ${(props: any)=>(props?.datafancy?.backgroundHover || 'transparent')};
+      background: ${(props: DataFancyComponentProps)=>(props?.fancy?.backgroundHover || 'transparent')};
+      outline: none;
       color: #ffffff;
     }
     &:hover{
-      background: ${(props: any)=>(props?.datafancy?.backgroundHover || 'transparent')};
+      background: ${(props: DataFancyComponentProps)=>(props?.fancy?.backgroundHover || 'transparent')};
+      outline: none;
       color: #ffffff;
     }
     &:focus + .label, &:hover + .label{
-      opacity: ${(props: any)=>(props?.datafancy?.text && !props?.inputProps ? '0' : '1')};
+      opacity: ${(props: inputProps)=>(props?.fancy?.text && !props?.inputProps ? '0' : '1')};
     }
   `
 
@@ -72,6 +78,7 @@ const InputWrapper = styled.div`
   width: 100%;
   display: flex;
   left: 0px;
+  overflow: hidden;
   right: 0px;
 `
 
@@ -81,13 +88,13 @@ const Input:React.FunctionComponent<inputProps> = ({fancy, ...inputProps}) => {
       <FancyInput
         {...inputProps}
         value={inputProps.value}
-        datafancy={fancy}/>
+        fancy={fancy}/>
       {fancy
       ? <Label
           htmlFor={inputProps.id}
           className='label'
-          value={inputProps.value}
-          datafancy={fancy}>{
+          value={inputProps.type == "password" ? "•••••••••" : inputProps.value}
+          fancy={fancy}>{
           fancy.hide
             ? fancy.text
             : fancy.placeholder

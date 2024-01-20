@@ -6,7 +6,7 @@ import { netRequestHandler } from "@/utils/net-request-handler";
 import { tryCatch } from "@/utils/try-catch";
 import { fetchLatestMessageAPI } from "@/api/message-api";
 import { useChatStore } from "@/stores/chat-store";
-import { useMessageStore } from "@/stores/messages-store";
+import { message, useMessageStore } from "@/stores/messages-store";
 import { WarningContext, warningHook } from "@/lib/warning/warning-context";
 
 export const SocketContext: any = createContext(null)
@@ -18,10 +18,7 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
   const [socket, setSocket] = useState<Socket | null | any>()
   const router = useRouter()
 
-
   useEffect(()=>{
-    //New socket.io connection won't be created if on the logging page
-    if(router.pathname == "/"){return}
     const newSocket = io(`ws://192.168.2.100:4000/?_id=${_id}`, {
       reconnection: true,
       reconnectionDelay: 2000,
@@ -53,21 +50,14 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       newSocket.disconnect()
       newSocket.removeAllListeners()
     }
-  }, [router.pathname])
-
-  //Delete socket.io instance after logging out
-  useEffect(()=>{
-    if(router.pathname != "/" || !socket){return}
-    socket.disconnect()
-    setSocket(null)
-  }, [router.pathname])
+  }, [])
 
   useEffect(()=>{
     if(!socket?.connected){return}
-    socket.on('newMessage', (data: any) => {
+    socket.on('newMessage', (data: message) => {
       addMessage(data)
     })
-    socket.on('typing', (data: any) => {
+    socket.on('typing', (data: {chatID: string, state: boolean}) => {
       setIsTyping({chatID: data.chatID, state: data.state})
     })
     return () => {

@@ -16,6 +16,7 @@ export default function Home() {
   const router = useRouter()
   const warning = useContext<warningHook>(WarningContext)
   const {setUser} = useAccountStore()
+  const [toggle, setToggle] = useState<boolean>(false)
   const [userInputs, setUserInputs] = useState({
     usertag: "",
     password: "",
@@ -48,69 +49,43 @@ export default function Home() {
     })
   }
 
-  return (
-    <LoginTabs titles={['Login', 'Register']} userInputs={userInputs}>
-      <div>
+  return(
+    <div className={styles.loginPage}>
+      <div className={styles.inputsDiv}>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, usertag: inputFilter(e.target.value)})}
           value={userInputs.usertag.toLocaleLowerCase()}
-          fancy={{text: "UserTag", placeholder: "User Tag", backgroundHover: "#9385ca50"}}
+          fancy={{text: "Usertag", placeholder: "Usertag", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)"}}
           type="text"/>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, password: e.target.value})}
           value={userInputs.password}
-          fancy={{text: "Password", placeholder: "Password", hide: true, backgroundHover: "#9385ca50"}}
+          fancy={{text: "Password", placeholder: "Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
           type="password"/>
-        <button className={styles.loginButton} onClick={loginAccount} disabled={
-          !userInputs.usertag ||
-          !userInputs.password.length}>Login</button>
-        
-      </div>
-      <div>
-        <Input
-          onChange={(e)=>setUserInputs({...userInputs, usertag: inputFilter(e.target.value)})}
-          value={userInputs.usertag.toLocaleLowerCase()}
-          fancy={{text: "UserTag", placeholder: "User Tag", backgroundHover: "#9385ca50"}}
-          type="text"/>
-        <Input
-          onChange={(e)=>setUserInputs({...userInputs, password: e.target.value})}
-          value={userInputs.password}
-          fancy={{text: "Password", placeholder: "Password", hide: true, backgroundHover: "#9385ca50"}}
-          type="password"/>
-        <Input
+        {toggle ?<Input
           onChange={(e)=>setUserInputs({...userInputs, confirmPassword: e.target.value})}
           value={userInputs.confirmPassword}
-          fancy={{text: "Confirm password", placeholder: "Confirm password", hide: true, backgroundHover: "#9385ca50"}}
-          type="password"/>
-        <button className={styles.loginButton} onClick={registerNewAccount} disabled={
+          fancy={{text: "Confirm Password", placeholder: "Confirm Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
+          type="password"/> : <></>}
+        {!toggle
+        ? <button className={styles.loginButton} onClick={loginAccount} disabled={
+          !userInputs.usertag ||
+          !userInputs.password.length}>Login</button>
+        : <button className={styles.loginButton} onClick={registerNewAccount} disabled={
           (userInputs.usertag.length < 3) ||
           (userInputs.usertag.length > 30) ||
           (userInputs.password.length < 8) || 
-          (userInputs.password !== userInputs.confirmPassword)}>Register</button>
+          (userInputs.password !== userInputs.confirmPassword)}>Register</button>}
         
+        <span className={styles.toggleText} onClick={()=>setToggle(!toggle)}>{!toggle ? "I don't have an account!" : "I have an account!"}</span>
       </div>
-    </LoginTabs>
-  )
-}
 
-function LoginTabs({children, titles, userInputs}: any){
-  const [tab, setTab] = useState(0)
-  return(
-    <div className={styles.loginPage}>
-      <span className={styles.title}><Icon.Quill/>Quill Messenger</span>
-      <div className={styles.tabButtons}>
-        {titles.map((title: string, index: number) => <span key={title} onClick={()=>setTab(index)} className={index == tab ? styles.activeTab : ""}>{title}</span>)}
+      <div className={styles.description}>
+        <h2 className={styles.title}><Icon.Quill/> Quill Messenger</h2>
+        <h3>Welcome, User!</h3>
+        We're glad to see you here!<br/>
+        Log In or create a new account! Other people are waiting for you!
       </div>
-      <div className={styles.loginContent}>
-        {children[tab]}
-      </div>
-      {tab == 1 ? <>
-      <ul className={styles.warningLabels}>
-        {userInputs.usertag.length < 3 ? <li>Usertag must be longer than 3 characters!</li> : <></>}
-        {userInputs.usertag.length > 30 ? <li>Usertag must be no more than 30 characters long!</li> : <></>}
-        {userInputs.password.length < 8 ? <li>Password must be longer than 8 characters!</li> : <></>}
-        {userInputs.password !== userInputs.confirmPassword ? <li>Passwords do not match!</li> : <></>}
-      </ul></> : <></>}
     </div>
   )
 }
