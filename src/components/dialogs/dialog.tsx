@@ -12,6 +12,7 @@ import { useAccountStore } from '@/stores/account-store'
 import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { chat } from '@/types/types'
+import { calculateDate } from '@/utils/calculate-date'
 
 export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
   const [opponentData, setOpponentData] = useState<any>()
@@ -39,11 +40,10 @@ export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
 
   useEffect(()=>{
     if(!chatStore?.messages?.length){return}
-    const timeDate = new Date(chatStore?.messages[chatStore?.messages.length-1].createdAt)
     setMessageData({
       senderID: chatStore?.messages[chatStore?.messages.length-1].senderID,
       text: chatStore?.messages[chatStore?.messages.length-1].text,
-      time: `${timeDate.getHours()}:${timeDate.getMinutes() < 10 ? "0" + timeDate.getMinutes() : timeDate.getMinutes()}`
+      time: `${calculateDate('en-EN', chatStore?.messages[chatStore?.messages.length-1].createdAt, 'count')}`
     })
   }, [chatStore])
 
@@ -70,7 +70,7 @@ export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
               : <Message />
             }
           </span>
-          <span className={styles.status}>0</span>
+          {/* <span className={styles.status}>0</span> */}
         </div>
       </div>
     </div>

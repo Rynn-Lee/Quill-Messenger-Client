@@ -2,7 +2,7 @@ import TopPanel from "@/components/chat/top-panel/top-panel"
 import { useChatStore } from "@/stores/chat-store"
 import { useRouter } from "next/router"
 import styles from "@styles/pages/chat.module.sass"
-import { useContext, useEffect, useRef, useState } from "react"
+import { memo, useContext, useEffect, useRef, useState } from "react"
 import { sendMessageAPI } from "@/api/message-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
@@ -14,6 +14,8 @@ import { SocketContext } from "@/context/socket-context"
 import { Socket } from "socket.io-client/debug"
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
+
+export const MemoizedMessages = memo(Messages)
 
 export default function ChatBox() {
   const router = useRouter()
@@ -77,7 +79,7 @@ export default function ChatBox() {
         avatar={activeChat?.friend?.avatar}
         chatID={chatID}/>
 
-      <Messages
+      <MemoizedMessages
         messagesHistory={messagesHistory}
         chatID={chatID}
         activeChat={activeChat}

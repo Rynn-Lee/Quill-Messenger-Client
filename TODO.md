@@ -17,6 +17,7 @@ Project Description
 
 ### In Progress
 
+- [ ] Fix messages dates rerendering when typing message  
 
 ### Done ✓
 
