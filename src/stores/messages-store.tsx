@@ -7,7 +7,6 @@ export type message = {
   text: string,
   createdAt: string,
   updatedAt: string,
-  __v: 0
 }
 
 export type messageHistory = {

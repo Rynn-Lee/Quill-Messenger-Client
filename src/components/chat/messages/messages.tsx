@@ -13,7 +13,6 @@ export default function Messages({messagesHistory, chatID, activeChat, user, ref
       {messagesHistory[chatID]?.messages?.map((message: message, index: number) => {
         const date = new Date(message.createdAt)
         const nextMessageDate = messagesHistory[chatID]?.messages[index+1]?.createdAt
-        // console.log("Dates:", message.createdAt, nextMessageDate)
         const isNextMessageSamePerson = messagesHistory[chatID]?.messages[index+1]?.senderID == message.senderID
         const isDifferentDate = isDifferentDay(message.createdAt, nextMessageDate)
         return (

@@ -15,8 +15,6 @@ import { Socket } from "socket.io-client/debug"
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
 
-export const MemoizedMessages = memo(Messages)
-
 export default function ChatBox() {
   const router = useRouter()
   const {activeChat} = useChatStore()
@@ -79,7 +77,7 @@ export default function ChatBox() {
         avatar={activeChat?.friend?.avatar}
         chatID={chatID}/>
 
-      <MemoizedMessages
+      <Messages
         messagesHistory={messagesHistory}
         chatID={chatID}
         activeChat={activeChat}
