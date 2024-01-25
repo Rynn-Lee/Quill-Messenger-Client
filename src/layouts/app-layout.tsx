@@ -22,7 +22,7 @@ export default function AppLayout({children}: {children: React.ReactNode}){
   if(!user._id || router.pathname == "/"){
     return <div className="login"> <Home /> </div>
   }
-
+  
   return(
     <SocketWrapper _id={user._id}>
       <Sidebar /> 

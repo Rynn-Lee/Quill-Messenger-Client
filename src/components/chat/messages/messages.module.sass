@@ -54,6 +54,7 @@
 
 .arrow
   position: relative
+  height: 0px
   top: -24px
 .floatRight
   float: right
@@ -79,3 +80,18 @@
     flex: 1
     background: #ffffff1a
     height: 1px
+
+.spacing
+  background: none
+  display: block
+  height: 10px
+
+@media screen and (max-width: 972px)
+  .arrow
+    display: none
+  .leftMessage
+    .text
+      left: 0px
+  .rightMessage
+    .text
+      right: 0px

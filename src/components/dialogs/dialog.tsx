@@ -43,7 +43,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
     setMessageData({
       senderID: messagesStore?.messages[messagesStore?.messages.length-1].senderID,
       text: messagesStore?.messages[messagesStore?.messages.length-1].text,
-      time: `${calculateDate('en-EN', messagesStore?.messages[messagesStore?.messages.length-1].createdAt, 'count')}`
+      time: `${calculateDate(messagesStore?.messages[messagesStore?.messages.length-1].createdAt, 'count')}`
     })
   }, [messagesStore])
 
