@@ -15,7 +15,7 @@ import { userData } from "@/types/types"
 export default function Home() {
   const router = useRouter()
   const warning = useContext<warningHook>(WarningContext)
-  const {setUser} = useAccountStore()
+  const accountStore = useAccountStore()
   const [toggle, setToggle] = useState<boolean>(false)
   const [userInputs, setUserInputs] = useState({
     usertag: "",
@@ -23,16 +23,14 @@ export default function Home() {
     confirmPassword: "",
   })
 
-  const passLoginScreen = (userdata: userData) => {
-    setItem('userdata', userdata)
-    setUser(userdata)
+  const passLoginScreen = (userdata?: userData) => {
+    userdata && accountStore.setUser(userdata)
     router.push("/chat")
   }
 
   useEffect(()=>{
-    const userdata = getItem('userdata')
-    if(!userdata){ return }
-    passLoginScreen(userdata)
+    if(!accountStore._id){ return }
+    passLoginScreen()
   }, [])
 
   const registerNewAccount = async() => {

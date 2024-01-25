@@ -2,7 +2,7 @@ import TopPanel from "@/components/chat/top-panel/top-panel"
 import { useChatStore } from "@/stores/chat-store"
 import { useRouter } from "next/router"
 import styles from "@styles/pages/chat.module.sass"
-import { memo, useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useRef, useState } from "react"
 import { sendMessageAPI } from "@/api/message-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
@@ -15,9 +15,12 @@ import { Socket } from "socket.io-client/debug"
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
 
+const MemoMessages = React.memo(Messages)
+const MemoTopPanel = React.memo(TopPanel)
+
 export default function ChatBox() {
   const router = useRouter()
-  const {activeChat} = useChatStore()
+  const chatStore = useChatStore()
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const chatID: string = router.query.chatID as string
@@ -25,7 +28,7 @@ export default function ChatBox() {
   const ref = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [typingTimer, setTypingTimer] = useState<any>(null);
-  const {messagesHistory,  addMessage, setInputMessage}: any = useMessageStore()
+  const {messagesHistory,  addMessage}: any = useMessageStore()
 
   useEffect(()=>{
     if(!messagesHistory[chatID]?.messages?.length){return}
@@ -33,22 +36,22 @@ export default function ChatBox() {
   }, [messagesHistory[chatID]?.messages?.length])
 
   const sendNewMessage = async() => {
-    if(!messagesHistory[chatID]?.inputMessage || !socket){return}
+    if(!chatStore.userChats[chatID]?.inputMessage || !socket){return}
     tryCatch(async()=>{
-      const sentMessage = await netRequestHandler(()=>sendMessageAPI(chatID, user._id, messagesHistory[chatID]?.inputMessage), warning)
-      socket.emit('newMessage', {message: sentMessage.data, recipientID: activeChat.friend._id})
+      const sentMessage = await netRequestHandler(()=>sendMessageAPI(chatID, user._id, chatStore.userChats[chatID]?.inputMessage), warning)
+      socket.emit('newMessage', {message: sentMessage.data, recipientID: chatStore.activeChat.friend._id})
       addMessage(sentMessage.data)
-      setInputMessage({chatID, message: ""})
+      chatStore.setInputMessage({chatID, message: ""})
+      chatStore.setChatMessageTime({chatID, time: sentMessage.data.createdAt})
     })
   }
-
   const startTyping = () => {
     if(!socket){return}
     clearTimeout(typingTimer);
     stopTyping()
     if(isTyping){return}
     setIsTyping(true);
-    socket.emit('typing', {state: true, recipientID: activeChat.friend._id, chatID})
+    socket.emit('typing', {state: true, recipientID: chatStore.activeChat.friend._id, chatID})
   };
 
   const stopTyping = () => {
@@ -56,7 +59,7 @@ export default function ChatBox() {
     clearTimeout(typingTimer);
     setTypingTimer(setTimeout(() => {
       setIsTyping(false)
-      socket.emit('typing', {state: false, recipientID: activeChat.friend._id, chatID})
+      socket.emit('typing', {state: false, recipientID: chatStore.activeChat.friend._id, chatID})
     }, 1000));
   };
 
@@ -64,30 +67,25 @@ export default function ChatBox() {
       return () => clearTimeout(typingTimer); // Clear the timeout if the component is unmounted
   }, [typingTimer]);
 
-  // const isVisible = useOnScreen(ref)
-  // useEffect(()=>{
-  //   console.log("Element is", isVisible)
-  // }, [isVisible])
-
   return (
     <div className={styles.chatBox}>
-      <TopPanel
-        name={activeChat?.friend?.displayedName}
-        usertag={activeChat?.friend?.usertag}
-        avatar={activeChat?.friend?.avatar}
+      <MemoTopPanel
+        name={chatStore.activeChat?.friend?.displayedName}
+        usertag={chatStore.activeChat?.friend?.usertag}
+        avatar={chatStore.activeChat?.friend?.avatar}
         chatID={chatID}/>
 
-      <Messages
+      <MemoMessages
         messagesHistory={messagesHistory}
         chatID={chatID}
-        activeChat={activeChat}
+        activeChat={chatStore.activeChat}
         user={user}
         refProp={ref}/>
 
       <div className={styles.inputMessages}>
       <Input
-          value={messagesHistory[chatID]?.inputMessage || ""}
-          onChange={(e)=>{setInputMessage({chatID, message: e.target.value});startTyping()}}
+          value={chatStore.userChats[chatID]?.inputMessage || ""}
+          onChange={(e)=>{chatStore.setInputMessage({chatID, message: e.target.value});startTyping()}}
           onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
           fancy={{text: "Message", backgroundHover: "var(--messageInput)", background: "var(--messageInput)", position: "left"}}
           type="text"/>

@@ -4,7 +4,6 @@ import Icon from '@/assets/Icons'
 import { useContext, useEffect, useState } from 'react'
 import { fetchUserByIdAPI } from '@/api/user-api'
 import { useRouter } from 'next/router'
-import { useChatStore } from '@/stores/chat-store'
 import { WarningContext, warningHook } from '@/lib/warning/warning-context'
 import { netRequestHandler } from '@/utils/net-request-handler'
 import { tryCatch } from '@/utils/try-catch'
@@ -13,8 +12,9 @@ import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { chat } from '@/types/types'
 import { calculateDate } from '@/utils/calculate-date'
+import { useChatStore } from '@/stores/chat-store'
 
-export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
+export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore: any}){
   const [opponentData, setOpponentData] = useState<any>()
   const {setActiveChat, activeChat} = useChatStore()
   const socket: Socket | any = useContext(SocketContext)
@@ -39,17 +39,17 @@ export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
   }, [opponentData, socket?.connected])
 
   useEffect(()=>{
-    if(!chatStore?.messages?.length){return}
+    if(!messagesStore?.messages?.length){return}
     setMessageData({
-      senderID: chatStore?.messages[chatStore?.messages.length-1].senderID,
-      text: chatStore?.messages[chatStore?.messages.length-1].text,
-      time: `${calculateDate('en-EN', chatStore?.messages[chatStore?.messages.length-1].createdAt, 'count')}`
+      senderID: messagesStore?.messages[messagesStore?.messages.length-1].senderID,
+      text: messagesStore?.messages[messagesStore?.messages.length-1].text,
+      time: `${calculateDate('en-EN', messagesStore?.messages[messagesStore?.messages.length-1].createdAt, 'count')}`
     })
-  }, [chatStore])
+  }, [messagesStore])
 
 
   const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
-  const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{chatStore?.inputMessage}</>
+  const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{messagesStore?.inputMessage}</>
   const Message = () => <><span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
                           {messageData?.text?.length ? messageData.text : "No messages yet..."}</>
 
@@ -63,14 +63,13 @@ export default function Dialog({chat, chatStore}: {chat: chat, chatStore: any}){
         </div>
         <div className={styles.bottom}>
           <span className={styles.message}>
-            {chatStore?.isTyping
+            {chat?.isTyping
             ? <Typing />
-            : chatStore?.inputMessage.length && activeChat.chat._id != chat._id
+            : chat?.inputMessage?.length && activeChat.chat._id != chat._id
               ? <Draft />
               : <Message />
             }
           </span>
-          {/* <span className={styles.status}>0</span> */}
         </div>
       </div>
     </div>

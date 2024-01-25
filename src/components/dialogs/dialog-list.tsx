@@ -2,7 +2,7 @@ import Icon from '@/assets/Icons'
 import styles from './dialog-list.module.sass'
 import Input from '../interface/Input'
 import Dialog from './dialog'
-import { useChatStore } from '@store/chat-store'
+import { chat, useChatStore } from '@store/chat-store'
 import { useAccountStore } from '@store/account-store'
 import { useContext, useEffect, useState } from 'react'
 import { createNewChatAPI, fetchUserChatsAPI } from '@/api/chat-api'
@@ -19,7 +19,7 @@ import { useMessageStore } from '@/stores/messages-store'
 
 export default function DialogList(){
   const chatStore = useChatStore()
-  const {messagesHistory} = useMessageStore()
+  const messagesStore = useMessageStore()
   const [search, setSearch] = useState<string>("")
   const socket: Socket | any = useContext(SocketContext)
   const warning = useContext<warningHook>(WarningContext)
@@ -30,7 +30,11 @@ export default function DialogList(){
     if(!socket?.connected){return}
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserChatsAPI(user._id), warning)
-      chatStore.setUserChats(result.data.chats)
+      let newObj: any = {}
+      result.data?.chats?.map(async (chat: chat) => {
+        newObj[chat._id] = {...chat, isTyping: false, lastMessage: messagesStore.messagesHistory[chat._id]?.messages[messagesStore.messagesHistory[chat._id]?.messages.length-1]?.createdAt, inputMessage: ""}
+      })
+      chatStore.setUserChats(newObj)
     })
   }, [socket?.connected])
 
@@ -38,8 +42,8 @@ export default function DialogList(){
     if(search == user.usertag){return}
     tryCatch(async()=>{
       const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(search), warning)
-      const doesChatExist = chatStore.userChats.filter((chat: any) => {
-        if(chat.members[0] == secondUser.data._id || chat.members[1] == secondUser.data._id){
+      const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
+        if(chatStore.userChats[chat].members[0] == secondUser.data._id || chatStore.userChats[chat].members[0] == secondUser.data._id){
           router.push(`/chat/${chat._id}`)
           return true
         }
@@ -63,15 +67,17 @@ export default function DialogList(){
       </div>
       <fieldset className={styles.block}>
         <legend><Icon.Letter/> ALL MESSAGES</legend>
-        {chatStore.userChats?.map((chat: any) => (
+        {Object.keys(chatStore.userChats)?.map((keyname: string) => (
           <Link
-            key={chat._id}
-            href={`/chat/${chat._id}`}>
+            key={chatStore.userChats[keyname]._id}
+            href={`/chat/${chatStore.userChats[keyname]._id}`}>
             <Dialog 
-              chat={chat}
-              chatStore={messagesHistory[chat._id]}/>
+              chat={chatStore.userChats[keyname]}
+              messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}/>
           </Link>
-        ))}
+        )).sort((a: any, b: any) => {
+            return Date.parse(chatStore.userChats[b.key].lastMessage) - Date.parse(chatStore.userChats[a.key].lastMessage)
+        })}
       </fieldset>
     </div>
   )

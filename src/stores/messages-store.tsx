@@ -30,24 +30,12 @@ export const useMessageStore = create<messageStore>()((set) => ({
   setChatHistory: (data) => set((state: any) => ({
     messagesHistory: {...state.messagesHistory, [data.chatID]: {
       ...state.messagesHistory[data.chatID],
-      'messages': [...data.messages],
-      isTyping: false,
-      inputMessage: ""
+      'messages': [...data.messages]
     }}
   })),
   addMessage: (data) => set((state: any) => ({
     messagesHistory: {...state.messagesHistory, [data.chatID]: {
       ...state.messagesHistory[data.chatID], messages: [...(state.messagesHistory[data.chatID].messages || []), data]
-    }}
-  })),
-  setIsTyping: (data) => set((state: any) => ({
-    messagesHistory: {...state.messagesHistory, [data.chatID]: {
-      ...state.messagesHistory[data.chatID], isTyping: data.state
-    }}
-  })),
-  setInputMessage: (data) => set((state: any) => ({
-    messagesHistory: {...state.messagesHistory, [data.chatID]: {
-      ...state.messagesHistory[data.chatID], inputMessage: data.message
     }}
   }))
 }))

@@ -10,5 +10,7 @@ export type chat = {
   members: string[],
   createdAt: string,
   updatedAt: string,
-  __v: number
+  inputMessage: string,
+  isTyping: boolean,
+  lastMessage: string,
 }

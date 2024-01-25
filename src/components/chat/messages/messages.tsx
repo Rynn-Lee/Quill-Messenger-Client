@@ -1,13 +1,12 @@
-import { Fragment } from 'react'
+import { Fragment, useEffect } from 'react'
 import styles from './messages.module.sass'
 import Image from 'next/image'
 import { message, messageHistory } from '@/stores/messages-store'
-import { chat, userData } from '@/types/types'
-import { friend } from '@/stores/chat-store'
+import { userData } from '@/types/types'
 import Icon from '@/assets/Icons'
 import { calculateDate, isDifferentDay } from '@/utils/calculate-date'
 
-export default function Messages({messagesHistory, chatID, activeChat, user, refProp}: {messagesHistory: messageHistory, chatID: string, activeChat: {chat: chat, friend: friend}, user: userData, refProp: any}){
+export default function Messages({messagesHistory, chatID, activeChat, user, refProp}: {messagesHistory: messageHistory, chatID: string, activeChat: any, user: userData, refProp: any}){
   return(
     <div className={styles.chatContent}>
       {messagesHistory[chatID]?.messages?.map((message: message, index: number) => {
