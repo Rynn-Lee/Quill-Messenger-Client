@@ -37,7 +37,7 @@ export function calculateDate(timestamp: string, type: dateType){
       return 'Yesterday'
     if(diff > 1 && diff <= 6)
       return `${date.toLocaleDateString('en-EN', {weekday: 'long'})}`
-    if(diff > 6 && diff <= 13)
+    if(diff > 6)
       return `${date.getDate()}-${monthsShort[date.getMonth()]}-${date.getFullYear()-2000}`
   }
 

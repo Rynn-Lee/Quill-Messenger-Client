@@ -24,7 +24,7 @@ export type friend = {
 
 interface chatStore {
   userChats: chatArray,
-  activeChat: {chat: chat, friend: friend},
+  activeChat: {chat: chat, friend: friend} | any,
   setUserChats: (data: chatArray) => void,
   addNewChat: (data: chat) => void,
   setChatMessageTime: (data: {chatID: string, time: string}) => void,

@@ -21,8 +21,6 @@ interface messageStore {
   messagesHistory: messageHistory,
   addMessage: (data: message) => void,
   setChatHistory: (data: {chatID: string, messages: message[]}) => void,
-  setIsTyping: (data: {chatID: string, state: boolean}) => void,
-  setInputMessage: (data: {chatID: string, message: string}) => void,
 }
 
 export const useMessageStore = create<messageStore>()((set) => ({

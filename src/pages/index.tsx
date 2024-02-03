@@ -81,7 +81,7 @@ export default function Home() {
       <div className={styles.description}>
         <h2 className={styles.title}><Icon.Quill/> Quill Messenger</h2>
         <h3>Welcome, User!</h3>
-        We're glad to see you here!<br/>
+        We&apos;re glad to see you here!<br/>
         Log In or create a new account! Other people are waiting for you!
       </div>
     </div>

@@ -7,7 +7,7 @@ export const WarningContext: any = React.createContext(null)
 type errorDetails = {
   title: string,
   message: string,
-  fn?: (() => void) | null
+  fn?: (() => void) | any
 }
 
 export interface warningHook {
