@@ -16,6 +16,6 @@ Back-end: NodeJS, express<br>
 Database: MongoDB, mongoose<br>
 RTC: Socket.io, peer.js
 
-## 🖼️ Design 
+## ✏️ How it looks like? 
 ![Preview](https://github.com/Rynn-Lee/Quill-Messenger.Client/blob/main/public/Preview.png)
 
