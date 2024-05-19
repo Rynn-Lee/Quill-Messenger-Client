@@ -31,6 +31,11 @@ export default function ChatBox() {
   const {messagesHistory,  addMessage}: any = useMessageStore()
 
   useEffect(()=>{
+    console.log("OPENED CHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", chatID)
+    chatStore.setNewMessages({chatID, newMessages: 0})
+  },[chatID])
+
+  useEffect(()=>{
     if(!messagesHistory[chatID]?.messages?.length){return}
     ref.current?.scrollIntoView({behavior: "smooth", block: "end"})
   }, [messagesHistory[chatID]?.messages?.length])
@@ -76,7 +81,6 @@ export default function ChatBox() {
         chatID={chatID}/>
 
       <MemoMessages
-        messagesHistory={messagesHistory}
         chatID={chatID}
         activeChat={chatStore.activeChat}
         user={user}

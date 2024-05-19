@@ -13,6 +13,7 @@ export const SocketContext: any = createContext(null)
 
 export default function SocketWrapper({children, _id}: {children: React.ReactNode, _id: string}){
   const chatStore = useChatStore()
+  const {activeChat} = useChatStore()
   const warning = useContext<warningHook>(WarningContext)
   const messagesStore = useMessageStore()
   const [socket, setSocket] = useState<Socket | null | any>()
@@ -55,17 +56,19 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
   useEffect(()=>{
     if(!socket?.connected){return}
     socket.on('newMessage', (data: message) => {
+      activeChat.chat._id != data.chatID && chatStore.incMessageCounter({chatID: data.chatID})
       chatStore.setChatMessageTime({chatID: data.chatID, time: data.createdAt})
       messagesStore.addMessage(data)
     })
     socket.on('typing', (data: {chatID: string, state: boolean}) => {
+      if(!chatStore?.userChats[data.chatID]?._id){return}
       chatStore.setIsTyping({chatID: data.chatID, state: data.state})
     })
     return () => {
       socket.off('newMessage')
       socket.off('typing')
     }
-  }, [socket])
+  }, [socket, activeChat])
 
   useEffect(()=>{
     fillMessagesPreview()

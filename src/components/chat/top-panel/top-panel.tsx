@@ -1,7 +1,7 @@
 import Image from "next/image"
 import styles from "./toppanel.module.sass"
 import Icon from "@/assets/Icons"
-import { useChatStore } from "@/stores/chat-store"
+import { chat, useChatStore } from "@/stores/chat-store"
 
 export default function TopPanel({name, usertag, avatar, chatID}: {name: string, usertag: string, avatar: string, chatID: string}){
   const {userChats} = useChatStore()

@@ -10,9 +10,8 @@ import { tryCatch } from '@/utils/try-catch'
 import { useAccountStore } from '@/stores/account-store'
 import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
-import { chat } from '@/types/types'
 import { calculateDate } from '@/utils/calculate-date'
-import { useChatStore } from '@/stores/chat-store'
+import { useChatStore, chat } from '@/stores/chat-store'
 
 export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore: any}){
   const [opponentData, setOpponentData] = useState<any>()
@@ -27,7 +26,10 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
     time: "",
   })
   
-  const selectChat = () => setActiveChat({chat: chat, friend: opponentData})
+  const selectChat = () => {
+    console.log("SELECTING", chat._id)
+    setActiveChat({chat: chat, friend: opponentData})
+  }
 
   useEffect(()=>{
     if(opponentData || !socket?.connected){return}
@@ -70,6 +72,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
               : <Message />
             }
           </span>
+          {chat.newMessages ? <span className={styles.messagesCounter}>{chat.newMessages}</span> : null}
         </div>
       </div>
     </div>

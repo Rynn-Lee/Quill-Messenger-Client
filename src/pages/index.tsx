@@ -1,5 +1,4 @@
 import { loginAPI, registerAPI } from "@/api/user-api"
-import { getItem, setItem } from "@/lib/local-storage"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import Icon from "@assets/Icons"
 import Input from "@components/interface/Input"

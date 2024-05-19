@@ -76,7 +76,7 @@ export default function DialogList(){
               messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}/>
           </Link>
         )).sort((a: any, b: any) => {
-            return Date.parse(chatStore.userChats[b.key].lastMessage) - Date.parse(chatStore.userChats[a.key].lastMessage)
+            return Date.parse(chatStore?.userChats[b.key]?.lastMessage) - Date.parse(chatStore?.userChats[a.key]?.lastMessage)
         })}
       </fieldset>
     </div>

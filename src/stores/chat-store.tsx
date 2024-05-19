@@ -9,6 +9,7 @@ export type chat = {
   inputMessage: string,
   isTyping: boolean,
   lastMessage: string,
+  newMessages: number
 }
 
 export type chatArray = {
@@ -25,18 +26,27 @@ export type friend = {
 interface chatStore {
   userChats: chatArray,
   activeChat: {chat: chat, friend: friend} | any,
+  setNewMessages: (data: {chatID: string, newMessages: number}) => void,
+  incMessageCounter: (data: {chatID: string}) => void,
   setUserChats: (data: chatArray) => void,
   addNewChat: (data: chat) => void,
   setChatMessageTime: (data: {chatID: string, time: string}) => void,
   setIsTyping: (data: {chatID: string, state: boolean}) => void,
   setInputMessage: (data: {chatID: string, message: string}) => void,
   setActiveChat: (data: {chat: chat, friend: friend}) => void
+  updateReadAt: (data: {chatID: string}) => void
   clearChatStore: () => void,
 }
 
 export const useChatStore = create<chatStore>()(persist((set) => ({
   userChats: {},
   activeChat: {},
+  setNewMessages: (data) => set((state: any) => ({ userChats: {...state.userChats, [data.chatID]: {
+    ...state.userChats[data.chatID], newMessages: data.newMessages
+  }}})),
+  incMessageCounter: (data) => set((state: any) => ({ userChats: {...state.userChats, [data.chatID]: {
+    ...state.userChats[data.chatID], newMessages: state.userChats[data.chatID].newMessages + 1
+  }}})),
   setUserChats: (data) => set((state: any) => ({ userChats: data })),
   addNewChat: (data) => set((state: any) => ({ userChats: {...state.userChats, [data._id]: {
     ...data,
