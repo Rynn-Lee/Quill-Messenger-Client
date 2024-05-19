@@ -6,17 +6,16 @@ Project Description
 
 ### Todo
 
-- [ ] Put messages' time in opposite direction  
-- [ ] Sidebar "groups" page to work as toggle for dialog-list  
-- [ ] Cache opponent data  
 - [ ] Implement getting messages by portions, not all at once  
 - [ ] Implement online users  
 - [ ] Add react-window | https://github.com/bvaughn/react-window  
 
 ### In Progress
 
-- [ ] Fix messages dates rerendering when typing message  
 
 ### Done ✓
 
+- [x] Fix messages dates rerendering when typing message  
+- [x] Sidebar "groups" page to work as toggle for dialog-list  
+- [x] Put messages' time in opposite direction  
 

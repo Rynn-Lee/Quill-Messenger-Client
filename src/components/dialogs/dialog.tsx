@@ -11,11 +11,12 @@ import { useAccountStore } from '@/stores/account-store'
 import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { calculateDate } from '@/utils/calculate-date'
-import { useChatStore, chat } from '@/stores/chat-store'
+import { useChatStore, chat, friend } from '@/stores/chat-store'
 import { useCounterStore } from '@/stores/counter-store'
+import { userData } from '@/types/types'
 
 export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore: any}){
-  const [opponentData, setOpponentData] = useState<any>()
+  const [opponentData, setOpponentData] = useState<friend>()
   const {setActiveChat, activeChat} = useChatStore()
   const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
@@ -29,8 +30,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
   })
   
   const selectChat = () => {
-    console.log("SELECTING", chat._id)
-    setActiveChat({chat: chat, friend: opponentData})
+    setActiveChat({chat: chat, friend: opponentData!})
   }
 
   useEffect(()=>{

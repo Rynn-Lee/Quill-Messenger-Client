@@ -2,7 +2,7 @@ import Icon from "@/assets/Icons"
 import styles from "./sidebar.module.sass"
 import Image from "next/image"
 import Link from "next/link"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/router"
 import { logoutAPI } from "@/api/user-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
@@ -10,14 +10,20 @@ import { useAccountStore } from "@/stores/account-store"
 import { useChatStore } from "@/stores/chat-store"
 import { SocketContext } from "@/context/socket-context"
 import { Socket } from "socket.io-client"
+import { useCounterStore } from "@/stores/counter-store"
 
 export default function Sidebar(){
   const [activePage, setActivePage] = useState("/")
+  const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext);
   const user = useAccountStore()
   const chat = useChatStore()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
+
+  const counters = useMemo(()=>{
+    return counterStore.countersAmount()
+  }, [counterStore.countersAmount()])
 
   const logout = () => {
     logoutAPI()
@@ -40,8 +46,10 @@ export default function Sidebar(){
       <div className={styles.upperButtons}>
         <Icon.Quill />
         <hr className={styles.hr}/>
-        <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${chat.activeChat?.chat?._id ? `/chat/${chat.activeChat.chat._id}` : `/chat`}`}>{activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages />}</Link>
-        <Link className={activePage == "/groups" ? styles.activePage : ""} href="/groups">{activePage == "/groups" ? <Icon.PeopleActive/> : <Icon.People />}</Link>
+        <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${chat.activeChat?.chat?._id ? `/chat/${chat.activeChat.chat._id}` : `/chat`}`}>
+          {counters ? <div className={styles.counterDot}>{counters}</div> : null}
+          {activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages width="26px" height="26px" color="#cccccc"/>}
+        </Link>
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
       <div className={styles.bottomButtons}>

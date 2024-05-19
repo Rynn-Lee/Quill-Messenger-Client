@@ -19,6 +19,7 @@ import { useMessageStore } from '@/stores/messages-store'
 
 export default function DialogList(){
   const chatStore = useChatStore()
+  const [tab, setTab] = useState<'direct' | 'groups'>('direct')
   const messagesStore = useMessageStore()
   const [search, setSearch] = useState<string>("")
   const socket: Socket | any = useContext(SocketContext)
@@ -65,9 +66,14 @@ export default function DialogList(){
           type="text"/>
         <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser/></button>
       </div>
+      <div className={styles.listTabs}>
+        <div className={tab == 'direct' ? styles.activeTab : ""} onClick={() => setTab('direct')}>Direct</div>
+        <div className={tab == 'groups' ? styles.activeTab : ""} onClick={() => setTab('groups')}>Groups</div>
+      </div>
       <fieldset className={styles.block}>
-        <legend><Icon.Letter/> ALL MESSAGES</legend>
-        {Object.keys(chatStore.userChats)?.map((keyname: string) => (
+        {Object.keys(chatStore.userChats)
+                .filter((chat: any) => tab == 'direct' ? chatStore.userChats[chat].members.length == 2 : chatStore.userChats[chat].members.length > 2)
+                .map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
             href={`/chat/${chatStore.userChats[keyname]._id}`}>

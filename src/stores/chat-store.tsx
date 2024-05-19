@@ -19,6 +19,7 @@ export type friend = {
   avatar: string,
   displayedName: string,
   usertag: string,
+  createdAt: string,
   _id: string
 }
 

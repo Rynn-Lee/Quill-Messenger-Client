@@ -2,6 +2,7 @@ export type userData = {
   avatar: string,
   displayedName: string,
   usertag: string,
+  createdAt: string
   _id: string
 }
 

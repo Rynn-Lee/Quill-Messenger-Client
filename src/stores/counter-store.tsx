@@ -10,6 +10,7 @@ interface counterStore {
   counters: {[key: string]: counter}
   addCounter: (data: {chatID: string}) => void
   resetCounter: (data: {chatID: string}) => void
+  countersAmount: () => number
 }
 
 export const useCounterStore = create<counterStore>()(persist((set) => ({
@@ -19,7 +20,11 @@ export const useCounterStore = create<counterStore>()(persist((set) => ({
   })),
   resetCounter: (data: {chatID: string}) => set((state) => ({
     counters: {...state.counters, [data.chatID]: {chatID: data.chatID, counter: 0}}
-  }))
+  })),
+  countersAmount: () => {
+    const counted: number = Object.values(useCounterStore.getState().counters).reduce((acc: number, curr: counter) => curr.counter > 0 ? acc + 1 : acc, 0)
+    return counted
+  }
 }),{
   name: "message-counters"
 }))

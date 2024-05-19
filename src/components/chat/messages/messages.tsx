@@ -46,7 +46,6 @@ export default function Messages({chatID, activeChat, user, refProp}: {chatID: s
           </Fragment>
         )
       })}
-      <div>{activeChat.chat.lastMessage}</div>
     </div>
   )
 }

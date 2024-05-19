@@ -33,7 +33,6 @@ export default function ChatBox() {
   const {messagesHistory,  addMessage}: any = useMessageStore()
 
   useEffect(()=>{
-    console.log("OPENED CHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", chatID)
     counterStore.resetCounter({chatID})
   },[chatID])
 
