@@ -28,16 +28,16 @@ export default function Profile() {
 
   return (
     <div className={styles.profile}>
-      <fieldset>
-        <legend>Avatar</legend>
-        <Image src={user.avatar} alt="profile" width={60} height={60}/>
+      <fieldset className={styles.block}>
+        <legend>Your profile picture</legend>
+        <div className={styles.avatar}><Image src={user.avatar} alt="profile" width={120} height={120}/></div>
         <Input 
           value={newData.avatar}
           onChange={(e)=>setNewData({...newData, avatar: e.target.value})}/>
         <button onClick={update}>Change avatar</button>
       </fieldset>
-      <fieldset>
-        <legend>displayedname</legend>
+      <fieldset className={styles.block}>
+        <legend>Your displayed name</legend>
         <Input 
           value={newData.displayedName}
           onChange={(e)=>setNewData({...newData, displayedName: e.target.value})}/>

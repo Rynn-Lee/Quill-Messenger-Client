@@ -8,11 +8,13 @@ import { fetchLatestMessageAPI } from "@/api/message-api";
 import { message, useMessageStore } from "@/stores/messages-store";
 import { WarningContext, warningHook } from "@/lib/warning/warning-context";
 import { useChatStore } from "@/stores/chat-store";
+import { useCounterStore } from "@/stores/counter-store";
 
 export const SocketContext: any = createContext(null)
 
 export default function SocketWrapper({children, _id}: {children: React.ReactNode, _id: string}){
   const chatStore = useChatStore()
+  const counterStore = useCounterStore()
   const {activeChat} = useChatStore()
   const warning = useContext<warningHook>(WarningContext)
   const messagesStore = useMessageStore()
@@ -56,7 +58,11 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
   useEffect(()=>{
     if(!socket?.connected){return}
     socket.on('newMessage', (data: message) => {
-      activeChat.chat._id != data.chatID && chatStore.incMessageCounter({chatID: data.chatID})
+      console.log("NEW MESSAGE")
+      if(activeChat.chat._id != data.chatID){
+        console.log("ADDING TO COUNTER")
+        counterStore.addCounter({chatID: data.chatID})
+      }
       chatStore.setChatMessageTime({chatID: data.chatID, time: data.createdAt})
       messagesStore.addMessage(data)
     })

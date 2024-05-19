@@ -14,6 +14,7 @@ import { SocketContext } from "@/context/socket-context"
 import { Socket } from "socket.io-client/debug"
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
+import { useCounterStore } from "@/stores/counter-store"
 
 const MemoMessages = React.memo(Messages)
 const MemoTopPanel = React.memo(TopPanel)
@@ -21,6 +22,7 @@ const MemoTopPanel = React.memo(TopPanel)
 export default function ChatBox() {
   const router = useRouter()
   const chatStore = useChatStore()
+  const counterStore = useCounterStore()
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const chatID: string = router.query.chatID as string
@@ -32,7 +34,7 @@ export default function ChatBox() {
 
   useEffect(()=>{
     console.log("OPENED CHAT!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!", chatID)
-    chatStore.setNewMessages({chatID, newMessages: 0})
+    counterStore.resetCounter({chatID})
   },[chatID])
 
   useEffect(()=>{

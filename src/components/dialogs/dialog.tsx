@@ -12,10 +12,12 @@ import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { calculateDate } from '@/utils/calculate-date'
 import { useChatStore, chat } from '@/stores/chat-store'
+import { useCounterStore } from '@/stores/counter-store'
 
 export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore: any}){
   const [opponentData, setOpponentData] = useState<any>()
   const {setActiveChat, activeChat} = useChatStore()
+  const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
@@ -32,7 +34,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
   }
 
   useEffect(()=>{
-    if(opponentData || !socket?.connected){return}
+    if(opponentData || !socket?.connected || !chat?.members?.length){return}
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserByIdAPI(userID), warning)
@@ -72,7 +74,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
               : <Message />
             }
           </span>
-          {chat.newMessages ? <span className={styles.messagesCounter}>{chat.newMessages}</span> : null}
+          {counterStore?.counters[chat._id]?.counter ? <span className={styles.messagesCounter}>{counterStore?.counters[chat._id]?.counter}</span> : null}
         </div>
       </div>
     </div>
