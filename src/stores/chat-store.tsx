@@ -4,11 +4,11 @@ import { persist } from 'zustand/middleware'
 export type chat = {
   _id: string,
   members: string[],
-  createdAt: string,
-  updatedAt: string,
+  createdAt?: string,
+  updatedAt?: string,
   inputMessage: string,
-  isTyping: boolean,
-  lastMessage: string,
+  isTyping?: boolean,
+  lastMessage?: string,
 }
 
 export type chatArray = {
@@ -32,6 +32,7 @@ interface chatStore {
   setIsTyping: (data: {chatID: string, state: boolean}) => void,
   setInputMessage: (data: {chatID: string, message: string}) => void,
   setActiveChat: (data: {chat: chat, friend: friend}) => void
+  removeChat: (data: {chatID: string}) => void
   clearChatStore: () => void,
 }
 
@@ -53,6 +54,11 @@ export const useChatStore = create<chatStore>()(persist((set) => ({
       ...state.userChats[data.chatID], isTyping: data.state
     }}
   })),
+  removeChat: (data) => set((state: any) => {
+    const newChats = {...state.userChats}
+    delete newChats[data.chatID]
+    return {userChats: newChats}
+  }),
   setInputMessage: (data) => set((state: any) => ({
     userChats: {...state.userChats, [data.chatID]: {
       ...state.userChats[data.chatID], inputMessage: data.message

@@ -2,10 +2,10 @@ import Icon from '@/assets/Icons'
 import styles from './dialog-list.module.sass'
 import Input from '../interface/Input'
 import Dialog from './dialog'
-import { chat, useChatStore } from '@store/chat-store'
+import { chat, friend, useChatStore } from '@store/chat-store'
 import { useAccountStore } from '@store/account-store'
 import { useContext, useEffect, useState } from 'react'
-import { createNewChatAPI, fetchUserChatsAPI } from '@/api/chat-api'
+import { createNewChatAPI, deleteChatAPI, fetchUserChatsAPI } from '@/api/chat-api'
 import { inputFilter } from '@/utils/input-filter'
 import { fetchUserByTagAPI } from '@/api/user-api'
 import { WarningContext, warningHook } from '@/lib/warning/warning-context'
@@ -16,12 +16,15 @@ import { tryCatch } from '@/utils/try-catch'
 import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { useMessageStore } from '@/stores/messages-store'
+import { useCounterStore } from '@/stores/counter-store'
 
 export default function DialogList(){
+  const [deleteId, setDeleteId] = useState<string>("")
   const chatStore = useChatStore()
   const [tab, setTab] = useState<'direct' | 'groups'>('direct')
   const messagesStore = useMessageStore()
   const [search, setSearch] = useState<string>("")
+  const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
   const warning = useContext<warningHook>(WarningContext)
   const user = useAccountStore()
@@ -55,6 +58,22 @@ export default function DialogList(){
     })
   }
 
+  const chooseDeleteId = (id: string) => {
+   if(deleteId == id){setDeleteId("")} else {setDeleteId(id)}
+  }
+
+  const deleteChat = (friendInfo: friend) => {
+    warning.showWindow({title: "Delete chat", message: `Are you sure you want to delete this chat? You won't be able to recover this chat! ${friendInfo.displayedName} will also loose the chat!`, fn: async()=>{
+      await netRequestHandler(()=>deleteChatAPI(deleteId), warning)
+      console.log(friendInfo)
+      socket.emit('removeChat', {chatID: deleteId, recipientID: friendInfo._id})
+      counterStore.resetCounter({chatID: deleteId})
+      if(chatStore.activeChat.chat._id == deleteId){router.push('/chat')}
+      chatStore.removeChat({chatID: deleteId})
+      setDeleteId("")
+    }})
+  }
+
   return(
     <div className={styles.chatlist}>
       <h2>Messages</h2>
@@ -72,12 +91,15 @@ export default function DialogList(){
       </div>
       <fieldset className={styles.block}>
         {Object.keys(chatStore.userChats)
-                .filter((chat: any) => tab == 'direct' ? chatStore.userChats[chat].members.length == 2 : chatStore.userChats[chat].members.length > 2)
+                .filter((chat: any) => tab == 'direct' ? chatStore?.userChats[chat]?.members?.length == 2 : chatStore?.userChats[chat]?.members?.length > 2)
                 .map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
             href={`/chat/${chatStore.userChats[keyname]._id}`}>
-            <Dialog 
+            <Dialog
+              deleteChat={deleteChat}
+              chooseDeleteId={chooseDeleteId}
+              deleteId={deleteId}
               chat={chatStore.userChats[keyname]}
               messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}/>
           </Link>

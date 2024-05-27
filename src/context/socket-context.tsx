@@ -9,12 +9,15 @@ import { message, useMessageStore } from "@/stores/messages-store";
 import { WarningContext, warningHook } from "@/lib/warning/warning-context";
 import { useChatStore } from "@/stores/chat-store";
 import { useCounterStore } from "@/stores/counter-store";
+import { userInfo } from "os";
+import { useAccountStore } from "@/stores/account-store";
 
 export const SocketContext: any = createContext(null)
 
 export default function SocketWrapper({children, _id}: {children: React.ReactNode, _id: string}){
   const chatStore = useChatStore()
   const counterStore = useCounterStore()
+  const accountStore = useAccountStore()
   const {activeChat} = useChatStore()
   const warning = useContext<warningHook>(WarningContext)
   const messagesStore = useMessageStore()
@@ -58,27 +61,57 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
   useEffect(()=>{
     if(!socket?.connected){return}
     socket.on('newMessage', (data: message) => {
-      console.log("NEW MESSAGE")
       if(activeChat.chat._id != data.chatID){
         console.log("ADDING TO COUNTER")
+        console.log(data.chatID)
         counterStore.addCounter({chatID: data.chatID})
+      }
+      if(!chatStore?.userChats[data.chatID]?._id){
+        chatStore.addNewChat({
+          _id: data.chatID,
+          members: [data.senderID, accountStore._id],
+          inputMessage: '',
+        })
+        messagesStore.setChatHistory({chatID: data.chatID, messages: []})
       }
       chatStore.setChatMessageTime({chatID: data.chatID, time: data.createdAt})
       messagesStore.addMessage(data)
     })
     socket.on('typing', (data: {chatID: string, state: boolean}) => {
       if(!chatStore?.userChats[data.chatID]?._id){return}
+      console.log("TYPING", data.state)
       chatStore.setIsTyping({chatID: data.chatID, state: data.state})
+    })
+    socket.on('removeChat', (data: {chatID: string, recipientID: string}) => {
+      console.log("REMOVE CHsAT", data)
+      if(activeChat.chat._id == data.chatID){
+        router.push("/chat")
+      }
+      counterStore.resetCounter({chatID: data.chatID})
+      chatStore.removeChat({chatID: data.chatID})
+    })
+    socket.on('userDeleted', (data: {userID: string}) => {
+      console.log("REMOVE user", data)
+      Object.keys(chatStore.userChats).forEach((chatID) => {
+        if(chatStore.userChats[chatID]?.members.includes(data.userID)){
+          counterStore.resetCounter({chatID: chatID})
+          chatStore.removeChat({chatID: chatID})
+          if(activeChat.chat._id == data.userID){
+            router.push("/chat")
+          }
+        }
+      })
     })
     return () => {
       socket.off('newMessage')
+      socket.off('removeChat')
       socket.off('typing')
     }
-  }, [socket, activeChat])
+  }, [socket, activeChat, Object.keys(chatStore.userChats).length])
 
   useEffect(()=>{
     fillMessagesPreview()
-  }, [chatStore.userChats])
+  }, [chatStore.userChats.length])
 
   const fillMessagesPreview = async() => {
     Object.keys(chatStore.userChats).map((chat: string) => {

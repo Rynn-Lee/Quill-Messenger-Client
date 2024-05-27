@@ -47,7 +47,7 @@ export default function Sidebar(){
         <Icon.Quill />
         <hr className={styles.hr}/>
         <Link className={activePage == "/chat" ? styles.activePage : ""} href={`${chat.activeChat?.chat?._id ? `/chat/${chat.activeChat.chat._id}` : `/chat`}`}>
-          {counters ? <div className={styles.counterDot}>{counters}</div> : null}
+          {counters ? <div className={styles.counterDot} onContextMenu={(e)=>{e.preventDefault(); counterStore.removeCounters()}}>{counters}</div> : null}
           {activePage == "/chat" ? <Icon.MessagesActive/> : <Icon.Messages width="26px" height="26px" color="#cccccc"/>}
         </Link>
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>

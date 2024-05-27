@@ -29,28 +29,24 @@ export default function Discover() {
     setUsers(result.data)
   }
 
-  const createNewChat = async(user: userData) => {
+  const createNewChat = async(usertag: string) => {
     tryCatch(async()=>{
-      const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(user.usertag), warning)
-      const doesChatExist = Object.keys(chatStore.userChats).filter((chatID: string) => {
-        if(chatStore.userChats[chatID].members[0] == secondUser.data._id || chatStore.userChats[chatID].members[0] == secondUser.data._id){
-          // changeChat(chatStore.userChats[chatID], secondUser.data)
-          console.log("chatID", chatID)
-          router.push(`/chat/${chatID}`)
+      const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(usertag), warning)
+      const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
+        if(chatStore.userChats[chat].members[0] == secondUser.data._id || chatStore.userChats[chat].members[0] == secondUser.data._id){
+          console.log("CHAT EXITS")
+          chatStore.setActiveChat({chat: chat, friend: secondUser.data})
+          router.push(`/chat/${chatStore.userChats[chat]._id}`)
           return true
         }
       })
       if(doesChatExist.length){return}
-      console.log("Chat doesnt exist!!!!!!")
       const newChat = await netRequestHandler(()=>createNewChatAPI(account._id, secondUser.data._id), warning)
       chatStore.addNewChat(newChat.data)
-      // changeChat(newChat.data, secondUser.data)
+      chatStore.setActiveChat({chat: newChat.data, friend: secondUser.data})
+      router.push(`/chat/${newChat.data._id}`)
     })
   }
-
-  // const changeChat = (chat: chat, opponent: userData) => {
-  //   chatStore.setActiveChat({chat, friend: opponent})
-  // }
 
   return (
     <div className={styles.page}>
@@ -67,7 +63,7 @@ export default function Discover() {
                 <span className={styles.row}><Icon.User/> {user.usertag}</span>
                 <span className={styles.row}><Icon.Calendar color="#fff" width="26px" height="20px"/> {calculateDate(user.createdAt.toString(), 'fullshort')}</span>
               </div>
-              <button onClick={()=>{createNewChat(user)}}><Icon.Letter/> Написать</button>
+              <button onClick={()=>{createNewChat(user.usertag)}}><Icon.Letter/> Написать</button>
             </div>
           </div>
         ))}

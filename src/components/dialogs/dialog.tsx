@@ -15,7 +15,7 @@ import { useChatStore, chat, friend } from '@/stores/chat-store'
 import { useCounterStore } from '@/stores/counter-store'
 import { userData } from '@/types/types'
 
-export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore: any}){
+export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: chat, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
   const [opponentData, setOpponentData] = useState<friend>()
   const {setActiveChat, activeChat} = useChatStore()
   const counterStore = useCounterStore()
@@ -30,6 +30,8 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
   })
   
   const selectChat = () => {
+    if(activeChat.chat._id == chat._id){return}
+    chooseDeleteId('')
     setActiveChat({chat: chat, friend: opponentData!})
   }
 
@@ -57,9 +59,18 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
   const Message = () => <><span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
                           {messageData?.text?.length ? messageData.text : "No messages yet..."}</>
 
+                          
+
   return(
-    <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat}>
-      {opponentData?.avatar ? <Image src={opponentData?.avatar} alt="pfp" width={40} height={40}/> : <></>}
+    <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat} onContextMenu={(e)=>{e.preventDefault(); chooseDeleteId(chat._id);}}>
+      <div className={`${styles.deleteBlock} + ${deleteId == chat._id ? styles.deleteBlockActive : ""}`}>
+        <div onClick={()=>{deleteChat({chatID: chat._id, ...opponentData})}}><Icon.Remove width='25' height='25' color='#fff'/></div>
+      </div>
+      {opponentData?.avatar ? 
+      <div className={styles.avatarBlock}>
+        <Image src={opponentData?.avatar} alt="pfp" width={40} height={40}/>
+      </div>
+      : <></>}
       <div className={styles.messageContent}>
         <div className={styles.top}>
           <span className={styles.name}>{opponentData?.displayedName}</span>
@@ -74,7 +85,7 @@ export default function Dialog({chat, messagesStore}: {chat: chat, messagesStore
               : <Message />
             }
           </span>
-          {counterStore?.counters[chat._id]?.counter ? <span className={styles.messagesCounter}>{counterStore?.counters[chat._id]?.counter}</span> : null}
+          {counterStore?.counters[chat._id]?.counter ? <span className={styles.messagesCounter}>{counterStore.counters[chat._id].counter}</span> : null}
         </div>
       </div>
     </div>

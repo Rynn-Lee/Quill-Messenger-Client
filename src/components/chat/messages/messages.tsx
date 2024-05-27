@@ -56,7 +56,7 @@ function Message({message, user, opponent, date, index, nextMessage}: messageDat
     <div id={message._id} className={`${styles.message} ${message.senderID == user._id ? styles.rightMessage : styles.leftMessage}`}>
     {nextMessage.minutes > 5 || !nextMessage.samePerson || nextMessage.differentDate?
        <Image
-        src={message.senderID == user._id ? user.avatar : opponent.avatar}
+        src={message.senderID == user._id ? user?.avatar : opponent?.avatar}
         alt="avatar"
         width={30}
         height={30}/>

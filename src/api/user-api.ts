@@ -117,6 +117,23 @@ const updateUserProfileAPI = async(data: {_id: string, avatar?: string, displaye
   }
 }
 
+const deleteAccount = async(userID: string) => {
+  try{
+    const result = await axios.get(`${api_url}/user/delete/${userID}`)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      title: `Not able to delete account`,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
 const logoutAPI = async() => {
   try{
     removeItem('userdata')
@@ -125,4 +142,4 @@ const logoutAPI = async() => {
   }
 }
 
-export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI}
+export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI, deleteAccount}

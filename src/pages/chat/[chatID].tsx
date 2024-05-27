@@ -15,6 +15,7 @@ import { Socket } from "socket.io-client/debug"
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
 import { useCounterStore } from "@/stores/counter-store"
+import AboutUser from "@/components/chat/about/aboutUser"
 
 const MemoMessages = React.memo(Messages)
 const MemoTopPanel = React.memo(TopPanel)
@@ -25,6 +26,7 @@ export default function ChatBox() {
   const counterStore = useCounterStore()
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
+  const [isFriendInfoOpen, setIsFriendInfoOpen] = useState<boolean>(false)
   const chatID: string = router.query.chatID as string
   const socket: Socket | any = useContext(SocketContext)
   const ref = useRef<HTMLDivElement>(null);
@@ -34,6 +36,7 @@ export default function ChatBox() {
 
   useEffect(()=>{
     counterStore.resetCounter({chatID})
+    console.log("CHATID", chatID)
   },[chatID])
 
   useEffect(()=>{
@@ -51,6 +54,7 @@ export default function ChatBox() {
       chatStore.setChatMessageTime({chatID, time: sentMessage.data.createdAt})
     })
   }
+  
   const startTyping = () => {
     if(!socket){return}
     clearTimeout(typingTimer);
@@ -73,9 +77,17 @@ export default function ChatBox() {
       return () => clearTimeout(typingTimer); // Clear the timeout if the component is unmounted
   }, [typingTimer]);
 
+  useEffect(()=>{
+    console.log("isFriendInfoOpen", isFriendInfoOpen)
+  },[isFriendInfoOpen])
+
   return (
     <div className={styles.chatBox}>
+
+      {isFriendInfoOpen ? <AboutUser friend={chatStore.activeChat.friend} setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}/> : null}
+
       <MemoTopPanel
+        setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}
         name={chatStore.activeChat?.friend?.displayedName}
         usertag={chatStore.activeChat?.friend?.usertag}
         avatar={chatStore.activeChat?.friend?.avatar}

@@ -21,6 +21,7 @@ interface messageStore {
   messagesHistory: messageHistory,
   addMessage: (data: message) => void,
   setChatHistory: (data: {chatID: string, messages: message[]}) => void,
+  clearMessageStore: () => void
 }
 
 export const useMessageStore = create<messageStore>()((set) => ({
@@ -32,8 +33,9 @@ export const useMessageStore = create<messageStore>()((set) => ({
     }}
   })),
   addMessage: (data) => set((state: any) => ({
-    messagesHistory: {...state.messagesHistory, [data.chatID]: {
-      ...state.messagesHistory[data.chatID], messages: [...(state.messagesHistory[data.chatID].messages || []), data]
+    messagesHistory: {...state.messagesHistory, [data?.chatID]: {
+      ...state?.messagesHistory[data.chatID], messages: [...(state?.messagesHistory[data?.chatID]?.messages ?? []), data]
     }}
-  }))
+  })),
+  clearMessageStore: () => set(()=>({messagesHistory: {}}))
 }))
