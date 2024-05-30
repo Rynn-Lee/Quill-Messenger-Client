@@ -134,6 +134,24 @@ const deleteAccount = async(userID: string) => {
   }
 }
 
+const fetchRandomUserAPI = async(userid: string) => {
+  try{
+    console.log(userid)
+    const result = await axios.get(`${api_url}/user/randomuser?userId=${userid}`)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      title: `Not able to fetch random user`,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
 const logoutAPI = async() => {
   try{
     removeItem('userdata')
@@ -142,4 +160,4 @@ const logoutAPI = async() => {
   }
 }
 
-export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI, deleteAccount}
+export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI, deleteAccount, fetchRandomUserAPI}

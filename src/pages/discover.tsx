@@ -1,9 +1,11 @@
-import { fetchAllUsersAPI, fetchUserByTagAPI } from "@/api/user-api"
+import { fetchRandomUserAPI, fetchUserByTagAPI } from "@/api/user-api"
+import { open } from '@tauri-apps/api/dialog';
+import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
-import { chat, userData } from "@/types/types"
+import { userData } from "@/types/types"
 import styles from '@/styles/pages/discover.module.sass'
 import { netRequestHandler } from "@/utils/net-request-handler"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import Image from "next/image"
 import Icon from "@/assets/Icons"
 import { calculateDate } from "@/utils/calculate-date"
@@ -13,20 +15,22 @@ import { useChatStore } from "@/stores/chat-store"
 import { createNewChatAPI } from "@/api/chat-api"
 import { useAccountStore } from "@/stores/account-store"
 
+
 export default function Discover() {
-  const [users, setUsers] = useState<userData[]>([])
+  const [randomUser, setRandomUser] = useState<userData>()
   const router = useRouter()
   const account = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const chatStore = useChatStore()
+  const [image, setImage] = useState<string>()
 
   useEffect(()=>{
-    !users?.length && fetchUsers()
+    !randomUser && fetchRandomUser()
   }, [])
   
-  const fetchUsers = async() => {
-    const result = await netRequestHandler(() => fetchAllUsersAPI(), warning)
-    setUsers(result.data)
+  const fetchRandomUser = async() => {
+    const result = await netRequestHandler(() => fetchRandomUserAPI(account._id), warning)
+    setRandomUser(result.data)
   }
 
   const createNewChat = async(usertag: string) => {
@@ -48,25 +52,52 @@ export default function Discover() {
     })
   }
 
+  const openDialog = async () => {
+    try{
+      const selectedPath = await open({
+        multiple: false,
+        title: "Choose a photo"
+      })
+      if(!selectedPath) return;
+      const Buffer = await readBinaryFile(selectedPath as string)
+      const blob = new Blob([Buffer])
+      const url = URL.createObjectURL(blob)
+      setImage(url)
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    console.log(image)
+  },[image])
+
   return (
     <div className={styles.page}>
       <span className={styles.title}>✨ Discover new friends to talk with!</span>
       <div className={styles.users}>
-        {users?.map((user: userData) => (
-          <div className={styles.user} key={user._id}>
-            <div className={styles.pfpblock}>
-              <Image src={user.avatar} width={70} height={70} alt="avatar"/>
-            </div>
-            <div className={styles.infoblock}>
-              <div>
-                <span className={styles.row + " " + styles.username}>{user.displayedName}</span>
-                <span className={styles.row}><Icon.User/> {user.usertag}</span>
-                <span className={styles.row}><Icon.Calendar color="#fff" width="26px" height="20px"/> {calculateDate(user.createdAt.toString(), 'fullshort')}</span>
+        <div className={styles.randomDiv}>
+        {!randomUser?._id  ? <span className={styles.randomDivTitle}>Test your luck with the user randomizer!</span> : null }
+          {randomUser?._id && (
+            <div className={styles.userInfo}>
+              <div className={styles.pfpblock}>
+                <Image src={image} width={140} height={140} alt="avatar"/>
               </div>
-              <button onClick={()=>{createNewChat(user.usertag)}}><Icon.Letter/> Написать</button>
+              <div className={styles.infoblock}>
+                <div>
+                  <span className={styles.row + " " + styles.username}>{randomUser.displayedName}</span>
+                  <span className={styles.row}><Icon.User/> {randomUser.usertag}</span>
+                  <span className={styles.row}><Icon.Calendar color="#fff" width="26px" height="20px"/> {calculateDate(randomUser.createdAt.toString(), 'full')}</span>
+                  <div style={{flexDirection: "row", display: "flex"}}>
+                    <button onClick={()=>createNewChat(randomUser.usertag)} style={{flex: 2}}>Start a new conversation!</button>
+                    <button onClick={openDialog} style={{flex: 1}}>Try again :c</button>
+                  </div>
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          )}
+          {!randomUser?._id  ? <button onClick={fetchRandomUser}>Give me someone to talk!</button> : null}
+        </div>
       </div>
     </div>
   )

@@ -13,7 +13,6 @@ import { Socket } from 'socket.io-client'
 import { calculateDate } from '@/utils/calculate-date'
 import { useChatStore, chat, friend } from '@/stores/chat-store'
 import { useCounterStore } from '@/stores/counter-store'
-import { userData } from '@/types/types'
 
 export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: chat, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
   const [opponentData, setOpponentData] = useState<friend>()

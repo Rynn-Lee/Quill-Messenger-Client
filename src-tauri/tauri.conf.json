@@ -3,6 +3,7 @@
   "build": {
     "beforeBuildCommand": "pnpm run build",
     "beforeDevCommand": "pnpm run dev",
+    "withGlobalTauri": true,
     "devPath": "http://localhost:3000",
     "distDir": "../out"
   },
@@ -12,7 +13,12 @@
   },
   "tauri": {
     "allowlist": {
-      "all": false
+      "dialog": {
+        "open": true
+      },
+      "fs":{
+        "readFile": true
+      }
     },
     "bundle": {
       "active": true,
@@ -48,7 +54,7 @@
       }
     },
     "security": {
-      "csp": null
+      "csp": "default-src 'self'; img-src 'self' asset: https://asset.localhost"
     },
     "updater": {
       "active": false
