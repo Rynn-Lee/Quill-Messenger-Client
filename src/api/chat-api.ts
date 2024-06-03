@@ -1,12 +1,14 @@
 import axios from "axios"
 const api_url = 'http://192.168.2.100:4000/api'
+// const api_url = 'https://quill-messenger-server.onrender.com/api'
 
 //getChats
 const fetchUserChatsAPI = async(_id: string) => {
   try{
     const result = await axios.get(`${api_url}/chat/${_id}`)
+    const resultgroups = await axios.get(`${api_url}/group/${_id}`)
     return({
-      data: result.data,
+      data: [...result.data.chats, ...resultgroups.data.groups],
       status: 200,
     })
   } catch(err: any) {

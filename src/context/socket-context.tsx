@@ -9,7 +9,6 @@ import { message, useMessageStore } from "@/stores/messages-store";
 import { WarningContext, warningHook } from "@/lib/warning/warning-context";
 import { useChatStore } from "@/stores/chat-store";
 import { useCounterStore } from "@/stores/counter-store";
-import { userInfo } from "os";
 import { useAccountStore } from "@/stores/account-store";
 
 export const SocketContext: any = createContext(null)
@@ -90,6 +89,9 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       counterStore.resetCounter({chatID: data.chatID})
       chatStore.removeChat({chatID: data.chatID})
     })
+    socket.on('removeMessage', (data: message) => {
+      messagesStore.removeMessage(data)
+    })
     socket.on('userDeleted', (data: {userID: string}) => {
       console.log("REMOVE user", data)
       Object.keys(chatStore.userChats).forEach((chatID) => {
@@ -111,6 +113,7 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
 
   useEffect(()=>{
     fillMessagesPreview()
+    console.log("chatStore.userChats", chatStore.userChats)
   }, [chatStore.userChats.length])
 
   const fillMessagesPreview = async() => {

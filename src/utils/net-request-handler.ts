@@ -7,12 +7,11 @@ type requestResult = {
   data?: any
 }
 
-export async function netRequestHandler(request: Function, warning: warningHook): Promise<{data?: any}>{
+export async function netRequestHandler(request: Function, warning?: warningHook): Promise<{data?: any}>{
   try{
     const result: requestResult = await request();
-    console.log("A net request was made: ", request)
     if (result.status >= 400 || result.status < 200) {
-      warning.showWindow({ title: result?.title, message: result?.message });
+      warning && warning.showWindow({ title: result?.title, message: result?.message });
       throw new Error(result?.message)
     }
     return result;

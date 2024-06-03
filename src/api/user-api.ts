@@ -3,6 +3,7 @@ import { removeItem } from "@lib/local-storage"
 import axios from "axios"
 
 const api_url = 'http://192.168.2.100:4000/api'
+// const api_url = 'https://quill-messenger-server.onrender.com/api'
 
 const loginAPI = async(userdata: {usertag: string, password: string}) => {
   const url = `${api_url}/user/login`

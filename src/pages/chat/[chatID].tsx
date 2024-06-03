@@ -2,7 +2,7 @@ import TopPanel from "@/components/chat/top-panel/top-panel"
 import { useChatStore } from "@/stores/chat-store"
 import { useRouter } from "next/router"
 import styles from "@styles/pages/chat.module.sass"
-import React, { useContext, useEffect, useRef, useState } from "react"
+import React, { useContext, useEffect, useMemo, useRef, useState } from "react"
 import { sendMessageAPI } from "@/api/message-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { useAccountStore } from "@/stores/account-store"
@@ -39,11 +39,13 @@ export default function ChatBox() {
 
   useEffect(()=>{
     counterStore.resetCounter({chatID})
-    console.log("chatStore.activeChat.friend", chatStore.activeChat.friend)
-    console.log("CHATID", chatID)
   },[chatID])
 
-  type message = string | { format: string; code: string | undefined; text: string; } | { format: string; code: string | undefined; }
+  const members = useMemo(()=>{
+    return chatStore?.userChats[chatID]?.members?.filter((member) => member != user._id)
+  }, [chatID])
+
+  type message = {text: string} | { format: string; code: string | undefined; text: string; } | { format: string; code: string | undefined; }
 
   useEffect(()=>{
     if(!messagesHistory[chatID]?.messages?.length){return}
@@ -71,8 +73,7 @@ export default function ChatBox() {
         type: messageType,
         text: textFormat
       }), warning)
-      console.log(sentMessage.data)
-      socket.emit('newMessage', {message: sentMessage.data, recipientID: chatStore.activeChat.friend._id})
+      socket.emit('newMessage', {message: sentMessage.data, recipientID: members})
       addMessage(sentMessage.data)
       chatStore.setInputMessage({chatID, message: ""})
       chatStore.setChatImage({chatID, image: ""})
@@ -86,7 +87,7 @@ export default function ChatBox() {
     stopTyping()
     if(isTyping){return}
     setIsTyping(true);
-    socket.emit('typing', {state: true, recipientID: chatStore.activeChat.friend._id, chatID})
+    socket.emit('typing', {state: true, recipientID: members, chatID})
   };
 
   const stopTyping = () => {
@@ -94,7 +95,7 @@ export default function ChatBox() {
     clearTimeout(typingTimer);
     setTypingTimer(setTimeout(() => {
       setIsTyping(false)
-      socket.emit('typing', {state: false, recipientID: chatStore.activeChat.friend._id, chatID})
+      socket.emit('typing', {state: false, recipientID: members, chatID})
     }, 1000));
   };
 
@@ -127,7 +128,7 @@ export default function ChatBox() {
   return (
     <div className={styles.chatBox}>
 
-      {isFriendInfoOpen ? <AboutUser friend={chatStore.activeChat.friend} setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}/> : null}
+      {isFriendInfoOpen ? <AboutUser friend={chatStore.activeChat.friend} chatInfo={chatStore.userChats[chatID]} setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}/> : null}
 
       <MemoTopPanel
         setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}

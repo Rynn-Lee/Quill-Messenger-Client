@@ -15,6 +15,7 @@ import { useChatStore, chat, friend } from '@/stores/chat-store'
 import { useCounterStore } from '@/stores/counter-store'
 import { decodeImage } from '@/utils/decodeImage'
 import { useMessageStore } from '@/stores/messages-store'
+import { useUserCache } from '@/stores/user-cache'
 
 
 
@@ -25,6 +26,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
   const socket: Socket | any = useContext(SocketContext)
   const REALmessageStore = useMessageStore()
   const user = useAccountStore()
+  const userCache = useUserCache()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
   const [messageData, setMessageData] = useState({
@@ -44,6 +46,15 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
 
   useEffect(()=>{
     if(opponentData || !socket?.connected || !chat?.members?.length){return}
+    if(chat.members.length > 2){
+      setOpponentData({
+        avatar: decodeImage(chat.image.code),
+        displayedName: chat.name,
+        usertag: `${chat.members.length} members`,
+        type: 'group'
+      })
+      return
+    }
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserByIdAPI(userID), warning)
@@ -67,13 +78,13 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
   const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
   const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{messagesStore?.inputMessage}</>
   const Message = () => <>
-                          <span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
+                          <span className={styles.sentFromMe}>{!REALmessageStore?.messagesHistory[chat._id]?.messages?.length ? "" :messageData.senderID == user._id ? "You: " : `${userCache?.userCache[messageData.senderID]?.displayedName}: `}</span>
                           {!REALmessageStore?.messagesHistory[chat._id]?.messages?.length
                           ? "No messages yet..."
                           : messageData.type == 'media'
-                            ? <Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}}/>
+                            ? <span className={styles.sentFromMe}><Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}} alt=""/> [image]</span>
                             :  messageData.type == 'media-text'
-                              ? <><Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}}/> {messageData.text}</>
+                              ? <><Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}} alt=""/> {messageData.text}</>
                               : messageData.text
                           }
                         </>

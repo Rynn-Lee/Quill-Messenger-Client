@@ -26,14 +26,14 @@ export type friend = {
 
 interface chatStore {
   userChats: chatArray,
-  activeChat: {chat: chat, friend: friend} | any,
+  activeChat: {chat: chat, friend: friend | friend[]} | any,
   setUserChats: (data: chatArray) => void,
   addNewChat: (data: chat) => void,
   setChatMessageTime: (data: {chatID: string, time: string}) => void,
   setIsTyping: (data: {chatID: string, state: boolean}) => void,
   setInputMessage: (data: {chatID: string, message: string}) => void,
   setChatImage: (data: {chatID: string, image: string}) => void,
-  setActiveChat: (data: {chat: chat, friend: friend}) => void
+  setActiveChat: (data: {chat: chat, friend: friend[]}) => void
   removeChat: (data: {chatID: string}) => void
   clearChatStore: () => void,
 }

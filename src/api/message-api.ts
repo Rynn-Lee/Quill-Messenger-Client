@@ -1,5 +1,7 @@
 import axios from "axios"
 const api_url = 'http://192.168.2.100:4000/api'
+// const api_url = 'https://quill-messenger-server.onrender.com/api'
+
 // fetchMessages
 const fetchChatMessages = async(chatID: string) => {
   try{
@@ -55,4 +57,23 @@ const sendMessageAPI = async({chatID, senderID, type, text} : {chatID: string, s
   }
 }
 
-export {fetchChatMessages, fetchLatestMessageAPI, sendMessageAPI}
+const removeMessageAPI = async({_id} : {_id: string}) => {
+  try{
+    const result = await axios.get(`${api_url}/message/remove/${_id}`)
+    return({
+      data: result.data,
+      status: 200,
+    })
+  } catch(err: any) {
+    return({
+      data: [],
+      title: "Not able to send a message",
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
+
+
+export {fetchChatMessages, fetchLatestMessageAPI, sendMessageAPI, removeMessageAPI}

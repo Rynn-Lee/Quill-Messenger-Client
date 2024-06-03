@@ -5,7 +5,7 @@ import Dialog from './dialog'
 import Image from 'next/image'
 import { chat, friend, useChatStore } from '@store/chat-store'
 import { useAccountStore } from '@store/account-store'
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { Fragment, memo, useContext, useEffect, useMemo, useState } from 'react'
 import { open } from '@tauri-apps/api/dialog';
 import { readBinaryFile } from "@tauri-apps/api/fs"
 import { createNewChatAPI, deleteChatAPI, fetchUserChatsAPI } from '@/api/chat-api'
@@ -42,7 +42,7 @@ export default function DialogList(){
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserChatsAPI(user._id), warning)
       let newObj: any = {}
-      result.data?.chats?.map(async (chat: chat) => {
+      result.data?.map(async (chat: chat) => {
         newObj[chat._id] = {...chat, isTyping: false, lastMessage: messagesStore.messagesHistory[chat._id]?.messages[messagesStore.messagesHistory[chat._id]?.messages.length-1]?.createdAt, inputMessage: ""}
       })
       chatStore.setUserChats(newObj)
@@ -50,7 +50,9 @@ export default function DialogList(){
   }, [socket?.connected])
 
   const createNewChat = async() => {
+    console.log('CREATE ONE')
     if(search == user.usertag){return}
+    console.log('CREATE TWO')
     tryCatch(async()=>{
       const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(search), warning)
       const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
@@ -58,9 +60,11 @@ export default function DialogList(){
           router.push(`/chat/${chat._id}`)
           return true
         }
+        console.log('CHAT EXISTS', chat)
       })
       if(doesChatExist.length){return}
       const newChat = await netRequestHandler(()=>createNewChatAPI(user._id, secondUser.data._id), warning)
+      console.log(newChat.data)
       chatStore.addNewChat(newChat.data)
     })
   }
@@ -86,47 +90,90 @@ export default function DialogList(){
       {groupCreateMode ? <CreateGroupWindow setGroupCreateMode={setGroupCreateMode}/> : null}
       <h2>Messages</h2>
       <div className={styles.searchBlock}>
-        <Input
-          onChange={(e)=>setSearch(inputFilter(e.target.value))}
-          value={search}
-          fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
-          type="text"/>
-        <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da"/></button>
+        {tab=="groups" ? 
+        <button className={styles.createAgroup} onClick={()=>setGroupCreateMode(!groupCreateMode)}>
+          Create a new group
+        </button>
+        : <><Input
+            onChange={(e)=>setSearch(inputFilter(e.target.value))}
+            value={search}
+            fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
+            type="text"/>
+            <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da"/></button></>
+        }
+        
       </div>
       <div className={styles.listTabs}>
         <div className={tab == 'direct' ? styles.activeTab : ""} onClick={() => setTab('direct')}>Direct</div>
         <div className={tab == 'groups' ? styles.activeTab : ""} onClick={() => setTab('groups')}>Groups</div>
       </div>
-      {tab=="groups" ? 
-      <button className={styles.createAgroup} onClick={()=>setGroupCreateMode(!groupCreateMode)}>
-        Create new
-      </button> : null
-      }
-      <fieldset className={styles.block}>
-        {Object.keys(chatStore.userChats)
-                .filter((chat: any) => tab == 'direct' ? chatStore?.userChats[chat]?.members?.length == 2 : chatStore?.userChats[chat]?.members?.length > 2)
-                .map((keyname: string) => (
+      <div className={styles.block} style={{padding: 0, margin: 0, overflowX: "hidden"}}>
+        <div style={{display: tab == 'direct' ? 'flex' : 'none'}}><UserList deleteChat={deleteChat} chooseDeleteId={chooseDeleteId} deleteId={deleteId} messagesStore={messagesStore}/></div>
+        <div style={{display: tab != 'direct' ? 'flex' : 'none'}}><GroupList deleteChat={deleteChat} chooseDeleteId={chooseDeleteId} deleteId={deleteId} messagesStore={messagesStore}/></div>
+      </div>
+    </div>
+  )
+}
+
+const UserList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) => {
+  const chatStore = useChatStore()
+  return (
+    <div>
+      {Object.keys(chatStore.userChats)
+        .filter((chat: any) => chatStore?.userChats[chat]?.members?.length == 2)
+        .map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
-            href={`/chat/${chatStore.userChats[keyname]._id}`}>
+            href={`/chat/${chatStore.userChats[keyname]._id}`}
+          >
             <Dialog
               deleteChat={deleteChat}
               chooseDeleteId={chooseDeleteId}
               deleteId={deleteId}
               chat={chatStore.userChats[keyname]}
-              messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}/>
+              messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}
+            />
           </Link>
-        )).sort((a: any, b: any) => {
-            return Date.parse(chatStore?.userChats[b.key]?.lastMessage) - Date.parse(chatStore?.userChats[a.key]?.lastMessage)
+        ))
+        .sort((a: any, b: any) => {
+          return Date.parse(chatStore?.userChats[b.key]?.lastMessage) - Date.parse(chatStore?.userChats[a.key]?.lastMessage);
         })}
-      </fieldset>
     </div>
-  )
-}
+  );
+};
+
+
+const GroupList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) => {
+  const chatStore = useChatStore()
+  return (
+    <div>
+      {Object.keys(chatStore.userChats)
+        .filter((chat: any) => chatStore?.userChats[chat]?.members?.length > 2)
+        .map((keyname: string) => (
+          <Link
+            key={chatStore.userChats[keyname]._id}
+            href={`/chat/${chatStore.userChats[keyname]._id}`}
+          >
+            <Dialog
+              deleteChat={deleteChat}
+              chooseDeleteId={chooseDeleteId}
+              deleteId={deleteId}
+              chat={chatStore.userChats[keyname]}
+              messagesStore={messagesStore.messagesHistory[chatStore.userChats[keyname]._id]}
+            />
+          </Link>
+        ))
+        .sort((a: any, b: any) => {
+          return Date.parse(chatStore?.userChats[b.key]?.lastMessage) - Date.parse(chatStore?.userChats[a.key]?.lastMessage);
+        })}
+    </div>
+  );
+};
 
 export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Function}){
   const warning = useContext<warningHook>(WarningContext)
   const accountStore = useAccountStore()
+  const chatStore = useChatStore()
   const [step, setStep] = useState(0)
   const [users, setUsers] = useState<userData[]>([])
   const [groupData, setGroupData] = useState<{name: string, members: string[], avatar: string}>({
@@ -178,8 +225,8 @@ export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Fun
   }
 
   const finishCreatingGroup = async () => {
-    const result = await createNewGroupAPI(groupData.name, groupData.avatar, groupData.members)
-    console.log(result)
+    const result = await createNewGroupAPI(groupData.name, {format: 'png', code: groupData.avatar}, groupData.members)
+    chatStore.addNewChat(result.data)
     setGroupCreateMode(false)
     setStep(0)
   }

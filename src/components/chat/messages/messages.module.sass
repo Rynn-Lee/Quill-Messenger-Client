@@ -4,6 +4,7 @@
   left: 346px
   right: 0px
   padding: 5px 20px
+  overflow: hidden
   overflow-y: auto
   bottom: 62px
   z-index: 100
@@ -22,6 +23,20 @@
     max-width: 500px
     padding: 5px 15px
     border-radius: 10px
+  .removeMessage
+    position: absolute
+    top: -12px
+    transform: rotate(45deg)
+    pointer-events: none
+    opacity: 0
+    right: -20px
+    padding: 5px
+    cursor: pointer
+    transition: 200ms
+  &:hover
+    .removeMessage
+      opacity: 1
+      pointer-events: all
 
 .rightMessage
   justify-content: flex-start
