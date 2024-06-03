@@ -8,6 +8,7 @@ import { useEffect } from "react";
 
 const ignoreList: string[] = ["/settings", "/profile"]
 
+
 export default function AppLayout({children}: {children: React.ReactNode}){
   const user = useAccountStore()
   const router = useRouter()
@@ -26,10 +27,10 @@ export default function AppLayout({children}: {children: React.ReactNode}){
   return(
     <SocketWrapper _id={user._id}>
       <Sidebar /> 
-      {!ignoreList.includes(router.pathname) ? <DialogList/>: <></>}
       <div className={"content"}>
         {children}
       </div>
+      {!ignoreList.includes(router.pathname) ? <DialogList/>: <></>}
     </SocketWrapper>
   )
 }

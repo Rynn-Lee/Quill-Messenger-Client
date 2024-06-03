@@ -36,10 +36,11 @@ const fetchLatestMessageAPI = async(chatID: string) => {
   }
 }
 
+type message = string | { format: string; code: string | undefined; text: string; } | { format: string; code: string | undefined; }
 // sendMessage
-const sendMessageAPI = async(chatID: string, senderID: string, text: string) => {
+const sendMessageAPI = async({chatID, senderID, type, text} : {chatID: string, senderID: string, type: 'text' | 'media' | 'media-text', text: message}) => {
   try{
-    const result = await axios.post(`${api_url}/message/send`, {chatID, senderID, text})
+    const result = await axios.post(`${api_url}/message/send`, {chatID, senderID, type, text})
     return({
       data: result.data,
       status: 200,

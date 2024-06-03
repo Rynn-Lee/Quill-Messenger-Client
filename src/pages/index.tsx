@@ -1,4 +1,4 @@
-import { loginAPI, registerAPI } from "@/api/user-api"
+import { fetchUserByTagAPI, loginAPI, registerAPI } from "@/api/user-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import Icon from "@assets/Icons"
 import Input from "@components/interface/Input"
@@ -10,11 +10,12 @@ import { inputFilter } from "@/utils/input-filter"
 import { netRequestHandler } from "@/utils/net-request-handler"
 import { tryCatch } from "@/utils/try-catch"
 import { userData } from "@/types/types"
+import { decodeImage } from "@/utils/decodeImage"
 
 export default function Home() {
   const router = useRouter()
   const warning = useContext<warningHook>(WarningContext)
-  const accountStore = useAccountStore()
+  const accountStore  = useAccountStore()
   const [toggle, setToggle] = useState<boolean>(false)
   const [userInputs, setUserInputs] = useState({
     usertag: "",
@@ -23,26 +24,44 @@ export default function Home() {
   })
 
   const passLoginScreen = (userdata?: userData) => {
-    userdata && accountStore.setUser(userdata)
+    userdata && accountStore.setUser({...userdata})
     router.push("/chat")
   }
 
   useEffect(()=>{
     if(!accountStore._id){ return }
-    passLoginScreen()
+    passiveLogin()
   }, [])
+
+  const passiveLogin = () => {
+    tryCatch(async()=>{
+      const result = await netRequestHandler(()=>fetchUserByTagAPI(accountStore.usertag), warning)
+      console.log("PASSIVE LOGGED IN", result)
+      passLoginScreen({
+        ...result.data,
+        avatar: result.data.avatar.code
+      })
+    })
+  }
 
   const registerNewAccount = async() => {
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>registerAPI(userInputs), warning)
-      passLoginScreen(result.data)
+      passLoginScreen({
+        ...result.data,
+        avatar: result.data.avatar.code
+      })
     })
   }
 
   const loginAccount = async() => {
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>loginAPI(userInputs), warning)
-      passLoginScreen(result.data)
+      console.log(result)
+      passLoginScreen({
+        ...result.data,
+        avatar: result.data.avatar.code
+      })
     })
   }
 

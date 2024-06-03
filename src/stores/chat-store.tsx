@@ -9,6 +9,7 @@ export type chat = {
   inputMessage: string,
   isTyping?: boolean,
   lastMessage?: string,
+  attachment?: string
 }
 
 export type chatArray = {
@@ -31,6 +32,7 @@ interface chatStore {
   setChatMessageTime: (data: {chatID: string, time: string}) => void,
   setIsTyping: (data: {chatID: string, state: boolean}) => void,
   setInputMessage: (data: {chatID: string, message: string}) => void,
+  setChatImage: (data: {chatID: string, image: string}) => void,
   setActiveChat: (data: {chat: chat, friend: friend}) => void
   removeChat: (data: {chatID: string}) => void
   clearChatStore: () => void,
@@ -62,6 +64,11 @@ export const useChatStore = create<chatStore>()(persist((set) => ({
   setInputMessage: (data) => set((state: any) => ({
     userChats: {...state.userChats, [data.chatID]: {
       ...state.userChats[data.chatID], inputMessage: data.message
+    }}
+  })),
+  setChatImage: (data) => set((state: any) => ({
+    userChats: {...state.userChats, [data.chatID]: {
+      ...state.userChats[data.chatID], attachment: data.image
     }}
   })),
   setActiveChat: (data) => set((state: any) => ({activeChat: data})),

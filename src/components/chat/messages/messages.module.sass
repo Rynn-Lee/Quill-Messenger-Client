@@ -5,7 +5,7 @@
   right: 0px
   padding: 5px 20px
   overflow-y: auto
-  bottom: 60px
+  bottom: 62px
   z-index: 100
   
 .message
@@ -16,6 +16,7 @@
   word-break: break-word
   padding: 1px 0px
   img
+    object-fit: cover
     border-radius: 100px
   div
     max-width: 500px
@@ -41,6 +42,7 @@
     margin-left: 5px
     background: var(--leftMessage)
   .timeSent
+    margin-top: 5px
     float: right
 
 .timeSent
@@ -87,6 +89,12 @@
   display: block
   height: 10px
 
+.messageContent
+  display: flex
+  flex-direction: column
+  padding: 0px !important
+  margin: 0px !important
+
 @media screen and (max-width: 972px)
   .arrow
     display: none
@@ -96,3 +104,4 @@
   .rightMessage
     .text
       right: 0px
+

@@ -2,7 +2,7 @@ import Icon from "@/assets/Icons"
 import styles from "./sidebar.module.sass"
 import Image from "next/image"
 import Link from "next/link"
-import { useContext, useEffect, useMemo, useState } from "react"
+import { memo, useContext, useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/router"
 import { logoutAPI } from "@/api/user-api"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
@@ -11,8 +11,9 @@ import { useChatStore } from "@/stores/chat-store"
 import { SocketContext } from "@/context/socket-context"
 import { Socket } from "socket.io-client"
 import { useCounterStore } from "@/stores/counter-store"
+import { decodeImage } from "@/utils/decodeImage"
 
-export default function Sidebar(){
+const MemoSidebar = memo(function Sidebar(){
   const [activePage, setActivePage] = useState("/")
   const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext);
@@ -20,6 +21,10 @@ export default function Sidebar(){
   const chat = useChatStore()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
+
+  const avatar = useMemo(()=>{
+    return decodeImage(user.avatar)
+  }, [user.avatar])
 
   const counters = useMemo(()=>{
     return counterStore.countersAmount()
@@ -59,10 +64,12 @@ export default function Sidebar(){
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">
           {user.avatar ? <Image
             className={`${styles.userImage} ${socket?.connected ? styles.connected : styles.disconnected}`}
-            src={user.avatar}
-            alt="pfp" width={40} height={40}/> : <></>}
+            src={avatar}
+            alt="pfp" width={40} height={40}/> : <div>none</div>}
         </Link>
       </div>
     </div> 
   )
-}
+})
+
+export default MemoSidebar

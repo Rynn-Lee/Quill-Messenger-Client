@@ -1,6 +1,4 @@
 import { fetchRandomUserAPI, fetchUserByTagAPI } from "@/api/user-api"
-import { open } from '@tauri-apps/api/dialog';
-import { readBinaryFile, readTextFile } from "@tauri-apps/api/fs"
 import { WarningContext, warningHook } from "@/lib/warning/warning-context"
 import { userData } from "@/types/types"
 import styles from '@/styles/pages/discover.module.sass'
@@ -14,6 +12,7 @@ import { tryCatch } from "@/utils/try-catch"
 import { useChatStore } from "@/stores/chat-store"
 import { createNewChatAPI } from "@/api/chat-api"
 import { useAccountStore } from "@/stores/account-store"
+import { decodeImage } from "@/utils/decodeImage"
 
 
 export default function Discover() {
@@ -30,42 +29,29 @@ export default function Discover() {
   
   const fetchRandomUser = async() => {
     const result = await netRequestHandler(() => fetchRandomUserAPI(account._id), warning)
-    setRandomUser(result.data)
+    setRandomUser({
+      ...result.data,
+      avatar: decodeImage(result?.data?.avatar?.code)
+    })
   }
 
   const createNewChat = async(usertag: string) => {
     tryCatch(async()=>{
-      const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(usertag), warning)
+      if(!randomUser){return}
       const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
-        if(chatStore.userChats[chat].members[0] == secondUser.data._id || chatStore.userChats[chat].members[0] == secondUser.data._id){
+        if(chatStore.userChats[chat].members[0] == randomUser._id || chatStore.userChats[chat].members[0] == randomUser._id){
           console.log("CHAT EXITS")
-          chatStore.setActiveChat({chat: chat, friend: secondUser.data})
+          chatStore.setActiveChat({chat: chat, friend: randomUser})
           router.push(`/chat/${chatStore.userChats[chat]._id}`)
           return true
         }
       })
       if(doesChatExist.length){return}
-      const newChat = await netRequestHandler(()=>createNewChatAPI(account._id, secondUser.data._id), warning)
+      const newChat = await netRequestHandler(()=>createNewChatAPI(account._id, randomUser._id), warning)
       chatStore.addNewChat(newChat.data)
-      chatStore.setActiveChat({chat: newChat.data, friend: secondUser.data})
+      chatStore.setActiveChat({chat: newChat.data, friend: randomUser})
       router.push(`/chat/${newChat.data._id}`)
     })
-  }
-
-  const openDialog = async () => {
-    try{
-      const selectedPath = await open({
-        multiple: false,
-        title: "Choose a photo"
-      })
-      if(!selectedPath) return;
-      const Buffer = await readBinaryFile(selectedPath as string)
-      const blob = new Blob([Buffer])
-      const url = URL.createObjectURL(blob)
-      setImage(url)
-    } catch (err) {
-      console.log(err)
-    }
   }
 
   useEffect(()=>{
@@ -81,7 +67,7 @@ export default function Discover() {
           {randomUser?._id && (
             <div className={styles.userInfo}>
               <div className={styles.pfpblock}>
-                <Image src={image} width={140} height={140} alt="avatar"/>
+                <Image src={randomUser.avatar} width={140} height={140} alt="avatar"/>
               </div>
               <div className={styles.infoblock}>
                 <div>
@@ -90,7 +76,7 @@ export default function Discover() {
                   <span className={styles.row}><Icon.Calendar color="#fff" width="26px" height="20px"/> {calculateDate(randomUser.createdAt.toString(), 'full')}</span>
                   <div style={{flexDirection: "row", display: "flex"}}>
                     <button onClick={()=>createNewChat(randomUser.usertag)} style={{flex: 2}}>Start a new conversation!</button>
-                    <button onClick={openDialog} style={{flex: 1}}>Try again :c</button>
+                    <button onClick={fetchRandomUser} style={{flex: 1}}>Try again :c</button>
                   </div>
                 </div>
               </div>

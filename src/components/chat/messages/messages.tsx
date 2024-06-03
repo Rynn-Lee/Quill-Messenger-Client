@@ -6,6 +6,7 @@ import { userData } from '@/types/types'
 import Icon from '@/assets/Icons'
 import { calculateDate, differenceInMinutes, isDifferentDay } from '@/utils/calculate-date'
 import { chat, friend } from '@/stores/chat-store'
+import { decodeImage } from '@/utils/decodeImage'
 
 type messageData = {
   message: message,
@@ -64,7 +65,10 @@ function Message({message, user, opponent, date, index, nextMessage}: messageDat
 
     
       <div className={`${styles.text} ${(!nextMessage.samePerson || (nextMessage.samePerson && nextMessage.differentDate)) ? (message.senderID == user._id ? styles.rightRow : styles.leftRow) : ""}`}>
-        {message.text}<br/>
+          <div className={styles.messageContent}>
+            {message.type == 'media-text' || message.type == 'media' ? <Image src={message.text.code} style={{borderRadius: 10, marginBottom: 5}} width={300} height={300}/> : null}
+            {message.text.text}
+          </div>
         <span className={styles.timeSent}>{calculateDate(date.toString(), 'time')}</span>
       </div>
     </div>

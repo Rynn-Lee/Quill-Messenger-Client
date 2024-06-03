@@ -9,9 +9,12 @@ import { useAccountStore } from "@/stores/account-store"
 import Input from "@/components/interface/Input"
 import Icon from "@/assets/Icons"
 import { tryCatch } from "@/utils/try-catch"
+import { open } from '@tauri-apps/api/dialog';
+import { readBinaryFile } from "@tauri-apps/api/fs"
 import { netRequestHandler } from "@/utils/net-request-handler"
 import { SocketContext } from "@/context/socket-context"
 import { Socket } from "socket.io-client/debug"
+import Image from 'next/image'
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
 import { useCounterStore } from "@/stores/counter-store"
@@ -36,8 +39,11 @@ export default function ChatBox() {
 
   useEffect(()=>{
     counterStore.resetCounter({chatID})
+    console.log("chatStore.activeChat.friend", chatStore.activeChat.friend)
     console.log("CHATID", chatID)
   },[chatID])
+
+  type message = string | { format: string; code: string | undefined; text: string; } | { format: string; code: string | undefined; }
 
   useEffect(()=>{
     if(!messagesHistory[chatID]?.messages?.length){return}
@@ -45,12 +51,31 @@ export default function ChatBox() {
   }, [messagesHistory[chatID]?.messages?.length])
 
   const sendNewMessage = async() => {
-    if(!chatStore.userChats[chatID]?.inputMessage || !socket){return}
+    if((!chatStore.userChats[chatID]?.inputMessage && !chatStore.userChats[chatID]?.attachment) || !socket){return}
+    const messageType = chatStore.userChats[chatID]?.inputMessage && chatStore.userChats[chatID]?.attachment
+                        ? 'media-text'
+                        : chatStore.userChats[chatID]?.inputMessage && !chatStore.userChats[chatID]?.attachment
+                          ? 'text'
+                          : 'media'
+
+    const textFormat : message = messageType == 'media-text'
+                     ? {format: 'png', code: chatStore.userChats[chatID]?.attachment, text: chatStore.userChats[chatID]?.inputMessage}
+                     : messageType == 'text'
+                       ? {text: chatStore.userChats[chatID]?.inputMessage}
+                       : {format: 'png', code: chatStore.userChats[chatID]?.attachment}
+    
     tryCatch(async()=>{
-      const sentMessage = await netRequestHandler(()=>sendMessageAPI(chatID, user._id, chatStore.userChats[chatID]?.inputMessage), warning)
+      const sentMessage = await netRequestHandler(()=>sendMessageAPI({
+        chatID,
+        senderID: user._id,
+        type: messageType,
+        text: textFormat
+      }), warning)
+      console.log(sentMessage.data)
       socket.emit('newMessage', {message: sentMessage.data, recipientID: chatStore.activeChat.friend._id})
       addMessage(sentMessage.data)
       chatStore.setInputMessage({chatID, message: ""})
+      chatStore.setChatImage({chatID, image: ""})
       chatStore.setChatMessageTime({chatID, time: sentMessage.data.createdAt})
     })
   }
@@ -77,9 +102,27 @@ export default function ChatBox() {
       return () => clearTimeout(typingTimer); // Clear the timeout if the component is unmounted
   }, [typingTimer]);
 
-  useEffect(()=>{
-    console.log("isFriendInfoOpen", isFriendInfoOpen)
-  },[isFriendInfoOpen])
+  const openImageDialog = async() => {
+    try{
+      const selectedPath = await open({
+        multiple: false,
+        filters: [
+          {
+            name: "Image",
+            extensions: ["png", "jpg", "jpeg", 'webp', 'gif']
+          }
+        ],
+        title: "Choose a photo"
+      })
+      if(!selectedPath) return;
+      const Buffer = await readBinaryFile(selectedPath as string)
+      const dataUrl = `data:image/png;base64,${btoa(Buffer.reduce((data, byte) => data + String.fromCharCode(byte), ''))}`
+
+      chatStore.setChatImage({chatID: chatID, image: dataUrl})
+    } catch (err) {
+      console.log(err)
+    }
+  }
 
   return (
     <div className={styles.chatBox}>
@@ -99,13 +142,21 @@ export default function ChatBox() {
         user={user}
         refProp={ref}/>
 
+      {chatStore?.userChats[chatID]?.attachment
+      ? <div className={styles.attachment}>
+          <div onClick={()=>chatStore.setChatImage({chatID, image: ''})}><Icon.AddUser color="rgb(235, 74, 74)" width="30px" height="30px"/></div>
+          <Image src={chatStore?.userChats[chatID]?.attachment} width={140} height={140} alt="Image"/>
+        </div>
+      : null
+      }
       <div className={styles.inputMessages}>
-      <Input
-          value={chatStore.userChats[chatID]?.inputMessage || ""}
-          onChange={(e)=>{chatStore.setInputMessage({chatID, message: e.target.value});startTyping()}}
-          onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
-          fancy={{text: "Message", backgroundHover: "var(--messageInput)", background: "var(--messageInput)", position: "left"}}
-          type="text"/>
+        <button className={styles.addImageButton} onClick={openImageDialog}><Icon.AddUser width="40px" height="40px" color={'#b06ce4'}/></button>
+        <Input
+            value={chatStore.userChats[chatID]?.inputMessage || ""}
+            onChange={(e)=>{chatStore.setInputMessage({chatID, message: e.target.value});startTyping()}}
+            onKeyDown={(e)=>{(e.key == "Enter" && sendNewMessage());}}
+            fancy={{text: "Message", backgroundHover: "var(--messageInput)", background: "var(--messageInput)", position: "left"}}
+            type="text"/>
         <button onClick={sendNewMessage}><Icon.SendArrow/></button>
       </div>
     </div>

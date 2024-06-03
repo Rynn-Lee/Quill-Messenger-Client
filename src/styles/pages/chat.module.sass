@@ -20,10 +20,10 @@
 .inputMessages
   position: fixed
   bottom: 20px
-  left: 375px
+  left: 355px
   right: 10px
   display: flex
-  align-items: flex-end
+  align-items: center
   flex-direction: row
   &>div
     flex: 10
@@ -32,3 +32,39 @@
     border-radius: 20px
     border: none
     background: #ffffff00
+  .addImageButton
+    transition: var(--var-transition)
+    cursor: pointer
+    &:hover
+      opacity: 0.7
+
+.attachment
+  display: flex
+  align-items: center
+  justify-content: center
+  position: fixed
+  left: 420px
+  z-index: 345678
+  width: 150px
+  height: 150px
+  bottom: 70px
+  background: var(--var-accent1)
+  border-radius: 10px
+  padding: 2px
+  div
+    display: flex
+    align-items: center
+    justify-content: center
+    position: absolute
+    z-index: 100
+    border-radius: 100px
+    transform: rotate(45deg)
+    top: -14px
+    right: -14px
+    transition: 200ms
+    z-index: 1000
+    &:hover
+      opacity: 0.8
+  img
+    border-radius: 10px
+    object-fit: contain

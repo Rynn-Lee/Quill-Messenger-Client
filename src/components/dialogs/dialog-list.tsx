@@ -2,12 +2,15 @@ import Icon from '@/assets/Icons'
 import styles from './dialog-list.module.sass'
 import Input from '../interface/Input'
 import Dialog from './dialog'
+import Image from 'next/image'
 import { chat, friend, useChatStore } from '@store/chat-store'
 import { useAccountStore } from '@store/account-store'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
+import { open } from '@tauri-apps/api/dialog';
+import { readBinaryFile } from "@tauri-apps/api/fs"
 import { createNewChatAPI, deleteChatAPI, fetchUserChatsAPI } from '@/api/chat-api'
 import { inputFilter } from '@/utils/input-filter'
-import { fetchUserByTagAPI } from '@/api/user-api'
+import { fetchAllUsersAPI, fetchUserByTagAPI } from '@/api/user-api'
 import { WarningContext, warningHook } from '@/lib/warning/warning-context'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -17,9 +20,13 @@ import { SocketContext } from '@/context/socket-context'
 import { Socket } from 'socket.io-client'
 import { useMessageStore } from '@/stores/messages-store'
 import { useCounterStore } from '@/stores/counter-store'
+import { decodeImage } from '@/utils/decodeImage'
+import { userData } from '@/types/types'
+import { createNewGroupAPI } from '@/api/group-api'
 
 export default function DialogList(){
   const [deleteId, setDeleteId] = useState<string>("")
+  const [groupCreateMode, setGroupCreateMode] = useState<boolean>(false)
   const chatStore = useChatStore()
   const [tab, setTab] = useState<'direct' | 'groups'>('direct')
   const messagesStore = useMessageStore()
@@ -76,6 +83,7 @@ export default function DialogList(){
 
   return(
     <div className={styles.chatlist}>
+      {groupCreateMode ? <CreateGroupWindow setGroupCreateMode={setGroupCreateMode}/> : null}
       <h2>Messages</h2>
       <div className={styles.searchBlock}>
         <Input
@@ -83,12 +91,17 @@ export default function DialogList(){
           value={search}
           fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
           type="text"/>
-        <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser/></button>
+        <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da"/></button>
       </div>
       <div className={styles.listTabs}>
         <div className={tab == 'direct' ? styles.activeTab : ""} onClick={() => setTab('direct')}>Direct</div>
         <div className={tab == 'groups' ? styles.activeTab : ""} onClick={() => setTab('groups')}>Groups</div>
       </div>
+      {tab=="groups" ? 
+      <button className={styles.createAgroup} onClick={()=>setGroupCreateMode(!groupCreateMode)}>
+        Create new
+      </button> : null
+      }
       <fieldset className={styles.block}>
         {Object.keys(chatStore.userChats)
                 .filter((chat: any) => tab == 'direct' ? chatStore?.userChats[chat]?.members?.length == 2 : chatStore?.userChats[chat]?.members?.length > 2)
@@ -107,6 +120,108 @@ export default function DialogList(){
             return Date.parse(chatStore?.userChats[b.key]?.lastMessage) - Date.parse(chatStore?.userChats[a.key]?.lastMessage)
         })}
       </fieldset>
+    </div>
+  )
+}
+
+export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Function}){
+  const warning = useContext<warningHook>(WarningContext)
+  const accountStore = useAccountStore()
+  const [step, setStep] = useState(0)
+  const [users, setUsers] = useState<userData[]>([])
+  const [groupData, setGroupData] = useState<{name: string, members: string[], avatar: string}>({
+    name: "",
+    members: [accountStore._id],
+    avatar: "",
+  })
+
+  const openDialog = async () => {
+    try{
+      const selectedPath = await open({
+        multiple: false,
+        filters: [
+          {
+            name: "Image",
+            extensions: ["png", "jpg", "jpeg", 'webp', 'gif']
+          }
+        ],
+        title: "Choose a photo"
+      })
+      if(!selectedPath) return;
+      const Buffer = await readBinaryFile(selectedPath as string)
+      const dataUrl = `data:image/png;base64,${btoa(Buffer.reduce((data, byte) => data + String.fromCharCode(byte), ''))}`
+      
+      setGroupData({...groupData, avatar: dataUrl})
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  useEffect(()=>{
+    (async()=>{
+      const users = await netRequestHandler(()=>fetchAllUsersAPI(), warning)
+      if(!users) return
+      setUsers(users.data)
+    })()
+  },[])
+
+  const groupImage = useMemo(()=>{
+    return decodeImage(groupData.avatar)
+  }, [groupData.avatar])
+
+  const handleUserClick = (userid: string) => {
+    if(groupData.members.includes(userid)){
+      setGroupData({...groupData, members: groupData.members.filter((id: string) => id != userid)})
+      return
+    }
+    setGroupData({...groupData, members: [...groupData.members, userid]})
+  }
+
+  const finishCreatingGroup = async () => {
+    const result = await createNewGroupAPI(groupData.name, groupData.avatar, groupData.members)
+    console.log(result)
+    setGroupCreateMode(false)
+    setStep(0)
+  }
+
+  return(
+    <div className={styles.createGroupWrapper} onClick={()=>setGroupCreateMode(false)}>
+      <div className={styles.createGroup} onClick={(e)=>e.stopPropagation()}>
+        {step == 0
+          ? <><div onClick={openDialog}>
+                {groupData.avatar
+                ? <Image src={groupImage} className={styles.avatar} alt="avatar" width={40} height={40}/>
+                : <div className={styles.avatar}>Select</div>
+                }
+              </div>
+              <div className={styles.groupInfo}>
+                <p className={styles.title}>Group Name</p>
+                <input onChange={(e)=>setGroupData({...groupData, name: e.target.value})} type="text" value={groupData.name}/>
+                <button onClick={()=>setStep(1)} disabled={!groupData.name}>Continue</button>
+              </div></>
+        : <div className={styles.invitePeople}>
+            <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
+              <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
+                <span className={styles.title}>Invite People</span>
+                <span>Selected: {groupData.members.length-1}</span>
+              </div>
+              <button className={styles.finishCreating} onClick={()=>finishCreatingGroup()} style={{background: "#00000000", border: "none"}}><Icon.SendArrow /></button>
+            </div>
+            {users.map((user: userData) => {
+              if(user._id == accountStore._id) return null
+              const image = decodeImage(user.avatar.code)
+              return(
+              <div key={user._id} className={`${styles.userDiv} ${groupData.members.includes(user._id) ? styles.selected : ""}`} onClick={()=>handleUserClick(user._id)}>
+                <Image src={image} className={styles.userAvatars} alt="avatar" width={40} height={40}/>
+                <div style={{display: "flex", flexDirection: "column", gap: "5px"}}>
+                  <span className={styles.username}>{user.displayedName}</span>
+                  <span className={styles.username}>{user.usertag}</span>
+                </div>
+              </div>)
+            })}
+          </div>
+        }
+      </div>
     </div>
   )
 }

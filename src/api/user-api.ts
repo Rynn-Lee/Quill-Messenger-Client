@@ -100,7 +100,7 @@ const fetchUserByTagAPI = async(usertag: string) => {
   }
 }
 
-const updateUserProfileAPI = async(data: {_id: string, avatar?: string, displayedName?: string}) => {
+const updateUserProfileAPI = async(data: {_id: string, avatar?: {format?: string, code?: string}, displayedName?: string}) => {
   try{
     const result = await axios.post(`${api_url}/user/update`, data)
     return({

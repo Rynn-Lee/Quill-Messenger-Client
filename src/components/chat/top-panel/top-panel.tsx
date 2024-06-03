@@ -1,10 +1,11 @@
 import Image from "next/image"
 import styles from "./toppanel.module.sass"
 import Icon from "@/assets/Icons"
-import { chat, useChatStore } from "@/stores/chat-store"
+import { useChatStore } from "@/stores/chat-store"
 
 export default function TopPanel({name, usertag, avatar, chatID, setIsFriendInfoOpen}: {name: string, usertag: string, avatar: string, chatID: string, setIsFriendInfoOpen: Function}){
   const {userChats} = useChatStore()
+  
   return(
     <div className={styles.topPanel}>
       <div>

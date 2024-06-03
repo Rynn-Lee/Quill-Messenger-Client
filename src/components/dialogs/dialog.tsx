@@ -13,21 +13,29 @@ import { Socket } from 'socket.io-client'
 import { calculateDate } from '@/utils/calculate-date'
 import { useChatStore, chat, friend } from '@/stores/chat-store'
 import { useCounterStore } from '@/stores/counter-store'
+import { decodeImage } from '@/utils/decodeImage'
+import { useMessageStore } from '@/stores/messages-store'
+
+
 
 export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: chat, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
   const [opponentData, setOpponentData] = useState<friend>()
   const {setActiveChat, activeChat} = useChatStore()
   const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
+  const REALmessageStore = useMessageStore()
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
   const [messageData, setMessageData] = useState({
     senderID: "",
     text: "",
+    type: "",
+    image: "",
     time: "",
   })
-  
+
+
   const selectChat = () => {
     if(activeChat.chat._id == chat._id){return}
     chooseDeleteId('')
@@ -39,7 +47,8 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
     const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserByIdAPI(userID), warning)
-      setOpponentData(result.data)
+      const decodedURL: any = decodeImage(result.data.avatar.code);
+      setOpponentData({...result.data, avatar: decodedURL})
     })
   }, [opponentData, socket?.connected])
 
@@ -47,7 +56,9 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
     if(!messagesStore?.messages?.length){return}
     setMessageData({
       senderID: messagesStore?.messages[messagesStore?.messages.length-1].senderID,
-      text: messagesStore?.messages[messagesStore?.messages.length-1].text,
+      text: messagesStore?.messages[messagesStore?.messages.length-1].text?.text,
+      image: messagesStore?.messages[messagesStore?.messages.length-1].text?.code ?? "",
+      type: messagesStore?.messages[messagesStore?.messages.length-1].type,
       time: `${calculateDate(messagesStore?.messages[messagesStore?.messages.length-1].createdAt, 'count')}`
     })
   }, [messagesStore])
@@ -55,10 +66,18 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
 
   const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
   const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{messagesStore?.inputMessage}</>
-  const Message = () => <><span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
-                          {messageData?.text?.length ? messageData.text : "No messages yet..."}</>
+  const Message = () => <>
+                          <span className={styles.sentFromMe}>{messageData.senderID == user._id ? "You: " : ""}</span>
+                          {!REALmessageStore?.messagesHistory[chat._id]?.messages?.length
+                          ? "No messages yet..."
+                          : messageData.type == 'media'
+                            ? <Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}}/>
+                            :  messageData.type == 'media-text'
+                              ? <><Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}}/> {messageData.text}</>
+                              : messageData.text
+                          }
+                        </>
 
-                          
 
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat} onContextMenu={(e)=>{e.preventDefault(); chooseDeleteId(chat._id);}}>

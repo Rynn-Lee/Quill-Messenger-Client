@@ -8,11 +8,16 @@ type requestResult = {
 }
 
 export async function netRequestHandler(request: Function, warning: warningHook): Promise<{data?: any}>{
-  const result: requestResult = await request();
-  console.log("REQADSADASFAS", request)
-  if (result.status >= 400 || result.status < 200) {
-    warning.showWindow({ title: result?.title, message: result?.message });
-    throw new Error(result?.message)
+  try{
+    const result: requestResult = await request();
+    console.log("A net request was made: ", request)
+    if (result.status >= 400 || result.status < 200) {
+      warning.showWindow({ title: result?.title, message: result?.message });
+      throw new Error(result?.message)
+    }
+    return result;
+  } catch(err: any) {
+    console.log("ERORR: ", err)
+    return {data: null}
   }
-  return result;
 }
