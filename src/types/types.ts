@@ -1,5 +1,8 @@
 export type userData = {
-  avatar: string,
+  avatar: {
+    format: string
+    code: string
+  },
   displayedName: string,
   usertag: string,
   createdAt: string

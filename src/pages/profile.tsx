@@ -13,7 +13,7 @@ import { tryCatch } from "@/utils/try-catch"
 import styles from "@styles/pages/profile.module.sass"
 import Image from "next/image"
 import { useRouter } from "next/router"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect, useMemo, useState } from "react"
 import { Socket } from "socket.io-client"
 import { decodeImage } from "@/utils/decodeImage"
 
@@ -82,11 +82,15 @@ export default function Profile() {
     }
   }
 
+  const avatar: any = useMemo(()=>{
+    return decodeImage(user.avatar)
+  },[user.avatar])
+
   return (
     <div className={styles.profile}>
       <fieldset className={styles.block}>
         <legend>Your profile picture</legend>
-        <div className={styles.avatar}><Image src={decodeImage(user.avatar)} alt="profile" width={120} height={120}/></div>
+        <div className={styles.avatar}><Image src={avatar} alt="profile" width={120} height={120}/></div>
         <Input 
           value={newData.avatar}
           onChange={(e)=>setNewData({...newData, avatar: e.target.value})}/>

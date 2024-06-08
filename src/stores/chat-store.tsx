@@ -8,8 +8,8 @@ export type chat = {
   updatedAt?: string,
   inputMessage: string,
   isTyping?: boolean,
-  lastMessage?: string,
-  attachment?: string
+  lastMessage?: any,
+  attachment?: any
 }
 
 export type chatArray = {
@@ -33,7 +33,7 @@ interface chatStore {
   setIsTyping: (data: {chatID: string, state: boolean}) => void,
   setInputMessage: (data: {chatID: string, message: string}) => void,
   setChatImage: (data: {chatID: string, image: string}) => void,
-  setActiveChat: (data: {chat: chat, friend: friend[]}) => void
+  setActiveChat: (data: {chat: chat, friend: any[]}) => void
   removeChat: (data: {chatID: string}) => void
   clearChatStore: () => void,
 }

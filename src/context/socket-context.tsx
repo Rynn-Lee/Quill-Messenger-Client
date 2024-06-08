@@ -60,7 +60,7 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
   useEffect(()=>{
     if(!socket?.connected){return}
     socket.on('newMessage', (data: message) => {
-      if(activeChat.chat._id != data.chatID){
+      if(activeChat?.chat?._id != data?.chatID){
         console.log("ADDING TO COUNTER")
         console.log(data.chatID)
         counterStore.addCounter({chatID: data.chatID})

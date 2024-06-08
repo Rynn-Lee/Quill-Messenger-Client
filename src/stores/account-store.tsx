@@ -13,7 +13,7 @@ interface AccoutStore {
   usertag: string,
   avatar: string,
   displayedName: string,
-  setUser: (data: userData) => void,
+  setUser: (data: any) => void,
   clearAccountStore: () => void
 }
 

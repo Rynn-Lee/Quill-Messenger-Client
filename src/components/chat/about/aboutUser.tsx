@@ -4,7 +4,7 @@ import Image from 'next/Image'
 import Icon from "@/assets/Icons";
 import { calculateDate } from "@/utils/calculate-date";
 
-export default function AboutUser({friend, chatInfo, setIsFriendInfoOpen}: {friend: friend, chatInfo:unknown, setIsFriendInfoOpen: Function}) {
+export default function AboutUser({friend, chatInfo, setIsFriendInfoOpen}: {friend: friend, chatInfo:any, setIsFriendInfoOpen: Function}) {
   return(
     <div className={styles.aboutUser} onClick={(e) => {e.stopPropagation();setIsFriendInfoOpen(false)}}>
       <div className={styles.userInfo}>

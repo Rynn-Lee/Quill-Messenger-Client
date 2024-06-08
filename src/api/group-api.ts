@@ -1,5 +1,7 @@
 import axios from "axios"
 const api_url = 'http://192.168.2.100:4000/api'
+// const api_url = 'http://192.168.2.107:4000/api'
+// const api_url = 'http://localhost:4000/api'
 // const api_url = 'https://quill-messenger-server.onrender.com/api'
 
 //create group

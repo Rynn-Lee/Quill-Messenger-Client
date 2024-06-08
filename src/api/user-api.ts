@@ -3,6 +3,8 @@ import { removeItem } from "@lib/local-storage"
 import axios from "axios"
 
 const api_url = 'http://192.168.2.100:4000/api'
+// const api_url = 'http://192.168.2.107:4000/api'
+// const api_url = 'http://localhost:4000/api'
 // const api_url = 'https://quill-messenger-server.onrender.com/api'
 
 const loginAPI = async(userdata: {usertag: string, password: string}) => {
@@ -101,7 +103,7 @@ const fetchUserByTagAPI = async(usertag: string) => {
   }
 }
 
-const updateUserProfileAPI = async(data: {_id: string, avatar?: {format?: string, code?: string}, displayedName?: string}) => {
+const updateUserProfileAPI = async(data: {_id: any, avatar?: {format?: any, code?: any}, displayedName?: any} | any) => {
   try{
     const result = await axios.post(`${api_url}/user/update`, data)
     return({

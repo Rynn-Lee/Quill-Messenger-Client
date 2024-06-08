@@ -27,7 +27,7 @@ import { createNewGroupAPI } from '@/api/group-api'
 export default function DialogList(){
   const [deleteId, setDeleteId] = useState<string>("")
   const [groupCreateMode, setGroupCreateMode] = useState<boolean>(false)
-  const chatStore = useChatStore()
+  const chatStore: any = useChatStore()
   const [tab, setTab] = useState<'direct' | 'groups'>('direct')
   const messagesStore = useMessageStore()
   const [search, setSearch] = useState<string>("")
@@ -99,7 +99,7 @@ export default function DialogList(){
             value={search}
             fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
             type="text"/>
-            <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da"/></button></>
+            <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da" width='24px' height='24px'/></button></>
         }
         
       </div>
@@ -212,7 +212,7 @@ export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Fun
     })()
   },[])
 
-  const groupImage = useMemo(()=>{
+  const groupImage: any = useMemo(()=>{
     return decodeImage(groupData.avatar)
   }, [groupData.avatar])
 
@@ -256,7 +256,7 @@ export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Fun
             </div>
             {users.map((user: userData) => {
               if(user._id == accountStore._id) return null
-              const image = decodeImage(user.avatar.code)
+              const image: any = decodeImage(user.avatar.code)
               return(
               <div key={user._id} className={`${styles.userDiv} ${groupData.members.includes(user._id) ? styles.selected : ""}`} onClick={()=>handleUserClick(user._id)}>
                 <Image src={image} className={styles.userAvatars} alt="avatar" width={40} height={40}/>

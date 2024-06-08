@@ -16,7 +16,7 @@ import { decodeImage } from "@/utils/decodeImage"
 
 
 export default function Discover() {
-  const [randomUser, setRandomUser] = useState<userData>()
+  const [randomUser, setRandomUser] = useState<any>()
   const router = useRouter()
   const account = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
@@ -53,10 +53,6 @@ export default function Discover() {
       router.push(`/chat/${newChat.data._id}`)
     })
   }
-
-  useEffect(()=>{
-    console.log(image)
-  },[image])
 
   return (
     <div className={styles.page}>

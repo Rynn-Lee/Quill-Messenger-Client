@@ -24,10 +24,10 @@ type messageData = {
   date: Date
   index: number
   handleRemoveMessage: (message: message) => void
-  nextMessage: {date: string, samePerson: boolean, differentDate: boolean, minutes: number, doesNextExist: boolean}
-}
+  nextMessage: {date: string, samePerson: boolean, differentDate: boolean, minutes: number, doesNextExist: boolean, createdAt: any, opponent: any, index: any} | any
+} | any
 
-export default function Messages({chatID, activeChat, user, refProp}: {chatID: string, activeChat: {chat: chat, friend: friend}, user: userData, refProp: any}){
+export default function Messages({chatID, activeChat, user, refProp}: {chatID: string, activeChat: {chat: chat, friend: friend}, user: any, refProp: any}){
   const {messagesHistory, removeMessage} = useMessageStore()
   const warning = useContext<warningHook>(WarningContext)
   const socket: Socket | any = useContext(SocketContext)
@@ -94,7 +94,7 @@ function Message({message, user, date, nextMessage, handleRemoveMessage}: messag
         
           {message.senderID == user._id
            ?  <div className={styles.removeMessage} onClick={() => handleRemoveMessage(message)}>
-                <Icon.AddUser width='30px' height='30px'/>
+                <Icon.AddUser width='30px' height='30px' color='#9d58ec'/>
               </div> : null}
 
           <div className={styles.messageContent}>

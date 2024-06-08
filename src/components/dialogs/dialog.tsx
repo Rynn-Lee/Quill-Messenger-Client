@@ -19,13 +19,13 @@ import { useUserCache } from '@/stores/user-cache'
 
 
 
-export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: chat, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
-  const [opponentData, setOpponentData] = useState<friend>()
+export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: any, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
+  const [opponentData, setOpponentData] = useState<any>()
   const {setActiveChat, activeChat} = useChatStore()
   const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
   const REALmessageStore = useMessageStore()
-  const user = useAccountStore()
+  const user: any = useAccountStore()
   const userCache = useUserCache()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
@@ -39,7 +39,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
 
 
   const selectChat = () => {
-    if(activeChat.chat._id == chat._id){return}
+    if(activeChat?.chat?._id == chat?._id){return}
     chooseDeleteId('')
     setActiveChat({chat: chat, friend: opponentData!})
   }
@@ -78,7 +78,16 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
   const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
   const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{messagesStore?.inputMessage}</>
   const Message = () => <>
-                          <span className={styles.sentFromMe}>{!REALmessageStore?.messagesHistory[chat._id]?.messages?.length ? "" :messageData.senderID == user._id ? "You: " : `${userCache?.userCache[messageData.senderID]?.displayedName}: `}</span>
+                          <span className={styles.sentFromMe}>{
+                            !REALmessageStore?.messagesHistory[chat._id]?.messages?.length 
+                            ? "" 
+                            : messageData.senderID == user._id
+                              ? "You: "
+                              : opponentData?.type == 'group'
+                                ?`${userCache?.userCache[messageData.senderID]?.displayedName}: }`
+                                : ""
+                          }
+                          </span>
                           {!REALmessageStore?.messagesHistory[chat._id]?.messages?.length
                           ? "No messages yet..."
                           : messageData.type == 'media'

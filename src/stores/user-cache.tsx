@@ -19,5 +19,5 @@ export const useUserCache = create<counterStore>()(persist((set) => ({
   },
   removeUserCache: () => set({userCache: {}})
 }),{
-  name: "message-counters"
+  name: "user-cache"
 }))

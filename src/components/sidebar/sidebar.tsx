@@ -22,7 +22,7 @@ const MemoSidebar = memo(function Sidebar(){
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
 
-  const avatar = useMemo(()=>{
+  const avatar: any = useMemo(()=>{
     return decodeImage(user.avatar)
   }, [user.avatar])
 

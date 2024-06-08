@@ -60,7 +60,7 @@ export default function ChatBox() {
                           ? 'text'
                           : 'media'
 
-    const textFormat : message = messageType == 'media-text'
+    const textFormat : any = messageType == 'media-text'
                      ? {format: 'png', code: chatStore.userChats[chatID]?.attachment, text: chatStore.userChats[chatID]?.inputMessage}
                      : messageType == 'text'
                        ? {text: chatStore.userChats[chatID]?.inputMessage}
