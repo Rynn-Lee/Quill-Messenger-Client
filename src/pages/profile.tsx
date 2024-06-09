@@ -1,4 +1,4 @@
-import { deleteAccount, updateUserProfileAPI } from "@/api/user-api"
+import { changePasswordAPI, deleteAccount, updateUserProfileAPI } from "@/api/user-api"
 import Input from "@/components/interface/Input"
 import { SocketContext } from "@/context/socket-context"
 import { removeItem, setItem } from "@/lib/local-storage"
@@ -16,6 +16,7 @@ import { useRouter } from "next/router"
 import { useContext, useEffect, useMemo, useState } from "react"
 import { Socket } from "socket.io-client"
 import { decodeImage } from "@/utils/decodeImage"
+import Icon from "@/assets/Icons"
 
 export default function Profile() {
   const warning = useContext<warningHook>(WarningContext)
@@ -28,6 +29,11 @@ export default function Profile() {
   const [newData, setNewData] = useState({
     avatar: user.avatar,
     displayedName: user.displayedName
+  })
+  const [passwords, setPasswords] = useState({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
   })
 
   const update = async() => {
@@ -86,23 +92,51 @@ export default function Profile() {
     return decodeImage(user.avatar)
   },[user.avatar])
 
+  const updatePassword = async() => {
+    if(!passwords.newPassword || !passwords.oldPassword || !passwords.confirmPassword || passwords.newPassword !== passwords.confirmPassword) {return}
+    tryCatch(async()=> {
+      const result = await netRequestHandler(()=>changePasswordAPI({userId: user._id, oldPassword: passwords.oldPassword, newPassword: passwords.newPassword}), warning)
+      if(!result){return}
+      setPasswords({
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+      })
+    })
+  }
+
   return (
     <div className={styles.profile}>
       <fieldset className={styles.block}>
-        <legend>Your profile picture</legend>
+        <legend>Ваше изображение профиля</legend>
         <div className={styles.avatar}><Image src={avatar} alt="profile" width={120} height={120}/></div>
-        <Input 
-          value={newData.avatar}
-          onChange={(e)=>setNewData({...newData, avatar: e.target.value})}/>
-        <button onClick={openDialog}>Change avatar</button>
-        <button onClick={removeUser}>DELETE ACCOUNT</button>
+        <div style={{display: 'flex', padding: 0, margin: 0}}>
+          <button onClick={openDialog} style={{flex: 3}}>Выбрать</button>
+          <button onClick={removeUser} style={{flex: 1}}><Icon.Remove height="24px" width="24px" color="#ffffff"/></button>
+        </div>
       </fieldset>
       <fieldset className={styles.block}>
         <legend>Your displayed name</legend>
         <Input 
           value={newData.displayedName}
           onChange={(e)=>setNewData({...newData, displayedName: e.target.value})}/>
-        <button onClick={update}>Change displayedName</button>
+        <button onClick={update}>Изменить никнейм</button>
+      </fieldset>
+      <fieldset className={styles.block}>
+        <legend>Сменить пароль</legend>
+        <Input 
+          value={passwords.oldPassword}
+          placeholder="Текущий пароль"
+          onChange={(e)=>setPasswords({...passwords, oldPassword: e.target.value})}/>
+        <Input 
+          value={passwords.newPassword}
+          placeholder="Новый пароль"
+          onChange={(e)=>setPasswords({...passwords, newPassword: e.target.value})}/>
+        <Input
+          placeholder="Подтвердите пароль"
+          value={passwords.confirmPassword}
+          onChange={(e)=>setPasswords({...passwords, confirmPassword: e.target.value})}/>
+        <button onClick={updatePassword}>Сменить пароль</button>
       </fieldset>
     </div>
   )

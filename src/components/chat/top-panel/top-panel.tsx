@@ -2,9 +2,11 @@ import Image from "next/image"
 import styles from "./toppanel.module.sass"
 import Icon from "@/assets/Icons"
 import { useChatStore } from "@/stores/chat-store"
+import { useEffect } from "react"
 
 export default function TopPanel({name, usertag, avatar, chatID, setIsFriendInfoOpen}: {name: string, usertag: string, avatar: string, chatID: string, setIsFriendInfoOpen: Function}){
   const {userChats} = useChatStore()
+
   
   return(
     <div className={styles.topPanel}>
@@ -20,8 +22,7 @@ export default function TopPanel({name, usertag, avatar, chatID, setIsFriendInfo
         </span>
       </div>
       <div>
-        <Icon.AudioCall/>
-        <Icon.VideoCall/>
+        <Icon.Settings/>
       </div>
     </div>
   )

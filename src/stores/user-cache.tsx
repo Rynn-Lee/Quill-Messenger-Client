@@ -11,13 +11,11 @@ interface counterStore {
   removeUserCache: () => void
 }
 
-export const useUserCache = create<counterStore>()(persist((set) => ({
+export const useUserCache = create<counterStore>()((set) => ({
   userCache: {},
   addUserCache: async (data) => {
     const user = await netRequestHandler(()=>fetchUserByIdAPI(data))
     set((state)=>({userCache: {...state.userCache, [data]: {...user.data, avatar: user?.data?.avatar?.code}}}))
   },
   removeUserCache: () => set({userCache: {}})
-}),{
-  name: "user-cache"
 }))

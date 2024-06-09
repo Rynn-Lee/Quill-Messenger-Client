@@ -45,8 +45,6 @@ export default function ChatBox() {
     return chatStore?.userChats[chatID]?.members?.filter((member) => member != user._id)
   }, [chatID])
 
-  type message = {text: string} | { format: string; code: string | undefined; text: string; } | { format: string; code: string | undefined; }
-
   useEffect(()=>{
     if(!messagesHistory[chatID]?.messages?.length){return}
     ref.current?.scrollIntoView({behavior: "smooth", block: "end"})

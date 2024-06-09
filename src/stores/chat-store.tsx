@@ -5,7 +5,12 @@ export type chat = {
   _id: string,
   members: string[],
   createdAt?: string,
+  type?: string
   updatedAt?: string,
+  image?: {
+    format: string,
+    code: string
+  }
   inputMessage: string,
   isTyping?: boolean,
   lastMessage?: any,
@@ -18,6 +23,7 @@ export type chatArray = {
 
 export type friend = {
   avatar: string,
+  type?: string,
   displayedName: string,
   usertag: string,
   createdAt: string,

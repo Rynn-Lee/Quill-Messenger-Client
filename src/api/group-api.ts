@@ -22,4 +22,22 @@ const createNewGroupAPI = async(name: string, image: {format: string, code: stri
   }
 }
 
-export { createNewGroupAPI }
+const deleteGroupChatAPI = async(chatID: string) => {
+  console.log("DELETE GROUP", chatID)
+  try{
+    const result = await axios.get(`${api_url}/group/delete/${chatID}`)
+    return({
+      data: result.data,
+      status: 200,
+    })
+  } catch(err: any) {
+    return({
+      data: [],
+      title: "Not able to delete the chat",
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
+export { createNewGroupAPI, deleteGroupChatAPI }

@@ -48,7 +48,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
     if(opponentData || !socket?.connected || !chat?.members?.length){return}
     if(chat.members.length > 2){
       setOpponentData({
-        avatar: decodeImage(chat.image.code),
+        avatar: decodeImage(chat?.image?.code) || "",
         displayedName: chat.name,
         usertag: `${chat.members.length} members`,
         type: 'group'
@@ -84,7 +84,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
                             : messageData.senderID == user._id
                               ? "You: "
                               : opponentData?.type == 'group'
-                                ?`${userCache?.userCache[messageData.senderID]?.displayedName}: }`
+                                ?`${userCache?.userCache[messageData.senderID]?.displayedName ?? 'user'}: `
                                 : ""
                           }
                           </span>
@@ -102,7 +102,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
   return(
     <div className={`${styles.messageBlock} ${router.query.chatID == chat._id ? styles.activePage : ""}`} onClick={selectChat} onContextMenu={(e)=>{e.preventDefault(); chooseDeleteId(chat._id);}}>
       <div className={`${styles.deleteBlock} + ${deleteId == chat._id ? styles.deleteBlockActive : ""}`}>
-        <div onClick={()=>{deleteChat({chatID: chat._id, ...opponentData})}}><Icon.Remove width='25' height='25' color='#fff'/></div>
+        <div onClick={()=>{deleteChat(chat, opponentData)}}><Icon.Remove width='25' height='25' color='#fff'/></div>
       </div>
       {opponentData?.avatar ? 
       <div className={styles.avatarBlock}>

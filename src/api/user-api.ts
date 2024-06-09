@@ -105,7 +105,7 @@ const fetchUserByTagAPI = async(usertag: string) => {
 
 const updateUserProfileAPI = async(data: {_id: any, avatar?: {format?: any, code?: any}, displayedName?: any} | any) => {
   try{
-    const result = await axios.post(`${api_url}/user/update`, data)
+    const result = await axios.post(`${api_url}/user/update`, {...data})
     return({
       data: result.data,
       status: 200
@@ -155,6 +155,24 @@ const fetchRandomUserAPI = async(userid: string) => {
   }
 }
 
+const changePasswordAPI = async(data: {userId: string, oldPassword: string, newPassword: string}) => {
+  const url = `${api_url}/user/changePassword`
+  try{
+    const result = await axios.post(url, data)
+    return({
+      data: result.data,
+      status: 200
+    })
+  } catch (err: any) {
+    return({
+      data: null,
+      title: `Not able to change password`,
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
 const logoutAPI = async() => {
   try{
     removeItem('userdata')
@@ -163,4 +181,4 @@ const logoutAPI = async() => {
   }
 }
 
-export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI, deleteAccount, fetchRandomUserAPI}
+export {loginAPI ,registerAPI, logoutAPI, fetchAllUsersAPI, fetchUserByIdAPI, fetchUserByTagAPI, updateUserProfileAPI, deleteAccount, fetchRandomUserAPI, changePasswordAPI}

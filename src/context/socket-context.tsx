@@ -7,7 +7,7 @@ import { tryCatch } from "@/utils/try-catch";
 import { fetchLatestMessageAPI } from "@/api/message-api";
 import { message, useMessageStore } from "@/stores/messages-store";
 import { WarningContext, warningHook } from "@/lib/warning/warning-context";
-import { useChatStore } from "@/stores/chat-store";
+import { chat, useChatStore } from "@/stores/chat-store";
 import { useCounterStore } from "@/stores/counter-store";
 import { useAccountStore } from "@/stores/account-store";
 
@@ -81,8 +81,8 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       console.log("TYPING", data.state)
       chatStore.setIsTyping({chatID: data.chatID, state: data.state})
     })
-    socket.on('removeChat', (data: {chatID: string, recipientID: string}) => {
-      console.log("REMOVE CHsAT", data)
+    socket.on('removeChat', (data: {chatID: string}) => {
+      console.log("REMOVE CHAT", data)
       if(activeChat.chat._id == data.chatID){
         router.push("/chat")
       }
@@ -91,6 +91,9 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
     })
     socket.on('removeMessage', (data: message) => {
       messagesStore.removeMessage(data)
+    })
+    socket.on('addGroup', (data: chat) => {
+      chatStore.addNewChat(data)
     })
     socket.on('userDeleted', (data: {userID: string}) => {
       console.log("REMOVE user", data)
@@ -107,6 +110,9 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
     return () => {
       socket.off('newMessage')
       socket.off('removeChat')
+      socket.off('removeMessage')
+      socket.off('addGroup')
+      socket.off('userDeleted')
       socket.off('typing')
     }
   }, [socket, activeChat, Object.keys(chatStore.userChats).length])

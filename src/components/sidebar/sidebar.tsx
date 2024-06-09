@@ -58,7 +58,6 @@ const MemoSidebar = memo(function Sidebar(){
         <Link className={activePage == "/discover" ? styles.activePage : ""} href="/discover">{activePage == "/discover" ? <Icon.DiscoverActive/> : <Icon.Discover />}</Link>
       </div>
       <div className={styles.bottomButtons}>
-        <Link className={activePage == "/settings" ? styles.activePage : ""} href="/settings">{activePage == "/settings" ? <Icon.SettingsActive/> : <Icon.Settings />}</Link>
         <Link onClick={()=>warning.showWindow({title: "Confirm Action", message: "Are you sure you want to leave?", fn: logout})} href="#"><Icon.Logout/></Link>
         <hr className={styles.hr}/>
         <Link className={`${styles.linkUserImage} ${activePage == "/profile" ? styles.activePage : ""}`} href="/profile">

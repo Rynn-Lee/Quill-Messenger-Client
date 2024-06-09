@@ -22,7 +22,7 @@ import { useMessageStore } from '@/stores/messages-store'
 import { useCounterStore } from '@/stores/counter-store'
 import { decodeImage } from '@/utils/decodeImage'
 import { userData } from '@/types/types'
-import { createNewGroupAPI } from '@/api/group-api'
+import { createNewGroupAPI, deleteGroupChatAPI } from '@/api/group-api'
 
 export default function DialogList(){
   const [deleteId, setDeleteId] = useState<string>("")
@@ -49,6 +49,7 @@ export default function DialogList(){
     })
   }, [socket?.connected])
 
+
   const createNewChat = async() => {
     console.log('CREATE ONE')
     if(search == user.usertag){return}
@@ -58,14 +59,15 @@ export default function DialogList(){
       const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
         if(chatStore.userChats[chat].members[0] == secondUser.data._id || chatStore.userChats[chat].members[0] == secondUser.data._id){
           router.push(`/chat/${chat._id}`)
+          console.log('CHAT EXISTS', chat)
           return true
         }
-        console.log('CHAT EXISTS', chat)
       })
       if(doesChatExist.length){return}
       const newChat = await netRequestHandler(()=>createNewChatAPI(user._id, secondUser.data._id), warning)
       console.log(newChat.data)
       chatStore.addNewChat(newChat.data)
+      router.push(`/chat/${newChat.data._id}`)
     })
   }
 
@@ -73,11 +75,20 @@ export default function DialogList(){
    if(deleteId == id){setDeleteId("")} else {setDeleteId(id)}
   }
 
-  const deleteChat = (friendInfo: friend) => {
-    warning.showWindow({title: "Delete chat", message: `Are you sure you want to delete this chat? You won't be able to recover this chat! ${friendInfo.displayedName} will also loose the chat!`, fn: async()=>{
-      await netRequestHandler(()=>deleteChatAPI(deleteId), warning)
-      console.log(friendInfo)
-      socket.emit('removeChat', {chatID: deleteId, recipientID: friendInfo._id})
+  const deleteChat = (chatInfo: {_id: string, members: string[], type: 'group' | undefined}, opponentData: friend) => {
+    console.log("ITIN INFO --------------------------------", chatInfo)
+    warning.showWindow({title: "Delete chat", message: `Are you sure you want to delete this chat? You won't be able to recover this chat!`, fn: async()=>{
+      if('image' in chatInfo){
+        console.log("DELETING GROUP", chatInfo)
+        await netRequestHandler(()=>deleteGroupChatAPI(deleteId), warning)
+      } else {
+        console.log("DELETING USER", chatInfo)
+        await netRequestHandler(()=>deleteChatAPI(deleteId), warning)
+      }
+
+      console.log("delete chat info", chatInfo.members)
+      socket.emit('removeChat', {chatID: deleteId, recipientID: chatInfo.members})
+      console.log("EVENT TO DELETE CHATS")
       counterStore.resetCounter({chatID: deleteId})
       if(chatStore.activeChat.chat._id == deleteId){router.push('/chat')}
       chatStore.removeChat({chatID: deleteId})
@@ -99,7 +110,7 @@ export default function DialogList(){
             value={search}
             fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
             type="text"/>
-            <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da" width='24px' height='24px'/></button></>
+            <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da" width='32px' height='32px'/></button></>
         }
         
       </div>
@@ -120,7 +131,7 @@ const UserList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) 
   return (
     <div>
       {Object.keys(chatStore.userChats)
-        .filter((chat: any) => chatStore?.userChats[chat]?.members?.length == 2)
+        .filter((chat: any) => !('image' in chatStore?.userChats[chat]))
         .map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
@@ -172,6 +183,7 @@ const GroupList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any)
 
 export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Function}){
   const warning = useContext<warningHook>(WarningContext)
+  const socket: Socket | any = useContext(SocketContext)
   const accountStore = useAccountStore()
   const chatStore = useChatStore()
   const [step, setStep] = useState(0)
@@ -225,7 +237,8 @@ export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Fun
   }
 
   const finishCreatingGroup = async () => {
-    const result = await createNewGroupAPI(groupData.name, {format: 'png', code: groupData.avatar}, groupData.members)
+    const result = await createNewGroupAPI(groupData.name, {format: 'jpg', code: groupData.avatar}, groupData.members)
+    socket.emit('createGroup', {recipientID: groupData.members, data: result.data})
     chatStore.addNewChat(result.data)
     setGroupCreateMode(false)
     setStep(0)
