@@ -128,10 +128,10 @@ const UserList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) 
   return (
     <div>
       {userChats
-        ?.map((keyname: string) => (
+        ?.map((keyname: string) => chatStore?.userChats[keyname] && (
           <Link
-            key={chatStore.userChats[keyname]._id}
-            href={`/chat/${chatStore.userChats[keyname]._id}`}
+            key={chatStore.userChats[keyname]?._id}
+            href={`/chat/${chatStore.userChats[keyname]?._id}`}
           >
             <Dialog
               deleteChat={deleteChat}
@@ -160,10 +160,10 @@ const GroupList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any)
   return (
     <div>
       {groupChats
-        ?.map((keyname: string) => (
+        ?.map((keyname: string) => chatStore?.userChats[keyname] && (
           <Link
-            key={chatStore.userChats[keyname]._id}
-            href={`/chat/${chatStore.userChats[keyname]._id}`}
+            key={chatStore.userChats[keyname]?._id ?? ""}
+            href={`/chat/${chatStore.userChats[keyname]?._id ?? ""}`}
           >
             <Dialog
               deleteChat={deleteChat}

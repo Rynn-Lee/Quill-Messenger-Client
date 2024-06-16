@@ -88,9 +88,20 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
     })
     socket.on('removeMessage', (data: message) => {
       messagesStore.removeMessage(data)
+      counterStore?.counters[data.chatID]?.counter > 0 && counterStore.decCounter({chatID: data.chatID})
     })
     socket.on('addGroup', (data: chat) => {
       chatStore.addNewChat(data)
+    })
+    socket.on('editUserAccount', (data: any) => {
+      console.log(data)
+    })
+    socket.on('editGroup', (data: {_id: string, name: string, image: {format: string, code: string}}) => {
+      chatStore.editChat({_id: data._id, name: data.name, image: data.image})
+      if(chatStore.activeChat.chat._id == data._id){
+        chatStore.setActiveChat({chat: {...chatStore.activeChat.chat, name: data.name, image: data.image}, friend: {...chatStore.activeChat.friend, displayedName: data.name, image: data.image}})
+      }
+      accountStore.incTrigger()
     })
     socket.on('userDeleted', (data: {userID: string}) => {
       Object.keys(chatStore.userChats).forEach((chatID) => {
@@ -111,7 +122,7 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       socket.off('userDeleted')
       socket.off('typing')
     }
-  }, [socket, activeChat, Object.keys(chatStore.userChats).length])
+  }, [socket, activeChat, Object.keys(chatStore.userChats).length, counterStore.counters])
 
   useEffect(()=>{
     fillMessagesPreview()

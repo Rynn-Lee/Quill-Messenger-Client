@@ -121,7 +121,7 @@ export default function ChatBox() {
 
       {isFriendInfoOpen ? <AboutUser friend={chatStore.activeChat.friend} chatInfo={chatStore.userChats[chatID]} setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}/> : null}
 
-      <MemoTopPanel
+      <TopPanel
         setIsFriendInfoOpen={(v: boolean)=>setIsFriendInfoOpen(v)}
         name={chatStore.activeChat?.friend?.displayedName}
         usertag={chatStore.activeChat?.friend?.usertag}

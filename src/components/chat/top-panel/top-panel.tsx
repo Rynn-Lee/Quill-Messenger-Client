@@ -9,18 +9,26 @@ export default function TopPanel({name, usertag, avatar, chatID, setIsFriendInfo
   const [data, setData] = useState<any>()
 
   useEffect(()=>{
-    console.log(chatStore.activeChat.friend)
-    setData(chatStore.activeChat.friend)
-  },[chatStore.activeChat])
-  
+    console.log("CHANTANGANTGANGANGANGANAN", chatStore.activeChat.friend.type)
+    chatStore.activeChat.friend.type
+    ? setData({
+        name: chatStore.activeChat?.friend?.displayedName,
+        usertag: chatStore.activeChat?.friend?.usertag,
+        avatar: chatStore.activeChat?.friend?.avatar,
+        chatID, setIsFriendInfoOpen
+      }) 
+    : setData({
+      name, usertag, avatar, chatID, setIsFriendInfoOpen
+    })
+  }, [chatStore.userChats[chatID]])
 
   return(
     <div className={styles.topPanel}>
       <div>
-        {avatar 
-        ? <Image src={avatar} alt="avatar" height={40} width={40} className={styles.avatar}/> 
+        {data?.avatar
+        ? <Image src={data.avatar ?? ""} alt="avatar" height={40} width={40} className={styles.avatar}/> 
         : <></>}
-        <span className={styles.displayedName} onClick={() => setIsFriendInfoOpen(true)}>{data?.displayedName}</span>
+        <span className={styles.displayedName} onClick={() => setIsFriendInfoOpen(true)}>{data?.name}</span>
         <span className={styles.usertag} onClick={() => setIsFriendInfoOpen(true)}>{data?.usertag}
           {chatStore.userChats[chatID]?.isTyping 
           ? <span className={styles.typing}><Icon.AnimatedPen/> Печатает...</span> 

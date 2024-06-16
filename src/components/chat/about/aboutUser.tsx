@@ -4,17 +4,20 @@ import Image from 'next/Image'
 import Icon from "@/assets/Icons";
 import { calculateDate } from "@/utils/calculate-date";
 import { useUserCache } from "@/stores/user-cache";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { open } from '@tauri-apps/api/dialog';
 import { readBinaryFile } from "@tauri-apps/api/fs"
 import { netRequestHandler } from "@/utils/net-request-handler";
 import { editGroupAPI } from "@/api/group-api";
 import { decodeImage } from "@/utils/decodeImage";
 import { useAccountStore } from "@/stores/account-store";
+import { Socket } from "socket.io-client";
+import { SocketContext } from "@/context/socket-context";
 
 export default function AboutUser({friend, chatInfo, setIsFriendInfoOpen}: {friend: friend | any, chatInfo:any, setIsFriendInfoOpen: Function}) {
   const userCache = useUserCache()
   const chatStore = useChatStore()
+  const socket: Socket | any = useContext(SocketContext)
   const account = useAccountStore()
   const [editMode, setEditMode] = useState(false)
   const [newData, setNewData] = useState({
@@ -55,7 +58,8 @@ export default function AboutUser({friend, chatInfo, setIsFriendInfoOpen}: {frie
       if(!result.data){return}
       setEditMode(false)
       chatStore.editChat({_id: chatInfo._id, name, image})
-      chatStore.setActiveChat({chat: {...chatInfo, name, image}, friend: friend})
+      chatStore.setActiveChat({chat: {...chatInfo, name, image}, friend: {...friend, displayedName: name, image}})
+      socket.emit('editGroup', {data: {_id: chatInfo._id, name, image}, recipientID: chatInfo.members})
       account.incTrigger()
     } catch (err) {
       console.log(err)

@@ -41,6 +41,7 @@ export default function Profile() {
       const result = await netRequestHandler(()=>updateUserProfileAPI({_id: user._id, ...newData}), warning)
       setItem('userdata', result.data)
       setUser(result.data)
+      socket.emit('editUserAccount', newData)
     })
   }
 
