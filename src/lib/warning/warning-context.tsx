@@ -29,8 +29,8 @@ export default function WarningProvider({ children }: {children: React.ReactNode
             <div className={styles.errorTitle}>{warningHook.error.title}</div>
             <div className={styles.errorMessage}>{warningHook.error.message}</div>
             <div className={styles.actionButtons}>
-              {warningHook.error.fn ? <button onClick={async()=>{await warningHook.error.fn(); warningHook.closeWindow()}}>Continue</button> : <></>}
-              <button onClick={()=>warningHook.closeWindow()}>Close</button>
+              {warningHook.error.fn ? <button onClick={async()=>{await warningHook.error.fn(); warningHook.closeWindow()}}>Подтвердить</button> : <></>}
+              <button onClick={()=>warningHook.closeWindow()}>Закрыть</button>
             </div>
           </div>
         </div>

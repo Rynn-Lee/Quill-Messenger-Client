@@ -15,7 +15,7 @@
   width: 100%
   align-items: flex-end
   word-break: break-word
-  padding: 1px 0px
+  margin-bottom: 2px
   img
     object-fit: cover
     border-radius: 100px
@@ -44,21 +44,22 @@
   .text
     position: sticky
     right: 50px
-    margin-right: 5px
+    padding: 0px
     background: var(--rightMessage)
   .timeSent
     float: left
-    // left: 20px
+    margin: 0px 10px 7px 10px
 
 .leftMessage
   .text
     position: sticky
     left: 50px
-    margin-left: 5px
+    margin-bottom: 0px
+    padding: 0px
     background: var(--leftMessage)
   .timeSent
-    margin-top: 5px
     float: right
+    margin: 0px 10px 7px 10px
 
 .timeSent
   font-size: 13px
@@ -73,7 +74,7 @@
 .arrow
   position: relative
   height: 0px
-  top: -24px
+  top: -26px
 .floatRight
   float: right
 .floatLeft
@@ -109,6 +110,10 @@
   flex-direction: column
   padding: 0px !important
   margin: 0px !important
+  img
+    padding: 0px !important
+    margin: 0px !important
+    object-fit: contain
 
 @media screen and (max-width: 972px)
   .arrow
@@ -120,3 +125,5 @@
     .text
       right: 0px
 
+.textMessage
+  padding: 5px 10px

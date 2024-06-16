@@ -2,7 +2,7 @@
   position: fixed
   right: 0px
   bottom: 0px
-  left: 0px
+  left: 357px
   top: 0px
   display: flex
   align-items: center
@@ -64,10 +64,12 @@
 .userlist
   display: flex
   flex-direction: column
+  max-height: 200px
+  
+  overflow-y: auto
   .userRow
     display: flex
-    flex-direction: row
-    align-items: center
+    align-items: flex-start
     width: 100%
     margin-bottom: 10px
     font-size: 10.4pt
@@ -79,3 +81,18 @@
       width: 100%
       align-items: center
       justify-content: center
+
+.groupInputName
+  background: var(--var-accent2)
+  width: 286px
+  font-size: 12pt
+  font-family: monospace
+  padding: 10px 20px
+  border-radius: 10px
+  color: #ffffff
+  align-items: center
+  justify-content: center
+  border: none
+  outline: none
+  &::selection
+    background: var(--notif-counter)

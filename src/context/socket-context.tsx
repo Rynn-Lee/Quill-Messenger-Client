@@ -61,8 +61,6 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
     if(!socket?.connected){return}
     socket.on('newMessage', (data: message) => {
       if(activeChat?.chat?._id != data?.chatID){
-        console.log("ADDING TO COUNTER")
-        console.log(data.chatID)
         counterStore.addCounter({chatID: data.chatID})
       }
       if(!chatStore?.userChats[data.chatID]?._id){
@@ -82,7 +80,6 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       chatStore.setIsTyping({chatID: data.chatID, state: data.state})
     })
     socket.on('removeChat', (data: {chatID: string}) => {
-      console.log("REMOVE CHAT", data)
       if(activeChat.chat._id == data.chatID){
         router.push("/chat")
       }
@@ -96,9 +93,8 @@ export default function SocketWrapper({children, _id}: {children: React.ReactNod
       chatStore.addNewChat(data)
     })
     socket.on('userDeleted', (data: {userID: string}) => {
-      console.log("REMOVE user", data)
       Object.keys(chatStore.userChats).forEach((chatID) => {
-        if(chatStore.userChats[chatID]?.members.includes(data.userID)){
+        if(chatStore.userChats[chatID]?.members.includes(data.userID) && chatStore.userChats[chatID]?.members.length < 3){
           counterStore.resetCounter({chatID: chatID})
           chatStore.removeChat({chatID: chatID})
           if(activeChat.chat._id == data.userID){

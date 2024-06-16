@@ -40,4 +40,22 @@ const deleteGroupChatAPI = async(chatID: string) => {
   }
 }
 
-export { createNewGroupAPI, deleteGroupChatAPI }
+const editGroupAPI = async({_id, data}: any) => {
+  console.log("EDIT GROUP", _id, data)
+  try{
+    const result = await axios.post(`${api_url}/group/edit`, {_id, ...data})
+    return({
+      data: result.data,
+      status: 200,
+    })
+  } catch(err: any) {
+    return({
+      data: [],
+      title: "Not able to edit the group",
+      message: err.response?.data.message || "The server is possibly offline :<",
+      status: err.response?.status || 400,
+    })
+  }
+}
+
+export { createNewGroupAPI, deleteGroupChatAPI, editGroupAPI }

@@ -15,6 +15,8 @@ interface AccoutStore {
   displayedName: string,
   setUser: (data: any) => void,
   clearAccountStore: () => void
+  trigger: number,
+  incTrigger: () => void
 }
 
 export const useAccountStore = create<AccoutStore>()(persist((set) => ({
@@ -22,6 +24,8 @@ export const useAccountStore = create<AccoutStore>()(persist((set) => ({
   avatar: "",
   usertag: "",
   displayedName: "",
+  trigger: 0,
+  incTrigger: () => set((state) => ({trigger: state.trigger + 1})),
   setUser: (userdata: userData) => set(() => ({
     _id: userdata._id,
     usertag: userdata.usertag,

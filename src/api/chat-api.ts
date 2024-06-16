@@ -16,7 +16,7 @@ const fetchUserChatsAPI = async(_id: string) => {
   } catch(err: any) {
     return({
       data: [],
-      title: "Not able to retreive chats",
+      title: "Не удалось получить чаты",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -34,7 +34,7 @@ const createNewChatAPI = async(firstID: string, secondID: string) => {
   } catch(err: any) {
     return({
       data: [],
-      title: "Not able to create a new chat",
+      title: "Не удалось создать чат",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })
@@ -51,7 +51,7 @@ const deleteChatAPI = async(chatID: string) => {
   } catch(err: any) {
     return({
       data: [],
-      title: "Not able to delete the chat",
+      title: "Не удалось удалить чат",
       message: err.response?.data.message || "The server is possibly offline :<",
       status: err.response?.status || 400,
     })

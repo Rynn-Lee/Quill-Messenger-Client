@@ -27,7 +27,7 @@ import { createNewGroupAPI, deleteGroupChatAPI } from '@/api/group-api'
 export default function DialogList(){
   const [deleteId, setDeleteId] = useState<string>("")
   const [groupCreateMode, setGroupCreateMode] = useState<boolean>(false)
-  const chatStore: any = useChatStore()
+  const chatStore = useChatStore()
   const [tab, setTab] = useState<'direct' | 'groups'>('direct')
   const messagesStore = useMessageStore()
   const [search, setSearch] = useState<string>("")
@@ -49,11 +49,8 @@ export default function DialogList(){
     })
   }, [socket?.connected])
 
-
   const createNewChat = async() => {
-    console.log('CREATE ONE')
     if(search == user.usertag){return}
-    console.log('CREATE TWO')
     tryCatch(async()=>{
       const secondUser = await netRequestHandler(()=>fetchUserByTagAPI(search), warning)
       const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
@@ -76,19 +73,14 @@ export default function DialogList(){
   }
 
   const deleteChat = (chatInfo: {_id: string, members: string[], type: 'group' | undefined}, opponentData: friend) => {
-    console.log("ITIN INFO --------------------------------", chatInfo)
-    warning.showWindow({title: "Delete chat", message: `Are you sure you want to delete this chat? You won't be able to recover this chat!`, fn: async()=>{
+    warning.showWindow({title: "Удалить чат", message: `Вы уверены, что хотите удалить этот чат? Этот чат невозможно будет восстановить!`, fn: async()=>{
       if('image' in chatInfo){
-        console.log("DELETING GROUP", chatInfo)
         await netRequestHandler(()=>deleteGroupChatAPI(deleteId), warning)
       } else {
-        console.log("DELETING USER", chatInfo)
         await netRequestHandler(()=>deleteChatAPI(deleteId), warning)
       }
 
-      console.log("delete chat info", chatInfo.members)
       socket.emit('removeChat', {chatID: deleteId, recipientID: chatInfo.members})
-      console.log("EVENT TO DELETE CHATS")
       counterStore.resetCounter({chatID: deleteId})
       if(chatStore.activeChat.chat._id == deleteId){router.push('/chat')}
       chatStore.removeChat({chatID: deleteId})
@@ -99,24 +91,24 @@ export default function DialogList(){
   return(
     <div className={styles.chatlist}>
       {groupCreateMode ? <CreateGroupWindow setGroupCreateMode={setGroupCreateMode}/> : null}
-      <h2>Messages</h2>
+      <h2>Сообщения</h2>
       <div className={styles.searchBlock}>
         {tab=="groups" ? 
         <button className={styles.createAgroup} onClick={()=>setGroupCreateMode(!groupCreateMode)}>
-          Create a new group
+          Создать группу
         </button>
         : <><Input
             onChange={(e)=>setSearch(inputFilter(e.target.value))}
             value={search}
-            fancy={{text: "Search by tag", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
+            fancy={{text: "Поиск по тегу", placeholder: "User Tag", background: "#1e2027", backgroundHover: "#2c2f38"}}
             type="text"/>
             <button onClick={createNewChat} className={`${styles.createChat}`}><Icon.AddUser color="#9851da" width='32px' height='32px'/></button></>
         }
         
       </div>
       <div className={styles.listTabs}>
-        <div className={tab == 'direct' ? styles.activeTab : ""} onClick={() => setTab('direct')}>Direct</div>
-        <div className={tab == 'groups' ? styles.activeTab : ""} onClick={() => setTab('groups')}>Groups</div>
+        <div className={tab == 'direct' ? styles.activeTab : ""} onClick={() => setTab('direct')}>Личные</div>
+        <div className={tab == 'groups' ? styles.activeTab : ""} onClick={() => setTab('groups')}>Группы</div>
       </div>
       <div className={styles.block} style={{padding: 0, margin: 0, overflowX: "hidden"}}>
         <div style={{display: tab == 'direct' ? 'flex' : 'none'}}><UserList deleteChat={deleteChat} chooseDeleteId={chooseDeleteId} deleteId={deleteId} messagesStore={messagesStore}/></div>
@@ -128,11 +120,15 @@ export default function DialogList(){
 
 const UserList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) => {
   const chatStore = useChatStore()
+  const [userChats, setUserChats] = useState<any>()
+  useEffect(()=>{
+    setUserChats(Object.keys(chatStore.userChats).filter((chat: any) => !('image' in chatStore?.userChats[chat])))
+  },[chatStore.userChats])
+
   return (
     <div>
-      {Object.keys(chatStore.userChats)
-        .filter((chat: any) => !('image' in chatStore?.userChats[chat]))
-        .map((keyname: string) => (
+      {userChats
+        ?.map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
             href={`/chat/${chatStore.userChats[keyname]._id}`}
@@ -156,11 +152,15 @@ const UserList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) 
 
 const GroupList = ({ deleteChat, chooseDeleteId, deleteId, messagesStore }: any) => {
   const chatStore = useChatStore()
+  const [groupChats, setGroupChats] = useState<any>()
+  useEffect(()=>{
+    setGroupChats(Object.keys(chatStore.userChats).filter((chat: any) => ('image' in chatStore?.userChats[chat])))
+  },[chatStore.userChats])
+
   return (
     <div>
-      {Object.keys(chatStore.userChats)
-        .filter((chat: any) => chatStore?.userChats[chat]?.members?.length > 2)
-        .map((keyname: string) => (
+      {groupChats
+        ?.map((keyname: string) => (
           <Link
             key={chatStore.userChats[keyname]._id}
             href={`/chat/${chatStore.userChats[keyname]._id}`}
@@ -251,19 +251,19 @@ export function CreateGroupWindow({setGroupCreateMode}: {setGroupCreateMode: Fun
           ? <><div onClick={openDialog}>
                 {groupData.avatar
                 ? <Image src={groupImage} className={styles.avatar} alt="avatar" width={40} height={40}/>
-                : <div className={styles.avatar}>Select</div>
+                : <div className={styles.avatar}>Выбрать</div>
                 }
               </div>
               <div className={styles.groupInfo}>
-                <p className={styles.title}>Group Name</p>
+                <p className={styles.title}>Название группы</p>
                 <input onChange={(e)=>setGroupData({...groupData, name: e.target.value})} type="text" value={groupData.name}/>
-                <button onClick={()=>setStep(1)} disabled={!groupData.name}>Continue</button>
+                <button onClick={()=>setStep(1)} disabled={!groupData.name}>Продолжить</button>
               </div></>
         : <div className={styles.invitePeople}>
             <div style={{display: 'flex', flexDirection: 'row', justifyContent: 'space-between', width: '100%'}}>
               <div style={{display: 'flex', flexDirection: 'column', gap: '5px'}}>
-                <span className={styles.title}>Invite People</span>
-                <span>Selected: {groupData.members.length-1}</span>
+                <span className={styles.title}>Пригласить людей</span>
+                <span>Выбрано: {groupData.members.length-1}</span>
               </div>
               <button className={styles.finishCreating} onClick={()=>finishCreatingGroup()} style={{background: "#00000000", border: "none"}}><Icon.SendArrow /></button>
             </div>

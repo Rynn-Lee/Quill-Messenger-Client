@@ -41,6 +41,7 @@ interface chatStore {
   setChatImage: (data: {chatID: string, image: string}) => void,
   setActiveChat: (data: {chat: chat, friend: any[]}) => void
   removeChat: (data: {chatID: string}) => void
+  editChat: (data: {_id: string, name: string, image: {format: string, code: string}}) => void
   clearChatStore: () => void,
 }
 
@@ -76,6 +77,10 @@ export const useChatStore = create<chatStore>()(persist((set) => ({
     userChats: {...state.userChats, [data.chatID]: {
       ...state.userChats[data.chatID], attachment: data.image
     }}
+  })),
+  editChat: (data) => set((state: any) => ({
+    userChats: {...state.userChats,
+      [data._id]: {...state.userChats[data._id], ...data}}
   })),
   setActiveChat: (data) => set((state: any) => ({activeChat: data})),
   clearChatStore: () => set(()=>({userChats: {}}))

@@ -17,7 +17,6 @@ import { Socket } from "socket.io-client/debug"
 import Image from 'next/image'
 import { useMessageStore } from "@/stores/messages-store"
 import Messages from "@/components/chat/messages/messages"
-import { useCounterStore } from "@/stores/counter-store"
 import AboutUser from "@/components/chat/about/aboutUser"
 
 const MemoMessages = React.memo(Messages)
@@ -26,29 +25,23 @@ const MemoTopPanel = React.memo(TopPanel)
 export default function ChatBox() {
   const router = useRouter()
   const chatStore = useChatStore()
-  const counterStore = useCounterStore()
   const user = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const [isFriendInfoOpen, setIsFriendInfoOpen] = useState<boolean>(false)
   const chatID: string = router.query.chatID as string
   const socket: Socket | any = useContext(SocketContext)
-  const ref = useRef<HTMLDivElement>(null);
   const [isTyping, setIsTyping] = useState<boolean>(false);
   const [typingTimer, setTypingTimer] = useState<any>(null);
-  const {messagesHistory,  addMessage}: any = useMessageStore()
-
-  useEffect(()=>{
-    counterStore.resetCounter({chatID})
-  },[chatID])
+  const {addMessage}: any = useMessageStore()
 
   const members = useMemo(()=>{
     return chatStore?.userChats[chatID]?.members?.filter((member) => member != user._id)
   }, [chatID])
 
-  useEffect(()=>{
-    if(!messagesHistory[chatID]?.messages?.length){return}
-    ref.current?.scrollIntoView({behavior: "smooth", block: "end"})
-  }, [messagesHistory[chatID]?.messages?.length])
+  // useEffect(()=>{
+  //   if(!messagesHistory[chatID]?.messages?.length){return}
+  //   ref.current?.scrollIntoView({behavior: "smooth", block: "end"})
+  // }, [messagesHistory[chatID]?.messages?.length])
 
   const sendNewMessage = async() => {
     if((!chatStore.userChats[chatID]?.inputMessage && !chatStore.userChats[chatID]?.attachment) || !socket){return}
@@ -138,8 +131,7 @@ export default function ChatBox() {
       <MemoMessages
         chatID={chatID}
         activeChat={chatStore.activeChat}
-        user={user}
-        refProp={ref}/>
+        user={user}/>
 
       {chatStore?.userChats[chatID]?.attachment
       ? <div className={styles.attachment}>

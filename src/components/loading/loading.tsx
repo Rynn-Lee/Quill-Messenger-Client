@@ -6,7 +6,7 @@ export default function Loading(){
   <div className={styles.loading}>
     <div className={styles.fading}>
       <span className={styles.loadingIco}><Icon.Loading /></span>
-      <span className={styles.loadingText}>Connecting to the server... Please wait</span>
+      <span className={styles.loadingText}>Подключение к серверу... Пожалуйста подождите</span>
     </div>
   </div>
   )

@@ -116,7 +116,7 @@ export default function Profile() {
         </div>
       </fieldset>
       <fieldset className={styles.block}>
-        <legend>Your displayed name</legend>
+        <legend>Ваш никнейм</legend>
         <Input 
           value={newData.displayedName}
           onChange={(e)=>setNewData({...newData, displayedName: e.target.value})}/>
@@ -127,14 +127,17 @@ export default function Profile() {
         <Input 
           value={passwords.oldPassword}
           placeholder="Текущий пароль"
+          type="password"
           onChange={(e)=>setPasswords({...passwords, oldPassword: e.target.value})}/>
         <Input 
           value={passwords.newPassword}
           placeholder="Новый пароль"
+          type="password"
           onChange={(e)=>setPasswords({...passwords, newPassword: e.target.value})}/>
         <Input
           placeholder="Подтвердите пароль"
           value={passwords.confirmPassword}
+          type="password"
           onChange={(e)=>setPasswords({...passwords, confirmPassword: e.target.value})}/>
         <button onClick={updatePassword}>Сменить пароль</button>
       </fieldset>

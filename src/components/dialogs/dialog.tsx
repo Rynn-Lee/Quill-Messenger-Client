@@ -22,10 +22,11 @@ import { useUserCache } from '@/stores/user-cache'
 export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, deleteChat}: {chat: any, messagesStore: any, chooseDeleteId: Function, deleteId: string, deleteChat: Function}) {
   const [opponentData, setOpponentData] = useState<any>()
   const {setActiveChat, activeChat} = useChatStore()
+  const chatStore = useChatStore()
   const counterStore = useCounterStore()
   const socket: Socket | any = useContext(SocketContext)
   const REALmessageStore = useMessageStore()
-  const user: any = useAccountStore()
+  const user = useAccountStore()
   const userCache = useUserCache()
   const warning = useContext<warningHook>(WarningContext)
   const router = useRouter()
@@ -37,31 +38,41 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
     time: "",
   })
 
-
   const selectChat = () => {
     if(activeChat?.chat?._id == chat?._id){return}
     chooseDeleteId('')
     setActiveChat({chat: chat, friend: opponentData!})
+    counterStore.resetCounter({chatID: chat._id})
+  
   }
 
   useEffect(()=>{
-    if(opponentData || !socket?.connected || !chat?.members?.length){return}
-    if(chat.members.length > 2){
+    setDialogData()
+  }, [opponentData, socket?.connected])
+  
+  useEffect(()=>{
+    setDialogData(true)
+  },[user.trigger])
+
+  const setDialogData = async (ignoreAll: boolean = false) => {
+    if((opponentData || !socket?.connected || !chat?.members?.length) && !ignoreAll){return}
+    console.log("PASS")
+    if(chat?.members?.length > 2){
       setOpponentData({
         avatar: decodeImage(chat?.image?.code) || "",
         displayedName: chat.name,
-        usertag: `${chat.members.length} members`,
+        usertag: `${chat.members.length} участников`,
         type: 'group'
       })
       return
     }
-    const userID = chat.members[0] != user._id ? chat.members[0] : chat.members[1]
+    const userID = chat?.members[0] != user._id ? chat.members[0] : chat.members[1]
     tryCatch(async()=>{
       const result = await netRequestHandler(()=>fetchUserByIdAPI(userID), warning)
       const decodedURL: any = decodeImage(result.data.avatar.code);
       setOpponentData({...result.data, avatar: decodedURL})
     })
-  }, [opponentData, socket?.connected])
+  }
 
   useEffect(()=>{
     if(!messagesStore?.messages?.length){return}
@@ -75,21 +86,21 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
   }, [messagesStore])
 
 
-  const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Typing...</span> 
-  const Draft = () => <><span className={styles.draft}>{"Draft: "}</span>{messagesStore?.inputMessage}</>
+  const Typing = () => <span className={styles.typing}><Icon.AnimatedPen/> Пишет...</span> 
+  const Draft = () => <><span className={styles.draft}>{"Черновик: "}</span>{chatStore.userChats[chat._id]?.inputMessage}</>
   const Message = () => <>
                           <span className={styles.sentFromMe}>{
                             !REALmessageStore?.messagesHistory[chat._id]?.messages?.length 
                             ? "" 
                             : messageData.senderID == user._id
-                              ? "You: "
+                              ? "Вы: "
                               : opponentData?.type == 'group'
                                 ?`${userCache?.userCache[messageData.senderID]?.displayedName ?? 'user'}: `
                                 : ""
                           }
                           </span>
                           {!REALmessageStore?.messagesHistory[chat._id]?.messages?.length
-                          ? "No messages yet..."
+                          ? "Пока нет сообщений..."
                           : messageData.type == 'media'
                             ? <span className={styles.sentFromMe}><Image src={messageData.image} width={15} height={15} style={{borderRadius: 7}} alt=""/> [image]</span>
                             :  messageData.type == 'media-text'
@@ -106,7 +117,7 @@ export default function Dialog({chat, messagesStore, chooseDeleteId, deleteId, d
       </div>
       {opponentData?.avatar ? 
       <div className={styles.avatarBlock}>
-        <Image src={opponentData?.avatar} alt="pfp" width={40} height={40}/>
+        <Image src={opponentData?.avatar ?? ""} alt="pfp" width={40} height={40}/>
       </div>
       : <></>}
       <div className={styles.messageContent}>

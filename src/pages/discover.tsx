@@ -21,7 +21,6 @@ export default function Discover() {
   const account = useAccountStore()
   const warning = useContext<warningHook>(WarningContext)
   const chatStore = useChatStore()
-  const [image, setImage] = useState<string>()
 
   useEffect(()=>{
     !randomUser && fetchRandomUser()
@@ -35,7 +34,7 @@ export default function Discover() {
     })
   }
 
-  const createNewChat = async(usertag: string) => {
+  const createNewChat = async() => {
     tryCatch(async()=>{
       if(!randomUser){return}
       const doesChatExist = Object.keys(chatStore.userChats).filter((chat: any) => {
@@ -56,10 +55,9 @@ export default function Discover() {
 
   return (
     <div className={styles.page}>
-      <span className={styles.title}>✨ Discover new friends to talk with!</span>
+      <span className={styles.title}>✨ Найдите новых друзей для общения!</span>
       <div className={styles.users}>
         <div className={styles.randomDiv}>
-        {!randomUser?._id  ? <span className={styles.randomDivTitle}>Test your luck with the user randomizer!</span> : null }
           {randomUser?._id && (
             <div className={styles.userInfo}>
               <div className={styles.pfpblock}>
@@ -71,14 +69,14 @@ export default function Discover() {
                   <span className={styles.row}><Icon.User/> {randomUser.usertag}</span>
                   <span className={styles.row}><Icon.Calendar color="#fff" width="26px" height="20px"/> {calculateDate(randomUser.createdAt.toString(), 'full')}</span>
                   <div style={{flexDirection: "row", display: "flex"}}>
-                    <button onClick={()=>createNewChat(randomUser.usertag)} style={{flex: 2}}>Start a new conversation!</button>
-                    <button onClick={fetchRandomUser} style={{flex: 1}}>Try again :c</button>
+                    <button onClick={()=>createNewChat(randomUser.usertag)} style={{flex: 2}}>Начать новую беседу!</button>
+                    <button onClick={fetchRandomUser} style={{flex: 1}}>Попробовать снова</button>
                   </div>
                 </div>
               </div>
             </div>
           )}
-          {!randomUser?._id  ? <button onClick={fetchRandomUser}>Give me someone to talk!</button> : null}
+          {!randomUser?._id  ? <button onClick={fetchRandomUser}>Получить собеседника!</button> : null}
         </div>
       </div>
     </div>

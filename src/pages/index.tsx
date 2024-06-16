@@ -10,7 +10,6 @@ import { inputFilter } from "@/utils/input-filter"
 import { netRequestHandler } from "@/utils/net-request-handler"
 import { tryCatch } from "@/utils/try-catch"
 import { userData } from "@/types/types"
-import { decodeImage } from "@/utils/decodeImage"
 
 export default function Home() {
   const router = useRouter()
@@ -71,36 +70,36 @@ export default function Home() {
         <Input
           onChange={(e)=>setUserInputs({...userInputs, usertag: inputFilter(e.target.value)})}
           value={userInputs.usertag.toLocaleLowerCase()}
-          fancy={{text: "Usertag", placeholder: "Usertag", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)"}}
+          fancy={{text: "Тэг", placeholder: "Usertag", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)"}}
           type="text"/>
         <Input
           onChange={(e)=>setUserInputs({...userInputs, password: e.target.value})}
           value={userInputs.password}
-          fancy={{text: "Password", placeholder: "Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
+          fancy={{text: "Пароль", placeholder: "Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
           type="password"/>
         {toggle ?<Input
           onChange={(e)=>setUserInputs({...userInputs, confirmPassword: e.target.value})}
           value={userInputs.confirmPassword}
-          fancy={{text: "Confirm Password", placeholder: "Confirm Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
+          fancy={{text: "Подтвердите пароль", placeholder: "Confirm Password", backgroundHover: "var(--loginInputHover)", background: "var(--loginInput)", hide: true}}
           type="password"/> : <></>}
         {!toggle
         ? <button className={styles.loginButton} onClick={loginAccount} disabled={
           !userInputs.usertag ||
-          !userInputs.password.length}>Login</button>
+          !userInputs.password.length}>Войти</button>
         : <button className={styles.loginButton} onClick={registerNewAccount} disabled={
           (userInputs.usertag.length < 3) ||
           (userInputs.usertag.length > 30) ||
           (userInputs.password.length < 8) || 
-          (userInputs.password !== userInputs.confirmPassword)}>Register</button>}
+          (userInputs.password !== userInputs.confirmPassword)}>Зарегистрироваться</button>}
         
-        <span className={styles.toggleText} onClick={()=>setToggle(!toggle)}>{!toggle ? "I don't have an account!" : "I have an account!"}</span>
+        <span className={styles.toggleText} onClick={()=>setToggle(!toggle)}>{!toggle ? "У меня нет аккаунта!" : "У меня есть аккаунт!"}</span>
       </div>
 
       <div className={styles.description}>
         <h2 className={styles.title}><Icon.Quill/> Quill Messenger</h2>
-        <h3>Welcome, User!</h3>
-        We&apos;re glad to see you here!<br/>
-        Log In or create a new account! Other people are waiting for you!
+        <h3>Добро пожаловать!</h3>
+        Мы рады видеть вас здесь!<br/>
+        Войдите или создайте новый аккаунт! Другие пользователи уже ждут вас!
       </div>
     </div>
   )
